@@ -3,11 +3,11 @@ const dotenv = require('dotenv')
 const bodyParser = require('body-parser');
 const morgan = require('morgan')
 
-const sequelize = require('./utils/database')
+const sequelize = require('./database/database')
 
 
 const User = require('./models/user')
-
+require('./database/associations')
 
 const userRoutes = require('./routes/user')
 
@@ -43,10 +43,10 @@ app.get('/api/products',(req, res) => {
   }  */
 //sequelize.sync({force:true})
 sequelize.sync()
-    .then(user => {
+/*     .then(user => {
         
     })
-    .catch(err => console.log(err))
+    .catch(err => console.log(err)) */
 
 
 
