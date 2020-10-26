@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler')
 const User = require('../models/user')
+const generateToken = require('../utils/generateToken')
 
 
 //@desc     Register a new user
@@ -28,7 +29,7 @@ exports.registerUser = asyncHandler(async (req, res) =>{
             _id: user._id,
             name: user.name,
             email: user.email,
-            isAdmin: user.isAdmin,
+            isAdmin: user.isAdmin
         })
     }else{
         res.status(400)
@@ -46,17 +47,29 @@ exports.login = asyncHandler(async (req, res) =>{
 
     //check if email is already in use
     const user = await User.findOne({ where: { email } })
-
+    console.log(user.id)
     //if user exist and entered password is the same
     if(user && (await user.validPassword(password))){
         res.json({
-            _id: user._id,
+            _id: user.id,
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin,
+            token: generateToken(user.id)
         })
     }else{
         res.status(401)
         throw new Error('Invalid email or password')
     }
+})
+
+
+//@desc     Get all users
+//@route    GET /api/users
+//@access   Private/user
+exports.getUsers = asyncHandler(async (req, res) =>{
+    const users = await User.findAll({attributes: { exclude: ['password'] }})
+    res.json(users)
+
+    
 })
