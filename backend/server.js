@@ -9,7 +9,6 @@ const sequelize = require('./database/database')
 const User = require('./models/user')
 require('./database/associations')
 
-const userRoutes = require('./routes/user')
 
 const app = express()
 dotenv.config()
@@ -22,15 +21,22 @@ if(process.env.NODE_ENV === 'development'){
 app.use(bodyParser.json()) // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }))
 
-app.use('/api/users',userRoutes)
 
-app.get('/',(req, res) => {
+//ROUTES
+const userRoutes = require('./routes/user')
+const categoryRoutes = require('./routes/category')
+
+app.use('/api/users', userRoutes)
+app.use('/api/categories', categoryRoutes)
+
+
+/* app.get('/',(req, res) => {
     res.send('API is running...')
 })
 
 app.get('/api/products',(req, res) => {
     res.send('Products...')
-})
+}) */
 
 //test connection
 /*  try {
