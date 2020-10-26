@@ -5,6 +5,7 @@ const morgan = require('morgan')
 
 const sequelize = require('./database/database')
 
+const {notFound, errorHandler} = require('./middleware/errorMiddleware')
 
 const User = require('./models/user')
 require('./database/associations')
@@ -32,6 +33,11 @@ app.use('/api/users', userRoutes)
 app.use('/api/categories', categoryRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/clients', clientRoutes)
+
+//middlewares
+app.use(notFound)
+app.use(errorHandler)
+
 
 /* app.get('/',(req, res) => {
     res.send('API is running...')

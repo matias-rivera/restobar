@@ -9,18 +9,17 @@ const Category = require('../models/category')
 
 exports.createProduct = asyncHandler(async (req, res) =>{
     
-    const {name, price, stock, category} = req.body;
-    Category.findByPk(category)
-        .then(category => {
-            return category.createProduct({name,price,stock})
-        })
-        .then(product => {
-            res.status(201).json(product)
-        })
-        .catch(error => {
-            res.status(404).json({error})
-            throw new Error('Cannot create Product')
-        })
+    const {name, price, stock, category:categoryId} = req.body;
+    const category = await Category.findByPk(categoryId)
+    
+    if(category){
+        createdProduct = await category.createProduct({name,price,stock})
+        res.json(createdProduct)
+    }else{
+        res.status(404)
+        throw new Error('Category not found')
+    }
+    
 })
 
 

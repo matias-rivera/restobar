@@ -8,17 +8,8 @@ const Client = require('../models/client')
 exports.createClient = asyncHandler(async (req, res) =>{
     
     const {name, address, phone, email, dni} = req.body;
-
-    
-    try {
-        const createdClient = 
-            await Client
-                .create({name, address, phone, email, dni})
-        res.status(201).json(createdClient)
-    } catch (error) {
-        res.status(404).json({error})
-        throw new Error('Cannot create Client')
-    }
+    const createdClient = await Client.create({name, address, phone, email, dni})
+    res.status(201).json(createdClient)
 
 })
 

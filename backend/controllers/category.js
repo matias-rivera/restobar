@@ -9,14 +9,8 @@ const Category = require('../models/category')
 exports.createCategory = asyncHandler(async (req, res) =>{
     
     const name = req.body.name;
-    
-    try {
-        const createdCategory = await Category.create({name})
-        res.status(201).json(createdCategory)
-    } catch (error) {
-        res.status(404).json({error})
-        throw new Error('Cannot create Category')
-    }
+    const createdCategory = await Category.create({name})
+    res.status(201).json(createdCategory)
 
 })
 
