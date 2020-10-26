@@ -25,9 +25,11 @@ app.use(bodyParser.urlencoded({ extended: true }))
 //ROUTES
 const userRoutes = require('./routes/user')
 const categoryRoutes = require('./routes/category')
+const productRoutes = require('./routes/product')
 
 app.use('/api/users', userRoutes)
 app.use('/api/categories', categoryRoutes)
+app.use('/api/products', productRoutes)
 
 
 /* app.get('/',(req, res) => {
