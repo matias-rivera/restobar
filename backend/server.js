@@ -26,11 +26,12 @@ app.use(bodyParser.urlencoded({ extended: true }))
 const userRoutes = require('./routes/user')
 const categoryRoutes = require('./routes/category')
 const productRoutes = require('./routes/product')
+const clientRoutes = require('./routes/client')
 
 app.use('/api/users', userRoutes)
 app.use('/api/categories', categoryRoutes)
 app.use('/api/products', productRoutes)
-
+app.use('/api/clients', clientRoutes)
 
 /* app.get('/',(req, res) => {
     res.send('API is running...')
