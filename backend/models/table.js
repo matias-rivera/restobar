@@ -8,8 +8,16 @@ const Table = sequelize.define('table',{
         allowNull: false,
         primaryKey: true
     },
-    occupied: Sequelize.BOOLEAN
-}) 
+    name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
+    occupied: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+    }
+    }) 
 
 
 

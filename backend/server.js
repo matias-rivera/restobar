@@ -28,11 +28,13 @@ const userRoutes = require('./routes/user')
 const categoryRoutes = require('./routes/category')
 const productRoutes = require('./routes/product')
 const clientRoutes = require('./routes/client')
+const tableRoutes = require('./routes/table')
 
 app.use('/api/users', userRoutes)
 app.use('/api/categories', categoryRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/clients', clientRoutes)
+app.use('/api/tables',tableRoutes)
 
 //middlewares
 app.use(notFound)
