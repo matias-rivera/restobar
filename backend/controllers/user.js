@@ -18,7 +18,7 @@ exports.registerUser = asyncHandler(async (req, res) =>{
         throw new Error('User already exists')
     } 
 
-    const user = await User.create({
+    const user = await User.scope('withPassword').create({
         name,
         email,
         password
@@ -46,8 +46,8 @@ exports.login = asyncHandler(async (req, res) =>{
     const {email, password} = req.body
 
     //check if email is already in use
-    const user = await User.findOne({ where: { email } })
-    console.log(user.id)
+    const user = await User.scope('withPassword').findOne({ where: { email } })
+
     //if user exist and entered password is the same
     if(user && (await user.validPassword(password))){
         res.json({

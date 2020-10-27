@@ -23,7 +23,7 @@ exports.protect = asyncHandler(async(req, res, next) => {
                 const decoded = jwt.verify(token, process.env.JWT_SECRET)
                 
                 //get user and remove password
-                req.user = await User.findByPk(decoded.id,{attributes: { exclude: ['password'] }})
+                req.user = await User.findByPk(decoded.id)
                 next()
             } catch(error){
                 console.error(error)

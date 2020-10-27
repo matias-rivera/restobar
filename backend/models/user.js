@@ -35,7 +35,15 @@ const User = sequelize.define('user',{
               const salt = bcrypt.genSaltSync(10);
               user.password = bcrypt.hashSync(user.password, salt);
             }
-          }
+          },
+        defaultScope: {
+            attributes: { exclude: ['password'] },
+        },
+        scopes: {
+            withPassword: {
+                attributes: { },
+            }
+        }
     }) 
 
 User.prototype.validPassword = function (password) {
