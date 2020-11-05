@@ -23,7 +23,7 @@ const Main = () => {
             
             <div className='content-wrapper'>
             
-                <Route path='/admin/user' component={UserScreen} />
+                <Route path='/user' component={UserScreen} />
                 <Route path='/category' component={CategoryScreen} />
                 <Route path='/delivery' component={DeliveryScreen} />
                 <Route path='/client' component={ClientScreen} />
