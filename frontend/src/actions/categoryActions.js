@@ -56,7 +56,10 @@ export const listCategories = (keyword = '', pageNumber = '') => async(dispatch,
 }
 
 //create a category
-export const createCategory = (name) => async(dispatch, getState) => {
+export const createCategory = (category) => async(dispatch, getState) => {
+    
+    const {name} = category
+
     try{
         dispatch({
             type: CATEGORY_CREATE_REQUEST

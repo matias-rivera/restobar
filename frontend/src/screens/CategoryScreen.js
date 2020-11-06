@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Modal from 'react-modal'
-import { Link, Route } from 'react-router-dom';
 import Paginate from './../components/Paginate';
 import SearchBox from './../components/SearchBox';
 import TableCrud from './../components/TableCrud';
 import Loader from './../components/Loader';
 import Message from './../components/Message';
-import { listCategories } from './../actions/categoryActions';
+import { createCategory, listCategories } from './../actions/categoryActions';
+import ModalCreate from './../components/ModalCreate';
 
 
 const CategoryScreen = ({history, match}) => {
@@ -17,8 +16,11 @@ const CategoryScreen = ({history, match}) => {
     const pageNumber = match.params.pageNumber || 1
 
     const [modalIsOpen, setModalIsOpen] = useState(false)
-    const [category, setCategory] = useState({
-        name: ''
+    const [data, setData] = useState({
+        name: {
+          type:'text',
+          data:''
+        }
     })
 
     const dispatch = useDispatch()
@@ -29,11 +31,37 @@ const CategoryScreen = ({history, match}) => {
     const userLogin = useSelector((state) => state.userLogin)
     const {userInfo} = userLogin
 
+    const categoryCreate = useSelector((state) => state.categoryCreate)
+    const {loading: createLoading, success: createSuccess ,error: createError} = categoryCreate
+
     useEffect(() => {
             dispatch(listCategories(keyword,pageNumber))
-    }, [dispatch, history, userInfo, pageNumber, keyword])
+    }, [dispatch, history, userInfo, pageNumber, keyword, createSuccess])
 
-    
+    const handleSubmit = (e) => {
+      
+      e.preventDefault();
+      
+      const category = {
+        name: data['name'].data,
+      }
+      
+      
+      dispatch(createCategory(category))
+
+       setData({
+        name: {
+          type: 'text',
+          data: ''
+        }
+      })
+      
+
+      setModalIsOpen(false)
+    }
+
+
+
     return ( 
         <>
 <section className="content-header">
@@ -41,6 +69,8 @@ const CategoryScreen = ({history, match}) => {
       <div className="row mb-2">
         <div className="col-sm-6">
           <h1>Categories</h1>
+          <Loader variable={createLoading} />
+          <Message message={createError} color={'danger'}/>
           
         </div>
         <div className="col-sm-6">
@@ -64,12 +94,8 @@ const CategoryScreen = ({history, match}) => {
           <div className="card">
             <div className="card-header">
               <h3 className="card-title">Categories table</h3>
-              {/* <button 
-                className='btn btn-success float-right mr-4'
-                onClick={() => setModalIsOpen(true)}
-              >
-                New User
-              </button> */}
+              <ModalCreate data={data} setData={setData} handleSubmit={handleSubmit} modalIsOpen={modalIsOpen} setModalIsOpen={setModalIsOpen}/>
+
             </div>
             {/* /.card-header */}
             <div className="card-body">

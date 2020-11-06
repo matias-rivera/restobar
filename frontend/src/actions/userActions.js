@@ -103,8 +103,10 @@ export const listUsers = (keyword = '', pageNumber = '') => async(dispatch, getS
 //register an user
 export const register = (user) => async(dispatch, getState) => {
     
-    const {name, email, password, isAdmin} = user
+    const {name , email, password, isAdmin} = user
     
+    
+
     try{
         dispatch({
             type: USER_REGISTER_REQUEST

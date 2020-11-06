@@ -1,27 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { listUsers, register } from './../actions/userActions';
-import Modal from 'react-modal'
-import { Link, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import Paginate from './../components/Paginate';
 import SearchBox from './../components/SearchBox';
 import TableCrud from './../components/TableCrud';
 import Loader from './../components/Loader';
 import Message from './../components/Message';
+import ModalCreate from './../components/ModalCreate';
 
-const customStyles = {
-  content : {
-    top                   : '50%',
-    left                  : '50%',
-    right                 : 'auto',
-    bottom                : 'auto',
-    marginRight           : '-50%',
-    width: 400,
-    transform             : 'translate(-50%, -50%)'
-  }
-}
 
-Modal.setAppElement('#root')
+
 
 const UserScreen = ({history, match}) => {
   
@@ -30,11 +19,23 @@ const UserScreen = ({history, match}) => {
 
     const [modalIsOpen, setModalIsOpen] = useState(false)
 
-    const [user, setUser] = useState({
-      name: '',
-      password: '',
-      email: '',
-      isAdmin: false
+    const [data, setData] = useState({
+      name: {
+        type: 'text',
+        data: ''
+      },
+      password: {
+        type: 'password',
+        data: ''
+      },
+      email: {
+        type: 'email',
+        data: ''
+      },
+      isAdmin: {
+        type: 'checkbox',
+        data: false
+      }
     })
     
     
@@ -54,20 +55,45 @@ const UserScreen = ({history, match}) => {
             dispatch(listUsers(keyword,pageNumber))
         }
 
-    }, [dispatch, history, userInfo, createSuccess, pageNumber, keyword])
+    }, [dispatch, userInfo, pageNumber, keyword, history])
 
-    const handleSubmit = () => {
-      setModalIsOpen(false)
-      dispatch(register(user))
+    const handleSubmit = (e) => {
       
-      setUser({
-        name: '',
-        password: '',
-        email: '',
-        isAdmin: false
+      e.preventDefault();
+      
+      const user = {
+        name: data['name'].data,
+        email: data['email'].data,
+        password: data['password'].data,
+        isAdmin: data['isAdmin'].data
+      }
+      
+      
+      dispatch(register(user))
+
+       setData({
+        name: {
+          type: 'text',
+          data: ''
+        },
+        password: {
+          type: 'password',
+          data: ''
+        },
+        email: {
+          type: 'email',
+          data: ''
+        },
+        isAdmin: {
+          type: 'checkbox',
+          data: false
+        }
       })
+      
+
+      setModalIsOpen(false)
     }
-   
+
 
     return ( 
         <>  
@@ -96,74 +122,15 @@ const UserScreen = ({history, match}) => {
       <div className="row">
         <div className="col-12">
 
-  <Modal style={customStyles} isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
-      <h2>Create User</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">Name</label>
-          <input 
-            type="text" 
-            className="form-control" 
-            id="name" 
-            aria-describedby="name" 
-            placeholder="Enter name" 
-            value={user.name}
-            onChange={(e) => setUser({...user, name: e.target.value})}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="email">Email address</label>
-          <input 
-            type="email" 
-            className="form-control" 
-            id="email" 
-            aria-describedby="email" 
-            placeholder="Enter email" 
-            value={user.email}
-            onChange={(e) => setUser({...user, email: e.target.value})}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input 
-            type="password" 
-            className="form-control" 
-            id="password" 
-            placeholder="password" 
-            value={user.password}
-            onChange={(e) => setUser({...user, password: e.target.value})}
-          />
-        </div>
-        <div className="form-check">
-
-          <input 
-            type="checkbox" 
-            className="form-check-input" 
-            id="isAdmin" 
-            checked={user.isAdmin}
-            onChange={(e) => setUser({...user, isAdmin: e.target.checked})} 
-          />
-
-          <label className="form-check-label" htmlFor="admin">Is admin</label>
-        </div>
-
-        <hr/>
-        <button type="submit" className="btn btn-primary">Submit</button>
-        <button className='btn btn-danger float-right' onClick={() => setModalIsOpen(false)}>Close</button>
-      </form>
-  </Modal>
+  
 
           <Route render={({history}) => <SearchBox history={history} item={'user'}/>} />
           
           <div className="card">
             <div className="card-header">
               <h3 className="card-title">Users table</h3>
-              <button 
-                className='btn btn-success float-right mr-4'
-                onClick={() => setModalIsOpen(true)}
-              >
-                New User
-              </button>
+              <ModalCreate data={data} setData={setData} handleSubmit={handleSubmit} modalIsOpen={modalIsOpen} setModalIsOpen={setModalIsOpen}/>
+             
             </div>
             {/* /.card-header */}
             <div className="card-body">
