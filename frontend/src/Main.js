@@ -13,6 +13,7 @@ import CategoryScreen from './screens/CategoryScreen';
 import UserScreen from './screens/UserScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import UserEditScreen from './screens/UserEditScreen';
+import CategoryEditScreen from './screens/CategoryEditScreen';
 
 
 const Main = () => {
@@ -30,6 +31,7 @@ const Main = () => {
                 <Route path='/user/search/:keyword' component={UserScreen} exact/>
                 <Route path='/user/search/:keyword/page/:pageNumber' component={UserScreen} exact/>
                 <Route path='/user' exact component={UserScreen} />
+                <Route path='/category/:id/edit' component={CategoryEditScreen}/>
                 <Route path='/category/page/:pageNumber' component={CategoryScreen} exact/>
                 <Route path='/category/search/:keyword' component={CategoryScreen} exact/>
                 <Route path='/category/search/:keyword/page/:pageNumber' component={CategoryScreen} exact/>

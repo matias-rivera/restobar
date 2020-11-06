@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { listUserDetails, deleteUser, updateUser } from './../actions/userActions';
 import { USER_UPDATE_RESET, USER_DETAILS_RESET, USER_DELETE_RESET } from './../constants/userConstants';
 import { Link } from 'react-router-dom';
+import Message from './../components/Message';
+import Loader from './../components/Loader';
 
 
 const UserEditScreen = ({history, match}) => {
@@ -108,47 +110,19 @@ const UserEditScreen = ({history, match}) => {
                 Go Back
         </Link>
         
-
-        
-
-
           <div className="card">
             <div className="card-header">
               <h3 className="card-title">Edit User</h3>
-              
-              {loadingUpdate 
-                ? 
-                <div className="spinner-border text-primary" role="status">
-                    <span className="sr-only">Loading...</span>
-                </div>
-                : 
-                ''}
-                {errorUpdate 
-                ? 
-                <div className="alert alert-danger" role="alert">
-                    {errorUpdate}
-                </div> 
-                : 
-                ''}
-                {loading 
-                ? 
-                <div className="spinner-border text-primary" role="status">
-                    <span className="sr-only">Loading...</span>
-                </div>
-                : 
-                ''}
-                {error 
-                ? 
-                <div className="alert alert-danger" role="alert">
-                    {error}
-                </div> 
-                : 
-                ''}
+              <Loader variable={loadingUpdate} />
+              <Message message={errorUpdate} color={'danger'}/>
+              <Loader variable={loading} />
+              <Message message={error} color={'danger'}/>
+
             </div>
             {/* /.card-header */}
             <div className="card-body">
             
-            <h2>Create User</h2>
+
 
 
                 <form onSubmit={handleSubmit}>

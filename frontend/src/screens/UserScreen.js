@@ -55,7 +55,7 @@ const UserScreen = ({history, match}) => {
             dispatch(listUsers(keyword,pageNumber))
         }
 
-    }, [dispatch, userInfo, pageNumber, keyword, history])
+    }, [dispatch, userInfo, pageNumber, keyword, history, createSuccess])
 
     const handleSubmit = (e) => {
       
