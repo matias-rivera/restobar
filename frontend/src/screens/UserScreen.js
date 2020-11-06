@@ -60,6 +60,7 @@ const UserScreen = ({history, match}) => {
       setPassword('')
       setIsAdmin(false)
     }
+   
 
     return ( 
         <>  
@@ -167,7 +168,7 @@ const UserScreen = ({history, match}) => {
               <Message message={error} color={'danger'} />
               : (
               <>
-              <TableCrud headers={['id','name','email','isAdmin']} data={users} itemLink={'user'}/>
+              <TableCrud data={users} itemLink={'user'}/>
               
               <Paginate 
                     item={'user'}

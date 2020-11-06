@@ -10,14 +10,28 @@ import {
     userDeleteReducer
 } from './reducers/userReducers'
 
+import {
+    categoryListReducer,
+    categoryCreateReducer,
+    categoryDetailsReducer,
+    categoryUpdateReducer,
+    categoryDeleteReducer
+} from './reducers/categoryReducers'
 
 const reducer = combineReducers({
+    
     userLogin: userLoginReducer,
     userList: userListReducer,
     userRegister : userRegisterReducer,
     userDetails: userDetailsReducer,
     userUpdate: userUpdateReducer,
-    userDelete: userDeleteReducer
+    userDelete: userDeleteReducer,
+    
+    categoryList: categoryListReducer,
+    categoryCreate:categoryCreateReducer,
+    categoryDetails: categoryDetailsReducer,
+    categoryUpdate: categoryUpdateReducer,
+    categoryDelete: categoryDeleteReducer
 
 })
 

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const TableCrud = ({headers, data, itemLink}) => {
-    console.log()
+const TableCrud = ({data, itemLink}) => {
+
+    const headers = Object.keys(data[0]).filter(item => (item !== 'updatedAt'))
+    
     return ( 
         <table id="example2" className="table table-bordered table-hover">
                 <thead>
@@ -17,10 +19,12 @@ const TableCrud = ({headers, data, itemLink}) => {
                 <tbody>
                     {data.map((item, i) => (
                         <tr key={i}>
-                            {headers.map(header => (
+                            {headers.map((header,ih) => (
                                 (typeof item[header]) === "boolean" 
-                                    ? <td>{item[header] ? 'Yes' : 'No'} </td> 
-                                    : <td>{item[header].toString()}</td>
+                                    ?   <td key={ih}>{item[header] ? 'Yes' : 'No'} </td> 
+                                    :   (header === 'createdAt' ) 
+                                    ?   <td key={ih}>{item[header].slice(0,10)}</td>
+                                    :   <td key={ih}>{item[header].toString()}</td>
                                 
                             ))}
                             {/* <td>{item.name}</td>

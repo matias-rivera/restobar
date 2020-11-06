@@ -30,6 +30,9 @@ const Main = () => {
                 <Route path='/user/search/:keyword' component={UserScreen} exact/>
                 <Route path='/user/search/:keyword/page/:pageNumber' component={UserScreen} exact/>
                 <Route path='/user' exact component={UserScreen} />
+                <Route path='/category/page/:pageNumber' component={CategoryScreen} exact/>
+                <Route path='/category/search/:keyword' component={CategoryScreen} exact/>
+                <Route path='/category/search/:keyword/page/:pageNumber' component={CategoryScreen} exact/>
                 <Route path='/category' component={CategoryScreen} />
                 <Route path='/delivery' component={DeliveryScreen} />
                 <Route path='/client' component={ClientScreen} />
