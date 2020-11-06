@@ -24,8 +24,11 @@ const Main = () => {
         <Menu/>
             
             <div className='content-wrapper'>
-   
+            <Switch>
                 <Route path='/user/:id/edit' component={UserEditScreen}/>
+                <Route path='/user/page/:pageNumber' component={UserScreen} exact/>
+                <Route path='/user/search/:keyword' component={UserScreen} exact/>
+                <Route path='/user/search/:keyword/page/:pageNumber' component={UserScreen} exact/>
                 <Route path='/user' exact component={UserScreen} />
                 <Route path='/category' component={CategoryScreen} />
                 <Route path='/delivery' component={DeliveryScreen} />
@@ -34,7 +37,7 @@ const Main = () => {
                 <Route path='/table' component={TableScreen} />
                 <Route path='/order' component={OrderScreen} />
                 <Route path='/' component={DashboardScreen} exact/>
-
+            </Switch>
 
   
                 

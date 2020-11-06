@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler')
 const User = require('../models/user')
 const generateToken = require('../utils/generateToken')
 const bcrypt = require('bcrypt')
+const { Op } = require("sequelize");
 
 //@desc     Register a new user
 //@route    POST /api/users
@@ -86,8 +87,47 @@ exports.getUser = asyncHandler(async (req, res) =>{
 //@route    GET /api/users
 //@access   Private/admin
 exports.getUsers = asyncHandler(async (req, res) =>{
-    const users = await User.findAll({attributes: { exclude: ['password'] }})
-    res.json(users)
+
+    //pages constans
+    const pageSize = 5
+    const page = Number(req.query.pageNumber) || 1
+    let users
+    let count
+    //check for keywords
+    const keyword =  req.query.keyword ? req.query.keyword : null
+
+
+    if(keyword){
+         count = await User.count({ 
+             where: {
+                [Op.or]:[
+                    {id: {[Op.like]: `%${keyword}%`}},
+                    {name: {[Op.like]: `%${keyword}%`}},
+                    {email: {[Op.like]: `%${keyword}%`}}
+                ]
+                }
+            })
+         users = await User.findAll({ 
+             where: { 
+                [Op.or]:[
+                    {id: {[Op.like]: `%${keyword}%`}},
+                    {name: {[Op.like]: `%${keyword}%`}},
+                    {email: {[Op.like]: `%${keyword}%`}}
+                ]
+                }
+            ,offset: (pageSize * (page - 1)), limit: pageSize})
+    }
+    else{
+         count = await User.count({})
+         users = await User.findAll({offset: (pageSize * (page - 1)), limit: pageSize})
+    }
+
+    
+
+    //const users = await User.findAll({attributes: { exclude: ['password'] }})
+
+    res.json({users, page, pages: Math.ceil(count / pageSize)})
+    //res.json(users)
 })
 
 

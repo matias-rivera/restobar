@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { listUsers, register } from './../actions/userActions';
 import Modal from 'react-modal'
-import { Link } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
+import Paginate from './../components/Paginate';
+import SearchBox from './../components/SearchBox';
 
 const customStyles = {
   content : {
@@ -18,8 +20,11 @@ const customStyles = {
 
 Modal.setAppElement('#root')
 
-const UserScreen = ({history}) => {
+const UserScreen = ({history, match}) => {
   
+    const keyword = match.params.keyword || ''
+    const pageNumber = match.params.pageNumber || 1
+
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [name, setName] = useState('')
     const [password, setPassword] = useState('')
@@ -29,7 +34,7 @@ const UserScreen = ({history}) => {
     const dispatch = useDispatch()
 
     const userList = useSelector((state) => state.userList)
-    const {loading, error, users} = userList
+    const {loading, error, users, page, pages} = userList
 
     const userLogin = useSelector((state) => state.userLogin)
     const {userInfo} = userLogin
@@ -39,10 +44,10 @@ const UserScreen = ({history}) => {
     
     useEffect(() => {
         if(userInfo && userInfo.isAdmin){
-            dispatch(listUsers())
+            dispatch(listUsers(keyword,pageNumber))
         }
 
-    }, [dispatch, history, userInfo, createSuccess])
+    }, [dispatch, history, userInfo, createSuccess, pageNumber, keyword])
 
     const handleSubmit = () => {
       setModalIsOpen(false)
@@ -146,6 +151,7 @@ const UserScreen = ({history}) => {
       </form>
   </Modal>
 
+          <Route render={({history}) => <SearchBox history={history} item={'user'}/>} />
           <div className="card">
             <div className="card-header">
               <h3 className="card-title">Users table</h3>
@@ -167,7 +173,9 @@ const UserScreen = ({history}) => {
               ? <div className="alert alert-danger" role="alert">
                 {error}
                 </div>  
-              : (<table id="example2" className="table table-bordered table-hover">
+              : (
+              <>
+              <table id="example2" className="table table-bordered table-hover">
                 <thead>
                   <tr>
                     <th>ID</th>
@@ -200,7 +208,14 @@ const UserScreen = ({history}) => {
 
                 </tbody>
 
-              </table>)}
+              </table>
+              <Paginate 
+                    item={'user'}
+                    pages={pages} 
+                    page={page} 
+                    keyword={keyword ? keyword : null} />
+              </>
+              )}
             </div>
             {/* /.card-body */}
           </div>
