@@ -11,7 +11,7 @@ const Menu = () => {
     return ( 
         <aside className="main-sidebar sidebar-dark-primary elevation-4">
         {/* Brand Logo */}
-        <a href="index3.html" className="brand-link">
+        <a href="/" className="brand-link">
             <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" className="brand-image img-circle elevation-3" style={{opacity: '.8'}} />
             <span className="brand-text font-weight-light">Restobar</span>
         </a>
@@ -104,73 +104,6 @@ const Menu = () => {
                     </li>           
                 </Link>
 
-                {/* Add icons to the links using the .nav-icon class
-                    with font-awesome or any other icon font library */}
-
-                {/* <Link to='/' className='btn-link' >
-                    <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
-                            <i className="nav-icon fas fa-tachometer-alt" /> Dashboard 
-                        </a>
-                    </li>           
-                </Link>
-                <li className="nav-header">ADMIN</li>
-                <Link to='/admin/user' className='btn-link' >
-                    <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
-                            <i className="nav-icon fas fa-calendar-alt" /> Users 
-                        </a>
-                    </li>           
-                </Link>
-                
-                <li className="nav-header">RESTOBAR</li>
-                <Link to='/category' className='btn-link' >
-                    <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
-                            <i className="nav-icon fas fa-calendar-alt" /> Categories 
-                        </a>
-                    </li>           
-                </Link>
-
-                <Link to='/product' className='btn-link' >
-                    <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
-                            <i className="nav-icon fas fa-calendar-alt" /> Products 
-                        </a>
-                    </li>           
-                </Link>
-                
-                <Link to='/client' className='btn-link' >
-                    <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
-                            <i className="nav-icon fas fa-calendar-alt" /> Clients 
-                        </a>
-                    </li>           
-                </Link>
-
-                <Link to='/order' className='btn-link' >
-                    <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
-                            <i className="nav-icon fas fa-calendar-alt" /> Orders 
-                        </a>
-                    </li>           
-                </Link>
-
-                <Link to='/table' className='btn-link' >
-                    <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
-                            <i className="nav-icon fas fa-calendar-alt" /> Tables 
-                        </a>
-                    </li>           
-                </Link>
-
-                <Link to='/delivery' className='btn-link' >
-                    <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
-                            <i className="nav-icon fas fa-calendar-alt" /> Delivery 
-                        </a>
-                    </li>           
-                </Link> */}
 
 
             </ul>

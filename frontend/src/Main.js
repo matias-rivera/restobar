@@ -12,6 +12,8 @@ import CategoryScreen from './screens/CategoryScreen';
 
 import UserScreen from './screens/UserScreen';
 import DashboardScreen from './screens/DashboardScreen';
+import UserEditScreen from './screens/UserEditScreen';
+
 
 const Main = () => {
 
@@ -22,8 +24,9 @@ const Main = () => {
         <Menu/>
             
             <div className='content-wrapper'>
-            
-                <Route path='/user' component={UserScreen} />
+   
+                <Route path='/user/:id/edit' component={UserEditScreen}/>
+                <Route path='/user' exact component={UserScreen} />
                 <Route path='/category' component={CategoryScreen} />
                 <Route path='/delivery' component={DeliveryScreen} />
                 <Route path='/client' component={ClientScreen} />
@@ -31,6 +34,9 @@ const Main = () => {
                 <Route path='/table' component={TableScreen} />
                 <Route path='/order' component={OrderScreen} />
                 <Route path='/' component={DashboardScreen} exact/>
+
+
+  
                 
             </div>
             <Footer/>     

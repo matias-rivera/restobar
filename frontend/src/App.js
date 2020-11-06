@@ -7,7 +7,7 @@ import SignInScreen from './screens/SignInScreen';
 import Main from './Main';
 
 const App = () => {
-  const trigger = false
+
 
   return ( 
     

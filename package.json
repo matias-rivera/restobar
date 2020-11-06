@@ -36,6 +36,7 @@
     "express-async-handler": "^1.1.4",
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.2.5",
+    "react-modal": "^3.11.2",
     "sequelize": "^6.3.5"
   },
   "devDependencies": {
