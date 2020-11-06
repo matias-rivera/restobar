@@ -5,6 +5,9 @@ import Modal from 'react-modal'
 import { Link, Route } from 'react-router-dom';
 import Paginate from './../components/Paginate';
 import SearchBox from './../components/SearchBox';
+import TableCrud from './../components/TableCrud';
+import Loader from './../components/Loader';
+import Message from './../components/Message';
 
 const customStyles = {
   content : {
@@ -66,20 +69,8 @@ const UserScreen = ({history, match}) => {
       <div className="row mb-2">
         <div className="col-sm-6">
           <h1>Users</h1>
-          {createLoading 
-          ? 
-          <div className="spinner-border text-primary" role="status">
-            <span className="sr-only">Loading...</span>
-          </div>
-          : 
-          ''}
-          {createError 
-          ? 
-          <div className="alert alert-danger" role="alert">
-            {createError}
-          </div> 
-          : 
-          ''}
+          <Loader variable={createLoading} />
+          <Message message={createError} color={'danger'}/>
         </div>
         <div className="col-sm-6">
           <ol className="breadcrumb float-sm-right">
@@ -136,6 +127,7 @@ const UserScreen = ({history, match}) => {
           />
         </div>
         <div className="form-check">
+
           <input 
             type="checkbox" 
             className="form-check-input" 
@@ -143,8 +135,10 @@ const UserScreen = ({history, match}) => {
             checked={isAdmin}
             onChange={(e) => setIsAdmin(e.target.checked)}
           />
+
           <label className="form-check-label" htmlFor="admin">Is admin</label>
         </div>
+
         <hr/>
         <button type="submit" className="btn btn-primary">Submit</button>
         <button className='btn btn-danger float-right' onClick={() => setModalIsOpen(false)}>Close</button>
@@ -152,6 +146,7 @@ const UserScreen = ({history, match}) => {
   </Modal>
 
           <Route render={({history}) => <SearchBox history={history} item={'user'}/>} />
+          
           <div className="card">
             <div className="card-header">
               <h3 className="card-title">Users table</h3>
@@ -166,49 +161,14 @@ const UserScreen = ({history, match}) => {
             <div className="card-body">
               {loading 
               ? 
-              <div className="spinner-border text-primary" role="status">
-                <span className="sr-only">Loading...</span>
-              </div> 
+              <Loader variable={loading} /> 
               : error 
-              ? <div className="alert alert-danger" role="alert">
-                {error}
-                </div>  
+              ? 
+              <Message message={error} color={'danger'} />
               : (
               <>
-              <table id="example2" className="table table-bordered table-hover">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Admin</th>
-                    <th></th>
-
-                  </tr>
-                </thead>
-                <tbody>
-                    {users.map(user => (
-                        <tr key={user.id}>
-                            <td>{user.id}</td>
-                            <td>{user.name}</td>
-                            <td>{user.email}</td>
-                            <td>{user.isAdmin ? 'Si' : 'No'}</td>
-                            <td className='text-center'>
-                              <Link to={`/user/${user.id}/edit`}>
-                                <button 
-                                  className='btn btn-warning'
-                                >Edit
-                                </button>
-                              </Link>
-                            </td>
-
-                        </tr>
-                    
-                    ))}
-
-                </tbody>
-
-              </table>
+              <TableCrud headers={['id','name','email','isAdmin']} data={users} itemLink={'user'}/>
+              
               <Paginate 
                     item={'user'}
                     pages={pages} 
