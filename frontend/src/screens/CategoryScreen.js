@@ -17,7 +17,9 @@ const CategoryScreen = ({history, match}) => {
     const pageNumber = match.params.pageNumber || 1
 
     const [modalIsOpen, setModalIsOpen] = useState(false)
-    const [name, setName] = useState('')
+    const [category, setCategory] = useState({
+        name: ''
+    })
 
     const dispatch = useDispatch()
 

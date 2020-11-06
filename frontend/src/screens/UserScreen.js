@@ -29,10 +29,14 @@ const UserScreen = ({history, match}) => {
     const pageNumber = match.params.pageNumber || 1
 
     const [modalIsOpen, setModalIsOpen] = useState(false)
-    const [name, setName] = useState('')
-    const [password, setPassword] = useState('')
-    const [email, setEmail] = useState('')
-    const [isAdmin, setIsAdmin] = useState(false)
+
+    const [user, setUser] = useState({
+      name: '',
+      password: '',
+      email: '',
+      isAdmin: false
+    })
+    
     
     const dispatch = useDispatch()
 
@@ -43,7 +47,7 @@ const UserScreen = ({history, match}) => {
     const {userInfo} = userLogin
 
     const userRegister = useSelector((state) => state.userRegister)
-    const {loading: createLoading, success: createSuccess ,error: createError, user: createdUser} = userRegister 
+    const {loading: createLoading, success: createSuccess ,error: createError} = userRegister 
     
     useEffect(() => {
         if(userInfo && userInfo.isAdmin){
@@ -54,11 +58,14 @@ const UserScreen = ({history, match}) => {
 
     const handleSubmit = () => {
       setModalIsOpen(false)
-      dispatch(register(name, email, password, isAdmin))
-      setName('')
-      setEmail('')
-      setPassword('')
-      setIsAdmin(false)
+      dispatch(register(user))
+      
+      setUser({
+        name: '',
+        password: '',
+        email: '',
+        isAdmin: false
+      })
     }
    
 
@@ -100,8 +107,8 @@ const UserScreen = ({history, match}) => {
             id="name" 
             aria-describedby="name" 
             placeholder="Enter name" 
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={user.name}
+            onChange={(e) => setUser({...user, name: e.target.value})}
           />
         </div>
         <div className="form-group">
@@ -112,8 +119,8 @@ const UserScreen = ({history, match}) => {
             id="email" 
             aria-describedby="email" 
             placeholder="Enter email" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={user.email}
+            onChange={(e) => setUser({...user, email: e.target.value})}
           />
         </div>
         <div className="form-group">
@@ -123,8 +130,8 @@ const UserScreen = ({history, match}) => {
             className="form-control" 
             id="password" 
             placeholder="password" 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={user.password}
+            onChange={(e) => setUser({...user, password: e.target.value})}
           />
         </div>
         <div className="form-check">
@@ -133,8 +140,8 @@ const UserScreen = ({history, match}) => {
             type="checkbox" 
             className="form-check-input" 
             id="isAdmin" 
-            checked={isAdmin}
-            onChange={(e) => setIsAdmin(e.target.checked)}
+            checked={user.isAdmin}
+            onChange={(e) => setUser({...user, isAdmin: e.target.checked})} 
           />
 
           <label className="form-check-label" htmlFor="admin">Is admin</label>
