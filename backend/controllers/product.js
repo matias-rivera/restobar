@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler')
 const Product = require('../models/product')
 const Category = require('../models/category')
+const { Op } = require("sequelize");
 
 
 //@desc     Create a product
@@ -28,8 +29,54 @@ exports.createProduct = asyncHandler(async (req, res) =>{
 //@route    GET /api/products
 //@access   Private/user
 exports.getProducts = asyncHandler(async (req, res) =>{
-    const products = await Product.findAll({include: [ { model: Category, as: 'category' } ]})
-    res.json(products)
+
+    const pageSize = 1
+    const page = Number(req.query.pageNumber) || 1
+    let products
+    let count
+
+    const keyword =  req.query.keyword ? req.query.keyword : null
+
+    if(keyword){
+        count = await Product.count({ 
+            include: [ { model: Category, as: 'category' } ],
+            where: {
+               [Op.or]:[
+                   {id: {[Op.like]: `%${keyword}%`}},
+                   {name: {[Op.like]: `%${keyword}%`}},
+                   {'$category.name$':{[Op.like]: `%${keyword}%`}}
+               ]
+               }
+           })
+        products = await Product.findAll({ 
+            include: [ { model: Category, as: 'category' } ],
+            where: { 
+               [Op.or]:[
+                   {id: {[Op.like]: `%${keyword}%`}},
+                   {name: {[Op.like]: `%${keyword}%`}},
+                   {'$category.name$':{[Op.like]: `%${keyword}%`}}
+               ]
+               },
+               offset: (pageSize * (page - 1)), limit: pageSize})
+    }
+    else{
+            count = await Product.count({})
+            products = await Product.findAll({
+                include: [ { model: Category, as: 'category' } ],
+                offset: (pageSize * (page - 1)), limit: pageSize
+            })
+    }
+
+   
+
+   //const users = await User.findAll({attributes: { exclude: ['password'] }})
+
+   res.json({products, page, pages: Math.ceil(count / pageSize)})
+
+    
+
+   /*  const products = await Product.findAll({include: [ { model: Category, as: 'category' } ]})
+    res.json(products) */
 })
 
 
