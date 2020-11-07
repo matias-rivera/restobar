@@ -191,7 +191,7 @@ export const updateTable = (table) => async(dispatch, getState) => {
 
         //update table
         const {data} = await axios.put(
-            `/api/tables/${TABLE.id}`,
+            `/api/tables/${table.id}`,
             table,
             config
             )
