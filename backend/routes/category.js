@@ -6,7 +6,8 @@ const {
     getCategory,
     getCategories,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    getAllCategories
 } = require('../controllers/category')
 
 
@@ -15,9 +16,14 @@ router.route('/')
     .get(protect, getCategories)
     .post(protect, createCategory)
 
+router.route('/all')
+    .get(protect, getAllCategories)
+
 router.route('/:id')
     .get(protect, getCategory)
     .put(protect, updateCategory)
     .delete(protect, deleteCategory)
+
+
 
 module.exports = router;

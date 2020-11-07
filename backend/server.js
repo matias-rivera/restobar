@@ -29,7 +29,8 @@ const categoryRoutes = require('./routes/category')
 const productRoutes = require('./routes/product')
 const clientRoutes = require('./routes/client')
 const tableRoutes = require('./routes/table')
-const orderRoutes = require('./routes/order')
+const orderRoutes = require('./routes/order');
+const Product = require('./models/product');
 
 app.use('/api/users', userRoutes)
 app.use('/api/categories', categoryRoutes)
@@ -60,7 +61,14 @@ app.get('/api/products',(req, res) => {
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }  */
-//sequelize.sync({force:true})
+/* sequelize.sync({force:true}).then(user =>
+    User.create({
+        name: 'Admin',
+        password: '123456',
+        email:'admin@example.com',
+        isAdmin: true
+    }) 
+) */
 sequelize.sync()
 /*     .then(user => {
         
@@ -69,11 +77,7 @@ sequelize.sync()
 
 
 
-/* User.create({
-    name: 'Matias',
-    password: '123456',
-    email:'asd@sad.com'
-}) */
+ 
 
 const PORT = process.env.PORT || 5000
 

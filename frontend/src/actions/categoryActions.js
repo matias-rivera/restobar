@@ -15,12 +15,51 @@ import {
     CATEGORY_DELETE_REQUEST,
     CATEGORY_DELETE_SUCCESS,
     CATEGORY_DELETE_FAIL,
+    CATEGORY_ALL_REQUEST,
+    CATEGORY_ALL_SUCCESS,
+    CATEGORY_ALL_FAIL
 
 } from '../constants/categoryConstants'
 
 
-
 //get all categories
+export const allCategories = () => async(dispatch, getState) =>{
+    try{
+        dispatch({
+            type: CATEGORY_ALL_REQUEST
+        })
+
+        //get user from state
+        const {userLogin: {userInfo}} = getState()
+
+        //headers
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        //get all categories
+        const {data} = await axios.get(`/api/categories/all`, config)
+     
+        dispatch({
+            type: CATEGORY_ALL_SUCCESS,
+            payload: data
+        })
+    } catch(error) {
+        dispatch({
+            type: CATEGORY_ALL_FAIL,
+            payload: 
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message
+        })
+    }
+}
+
+
+
+//get all categories with pagination
 export const listCategories = (keyword = '', pageNumber = '') => async(dispatch, getState) =>{
     try{
         dispatch({
@@ -131,6 +170,7 @@ export const listCategoryDetails = (id) =>  async (dispatch, getState) => {
         })
     }
 }
+
 
 //update a category
 export const updateCategory = (category) => async(dispatch, getState) => {

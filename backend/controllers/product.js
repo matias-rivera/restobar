@@ -111,7 +111,7 @@ exports.getProduct = asyncHandler(async (req, res) =>{
 //@access   Private/user
 exports.updateProduct = asyncHandler(async (req, res) =>{
     
-    const {name, price, stock} = req.body;
+    const {name, price, stock, category} = req.body;
 
     const product = await Product.findByPk(req.params.id)
 
@@ -119,12 +119,12 @@ exports.updateProduct = asyncHandler(async (req, res) =>{
         product.name = name
         product.price = price
         product.stock = stock
+        product.categoryId = category
         const updatedProduct =  await product.save()
-        console.log(product)
         res.json(updatedProduct)
     } else {
         res.status(404)
-        throw new Error('Category not found')
+        throw new Error('Product not found')
     }
 
 })

@@ -16,7 +16,7 @@ exports.createCategory = asyncHandler(async (req, res) =>{
 
 
 
-//@desc     Get all categories
+//@desc     Get all categories with pagination
 //@route    GET /api/categories
 //@access   Private/user
 exports.getCategories = asyncHandler(async (req, res) =>{
@@ -61,6 +61,15 @@ exports.getCategories = asyncHandler(async (req, res) =>{
 
     
     
+})
+
+
+//@desc     Get all categories
+//@route    GET /api/categories/all
+//@access   Private/user
+exports.getAllCategories = asyncHandler(async (req, res) =>{
+    const categories = await Category.findAll({})
+    res.json(categories)
 })
 
 

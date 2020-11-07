@@ -8,6 +8,7 @@ import Message from './../components/Message';
 import { createCategory, listCategories } from './../actions/categoryActions';
 import ModalCreate from './../components/ModalCreate';
 import { Route } from 'react-router-dom';
+import HeaderContent from '../components/HeaderContent';
 
 
 const CategoryScreen = ({history, match}) => {
@@ -65,30 +66,16 @@ const CategoryScreen = ({history, match}) => {
 
     return ( 
         <>
-<section className="content-header">
-    <div className="container-fluid">
-      <div className="row mb-2">
-        <div className="col-sm-6">
-          <h1>Categories</h1>
-          <Loader variable={createLoading} />
-          <Message message={createError} color={'danger'}/>
-          
-        </div>
-        <div className="col-sm-6">
-          <ol className="breadcrumb float-sm-right">
-            <li className="breadcrumb-item"><a href="#">Home</a></li>
-            <li className="breadcrumb-item active">Categories</li>
-          </ol>
-        </div>
-      </div>
-    </div>{/* /.container-fluid */}
-</section>
+<HeaderContent name={'Categories'} />
+
   {/* Main content */}
   
   <section className="content">
     <div className="container-fluid">
       <div className="row">
         <div className="col-12">
+          <Loader variable={createLoading} />
+          <Message message={createError} color={'danger'}/>
 
           <Route render={({history}) => <SearchBox history={history} item={'category'}/>} />
           

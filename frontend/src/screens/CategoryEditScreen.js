@@ -5,6 +5,7 @@ import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { CATEGORY_UPDATE_RESET, CATEGORY_DETAILS_RESET, CATEGORY_DELETE_RESET } from './../constants/categoryConstants';
 import { updateCategory, deleteCategory,listCategoryDetails } from './../actions/categoryActions';
+import HeaderContent from '../components/HeaderContent';
 
 
 const CategoryEditScreen = ({history, match}) => {
@@ -74,21 +75,7 @@ const CategoryEditScreen = ({history, match}) => {
     return ( 
         <>  
   {/* Content Header (Page header) */}
-  <section className="content-header">
-    <div className="container-fluid">
-      <div className="row mb-2">
-        <div className="col-sm-6">
-          <h1>Users</h1>
-        </div>
-        <div className="col-sm-6">
-          <ol className="breadcrumb float-sm-right">
-            <li className="breadcrumb-item"><a href="#">Home</a></li>
-            <li className="breadcrumb-item active">Users</li>
-          </ol>
-        </div>
-      </div>
-    </div>{/* /.container-fluid */}
-  </section>
+  <HeaderContent name={'Categories'} />
   {/* Main content */}
   
   <section className="content">

@@ -58,7 +58,7 @@ export const listProducts = (keyword = '', pageNumber = '') => async(dispatch, g
 //create a product
 export const createProduct = (product) => async(dispatch, getState) => {
     
-    const {name, price, stock, category} = product
+    
 
     try{
         dispatch({
@@ -80,7 +80,7 @@ export const createProduct = (product) => async(dispatch, getState) => {
         //create product
         const {data} = await axios.post(
             '/api/products',
-            (name, price, stock, category),
+            (product),
             config
             )
         dispatch({
@@ -135,8 +135,7 @@ export const listProductDetails = (id) =>  async (dispatch, getState) => {
 //update a product
 export const updateProduct = (product) => async(dispatch, getState) => {
     
-    const {name, price, stock} = product
-
+    
     try{
         dispatch({
             type: PRODUCT_UPDATE_REQUEST
@@ -155,7 +154,7 @@ export const updateProduct = (product) => async(dispatch, getState) => {
         //update product
         const {data} = await axios.put(
             `/api/products/${product.id}`,
-            (name, price, stock),
+            (product),
             config
             )
         dispatch({

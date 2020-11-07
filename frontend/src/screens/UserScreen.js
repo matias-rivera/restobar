@@ -8,6 +8,7 @@ import TableCrud from './../components/TableCrud';
 import Loader from './../components/Loader';
 import Message from './../components/Message';
 import ModalCreate from './../components/ModalCreate';
+import HeaderContent from '../components/HeaderContent';
 
 
 
@@ -98,23 +99,7 @@ const UserScreen = ({history, match}) => {
     return ( 
         <>  
   {/* Content Header (Page header) */}
-  <section className="content-header">
-    <div className="container-fluid">
-      <div className="row mb-2">
-        <div className="col-sm-6">
-          <h1>Users</h1>
-          <Loader variable={createLoading} />
-          <Message message={createError} color={'danger'}/>
-        </div>
-        <div className="col-sm-6">
-          <ol className="breadcrumb float-sm-right">
-            <li className="breadcrumb-item"><a href="#">Home</a></li>
-            <li className="breadcrumb-item active">Users</li>
-          </ol>
-        </div>
-      </div>
-    </div>{/* /.container-fluid */}
-  </section>
+<HeaderContent name={'Users'} />
   {/* Main content */}
   
   <section className="content">
@@ -124,6 +109,8 @@ const UserScreen = ({history, match}) => {
 
   
 
+          <Loader variable={createLoading} />
+          <Message message={createError} color={'danger'}/>
           <Route render={({history}) => <SearchBox history={history} item={'user'}/>} />
           
           <div className="card">

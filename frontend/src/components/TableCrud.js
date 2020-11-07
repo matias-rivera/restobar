@@ -16,13 +16,14 @@ const TableCrud = ({data, itemLink}) => {
                   <tr>
                     {headers.map((header,i) => (
                         <th key={i}>{header}</th>
-                    ))}
+                        ))}
                     <th></th>
 
                   </tr>
                 </thead>
                 <tbody>
-                    {data.map((item, i) => (
+                    {data.length < 1 ? 'Nothing found' : 
+                    data.map((item, i) => (
                         <tr key={i}>
                             {headers.map((header,ih) => (
                                     (   typeof item[header]) === "boolean" 

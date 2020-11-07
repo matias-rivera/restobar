@@ -5,6 +5,7 @@ import { USER_UPDATE_RESET, USER_DETAILS_RESET, USER_DELETE_RESET } from './../c
 import { Link } from 'react-router-dom';
 import Message from './../components/Message';
 import Loader from './../components/Loader';
+import HeaderContent from './../components/HeaderContent';
 
 
 const UserEditScreen = ({history, match}) => {
@@ -83,21 +84,8 @@ const UserEditScreen = ({history, match}) => {
     return ( 
         <>  
   {/* Content Header (Page header) */}
-  <section className="content-header">
-    <div className="container-fluid">
-      <div className="row mb-2">
-        <div className="col-sm-6">
-          <h1>Users</h1>
-        </div>
-        <div className="col-sm-6">
-          <ol className="breadcrumb float-sm-right">
-            <li className="breadcrumb-item"><a href="#">Home</a></li>
-            <li className="breadcrumb-item active">Users</li>
-          </ol>
-        </div>
-      </div>
-    </div>{/* /.container-fluid */}
-  </section>
+  <HeaderContent name={'Users'} />
+
   {/* Main content */}
   
   <section className="content">
