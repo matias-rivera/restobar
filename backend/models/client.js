@@ -12,15 +12,25 @@ const Client = sequelize.define('client',{
         type: Sequelize.STRING,
         allowNull: false
     },
-    address: Sequelize.STRING,
-    phone: Sequelize.STRING,
+    address: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: 'Address'
+    },
+    phone: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: 'Address'
+    },
     email: {
         type: Sequelize.STRING,
-        unique:true
+        unique:true,
+        allowNull: false,
     },
     dni: {
         type: Sequelize.STRING,
-        unique:true
+        unique:true,
+        allowNull: false
     }
     
 

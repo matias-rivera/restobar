@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler')
 const Client = require('../models/client')
+const { Op } = require("sequelize");
 
 
 //@desc     Create a client
@@ -33,6 +34,10 @@ exports.getClients = asyncHandler(async (req, res) =>{
                [Op.or]:[
                    {id: {[Op.like]: `%${keyword}%`}},
                    {name: {[Op.like]: `%${keyword}%`}},
+                   {address: {[Op.like]: `%${keyword}%`}},
+                   {phone: {[Op.like]: `%${keyword}%`}},
+                   {email: {[Op.like]: `%${keyword}%`}},
+                   {dni: {[Op.like]: `%${keyword}%`}}
 
                ]
                }
@@ -42,6 +47,10 @@ exports.getClients = asyncHandler(async (req, res) =>{
                [Op.or]:[
                    {id: {[Op.like]: `%${keyword}%`}},
                    {name: {[Op.like]: `%${keyword}%`}},
+                   {address: {[Op.like]: `%${keyword}%`}},
+                   {phone: {[Op.like]: `%${keyword}%`}},
+                   {email: {[Op.like]: `%${keyword}%`}},
+                   {dni: {[Op.like]: `%${keyword}%`}}
 
                ]
                }

@@ -23,7 +23,7 @@ import {
 
 
 //get all clients
-export const allclients = () => async(dispatch, getState) =>{
+export const allClients = () => async(dispatch, getState) =>{
     try{
         dispatch({
             type: CLIENT_ALL_REQUEST
