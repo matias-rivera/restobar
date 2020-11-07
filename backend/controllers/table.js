@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler')
 const Table = require('../models/table')
+const { Op } = require("sequelize");
 
 
 //@desc     Create a table
@@ -16,13 +17,60 @@ exports.createTable = asyncHandler(async (req, res) =>{
 
 
 
-//@desc     Get all tables
+//@desc     Get all tables with pagination
 //@route    GET /api/tables
 //@access   Private/user
 exports.getTables = asyncHandler(async (req, res) =>{
+
+    const pageSize = 5
+    const page = Number(req.query.pageNumber) || 1
+    let tables
+    let count
+
+    const keyword =  req.query.keyword ? req.query.keyword : null
+
+
+    if(keyword){
+        count = await Table.count({ 
+            where: {
+               [Op.or]:[
+                   {id: {[Op.like]: `%${keyword}%`}},
+                   {name: {[Op.like]: `%${keyword}%`}},
+
+               ]
+               }
+           })
+        tables = await Table.findAll({ 
+            where: { 
+               [Op.or]:[
+                   {id: {[Op.like]: `%${keyword}%`}},
+                   {name: {[Op.like]: `%${keyword}%`}},
+
+               ]
+               }
+           ,offset: (pageSize * (page - 1)), limit: pageSize})
+    }
+    else{
+            count = await Table.count({})
+            tables = await Table.findAll({offset: (pageSize * (page - 1)), limit: pageSize})
+    }
+
+   
+
+   //const users = await User.findAll({attributes: { exclude: ['password'] }})
+
+   res.json({tables, page, pages: Math.ceil(count / pageSize)})
+
+})
+
+//@desc     Get all tables
+//@route    GET /api/tables/all
+//@access   Private/user
+exports.getAllTables = asyncHandler(async (req, res) =>{
     const tables = await Table.findAll({})
     res.json(tables)
 })
+
 
 
 //@desc     Get table by ID

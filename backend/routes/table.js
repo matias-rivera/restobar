@@ -1,14 +1,17 @@
 const express = require('express')
 const router = express.Router()
 const {protect} = require('../middleware/authMiddleware')
-const { getTables, createTable, getTable, updateTable, deleteTable } = require('../controllers/table')
+const { getTables, getAllTables, createTable, getTable, updateTable, deleteTable } = require('../controllers/table')
 
 
 //ROUTES
 router.route('/')
     .get(protect, getTables)
     .post(protect, createTable)
-
+    
+router.route('/all')
+    .get(protect, getAllTables)
+    
 router.route('/:id')
     .get(protect, getTable)
     .put(protect, updateTable)

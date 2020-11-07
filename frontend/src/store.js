@@ -20,6 +20,15 @@ import {
 } from './reducers/categoryReducers'
 
 import {
+    tableAllReducer,
+    tableListReducer,
+    tableCreateReducer,
+    tableDetailsReducer,
+    tableUpdateReducer,
+    tableDeleteReducer
+} from './reducers/tableReducers'
+
+import {
     productListReducer,
     productCreateReducer,
     productDetailsReducer,
@@ -47,7 +56,14 @@ const reducer = combineReducers({
     productCreate: productCreateReducer,
     productDetails: productDetailsReducer,
     productUpdate: productUpdateReducer,
-    productDelete: productDeleteReducer
+    productDelete: productDeleteReducer,
+
+    tableAll: tableAllReducer,
+    tableList: tableListReducer,
+    tableCreate: tableCreateReducer,
+    tableDetails: tableDetailsReducer,
+    tableUpdate: tableUpdateReducer,
+    tableDelete: tableDeleteReducer
 
 
 })
