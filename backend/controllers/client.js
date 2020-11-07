@@ -15,10 +15,55 @@ exports.createClient = asyncHandler(async (req, res) =>{
 
 
 
-//@desc     Get all clients
+//@desc     Get all clients with pagination
 //@route    GET /api/clients
 //@access   Private/user
 exports.getClients = asyncHandler(async (req, res) =>{
+    const pageSize = 5
+    const page = Number(req.query.pageNumber) || 1
+    let clients
+    let count
+
+    const keyword =  req.query.keyword ? req.query.keyword : null
+
+
+    if(keyword){
+        count = await Client.count({ 
+            where: {
+               [Op.or]:[
+                   {id: {[Op.like]: `%${keyword}%`}},
+                   {name: {[Op.like]: `%${keyword}%`}},
+
+               ]
+               }
+           })
+        clients = await Client.findAll({ 
+            where: { 
+               [Op.or]:[
+                   {id: {[Op.like]: `%${keyword}%`}},
+                   {name: {[Op.like]: `%${keyword}%`}},
+
+               ]
+               }
+           ,offset: (pageSize * (page - 1)), limit: pageSize})
+    }
+    else{
+            count = await Client.count({})
+            clients = await Client.findAll({offset: (pageSize * (page - 1)), limit: pageSize})
+    }
+
+   
+
+   //const users = await User.findAll({attributes: { exclude: ['password'] }})
+
+   res.json({clients, page, pages: Math.ceil(count / pageSize)})
+
+})
+
+//@desc     Get all clients
+//@route    GET /api/clients/all
+//@access   Private/user
+exports.getAllClients = asyncHandler(async (req, res) =>{
     const clients = await Client.findAll({})
     res.json(clients)
 })

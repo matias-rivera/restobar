@@ -29,6 +29,15 @@ import {
 } from './reducers/tableReducers'
 
 import {
+    clientAllReducer,
+    clientListReducer,
+    clientCreateReducer,
+    clientDetailsReducer,
+    clientUpdateReducer,
+    clientDeleteReducer
+} from './reducers/clientReducers'
+
+import {
     productListReducer,
     productCreateReducer,
     productDetailsReducer,
@@ -63,7 +72,14 @@ const reducer = combineReducers({
     tableCreate: tableCreateReducer,
     tableDetails: tableDetailsReducer,
     tableUpdate: tableUpdateReducer,
-    tableDelete: tableDeleteReducer
+    tableDelete: tableDeleteReducer,
+
+    clientAll: clientAllReducer,
+    clientList: clientListReducer,
+    clientCreate: clientCreateReducer,
+    clientDetails: clientDetailsReducer,
+    clientUpdate: clientUpdateReducer,
+    clientDelete: clientDeleteReducer
 
 
 })
