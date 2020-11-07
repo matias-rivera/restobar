@@ -30,7 +30,7 @@ exports.createProduct = asyncHandler(async (req, res) =>{
 //@access   Private/user
 exports.getProducts = asyncHandler(async (req, res) =>{
 
-    const pageSize = 1
+    const pageSize = 5
     const page = Number(req.query.pageNumber) || 1
     let products
     let count
@@ -38,10 +38,13 @@ exports.getProducts = asyncHandler(async (req, res) =>{
     const keyword =  req.query.keyword ? req.query.keyword : null
 
     if(keyword){
-        count = await Product.count({ 
+        count = await Product.count({
             include: [ { model: Category, as: 'category' } ],
+            attributes: {
+                exclude: ['categoryId']  
+            }, 
             where: {
-               [Op.or]:[
+                [Op.or]:[
                    {id: {[Op.like]: `%${keyword}%`}},
                    {name: {[Op.like]: `%${keyword}%`}},
                    {'$category.name$':{[Op.like]: `%${keyword}%`}}
@@ -50,6 +53,9 @@ exports.getProducts = asyncHandler(async (req, res) =>{
            })
         products = await Product.findAll({ 
             include: [ { model: Category, as: 'category' } ],
+            attributes: {
+                exclude: ['categoryId']  
+            }, 
             where: { 
                [Op.or]:[
                    {id: {[Op.like]: `%${keyword}%`}},
@@ -62,7 +68,11 @@ exports.getProducts = asyncHandler(async (req, res) =>{
     else{
             count = await Product.count({})
             products = await Product.findAll({
-                include: [ { model: Category, as: 'category' } ],
+                    include: [ { model: Category, as: 'category' } ],
+                    attributes: {
+                        exclude: ['categoryId']  
+                    }, 
+
                 offset: (pageSize * (page - 1)), limit: pageSize
             })
     }

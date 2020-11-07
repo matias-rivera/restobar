@@ -28,7 +28,7 @@ const ModalCreate = ({data, setData, handleSubmit, modalIsOpen, setModalIsOpen})
                 className='btn btn-success float-right mr-4'
                 onClick={() => setModalIsOpen(true)}
               >
-                New User
+                Create
         </button>
         <Modal style={customStyles} isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
       <h2>Create Form</h2>

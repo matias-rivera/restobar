@@ -38,6 +38,10 @@ const Main = () => {
                 <Route path='/category' component={CategoryScreen} />
                 <Route path='/delivery' component={DeliveryScreen} />
                 <Route path='/client' component={ClientScreen} />
+                {/* <Route path='/category/:id/edit' component={CategoryEditScreen}/> */}
+                <Route path='/product/page/:pageNumber' component={ProductScreen} exact/>
+                <Route path='/product/search/:keyword' component={ProductScreen} exact/>
+                <Route path='/product/search/:keyword/page/:pageNumber' component={ProductScreen} exact/>
                 <Route path='/product' component={ProductScreen} />
                 <Route path='/table' component={TableScreen} />
                 <Route path='/order' component={OrderScreen} />
