@@ -38,7 +38,10 @@ exports.getCategories = asyncHandler(async (req, res) =>{
                ]
                }
            })
-        categories = await Category.findAll({ 
+        categories = await Category.findAll({
+            attributes: {
+                exclude: ['updatedAt']  
+            },  
             where: { 
                [Op.or]:[
                    {id: {[Op.like]: `%${keyword}%`}},
@@ -50,7 +53,12 @@ exports.getCategories = asyncHandler(async (req, res) =>{
     }
     else{
             count = await Category.count({})
-            categories = await Category.findAll({offset: (pageSize * (page - 1)), limit: pageSize})
+            categories = await Category.findAll({
+                attributes: {
+                    exclude: ['updatedAt']  
+                },
+                offset: (pageSize * (page - 1)), limit: pageSize
+            })
     }
 
    

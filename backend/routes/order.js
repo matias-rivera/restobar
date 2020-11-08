@@ -9,7 +9,8 @@ const {
     updateOrderPay, 
     updateOrderDelivery, 
     deleteOrder,
-    updateOrderItems 
+    updateOrderItems, 
+    getActiveOrders
 } = require('../controllers/order')
 
 
@@ -17,6 +18,9 @@ const {
 router.route('/')
     .post(protect, createOrder)
     .get(protect, getOrders)
+
+router.route('/active')
+    .get(protect, getActiveOrders)
 
 router.route('/:id')
     .get(protect, getOrder)

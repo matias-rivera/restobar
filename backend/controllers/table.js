@@ -40,7 +40,10 @@ exports.getTables = asyncHandler(async (req, res) =>{
                ]
                }
            })
-        tables = await Table.findAll({ 
+        tables = await Table.findAll({
+            attributes: {
+                exclude: ['updatedAt']  
+            },  
             where: { 
                [Op.or]:[
                    {id: {[Op.like]: `%${keyword}%`}},
@@ -52,7 +55,12 @@ exports.getTables = asyncHandler(async (req, res) =>{
     }
     else{
             count = await Table.count({})
-            tables = await Table.findAll({offset: (pageSize * (page - 1)), limit: pageSize})
+            tables = await Table.findAll({
+                attributes: {
+                    exclude: ['updatedAt']  
+                }, 
+                offset: (pageSize * (page - 1)), limit: pageSize
+            })
     }
 
    

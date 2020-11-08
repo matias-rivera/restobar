@@ -43,7 +43,10 @@ exports.getClients = asyncHandler(async (req, res) =>{
                }
            })
         clients = await Client.findAll({ 
-            where: { 
+            attributes: {
+                exclude: ['updatedAt']  
+            }, 
+            where: {
                [Op.or]:[
                    {id: {[Op.like]: `%${keyword}%`}},
                    {name: {[Op.like]: `%${keyword}%`}},
@@ -58,7 +61,11 @@ exports.getClients = asyncHandler(async (req, res) =>{
     }
     else{
             count = await Client.count({})
-            clients = await Client.findAll({offset: (pageSize * (page - 1)), limit: pageSize})
+            clients = await Client.findAll({
+                attributes: {
+                    exclude: ['updatedAt']  
+                },
+                offset: (pageSize * (page - 1)), limit: pageSize})
     }
 
    

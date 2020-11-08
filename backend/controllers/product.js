@@ -40,9 +40,6 @@ exports.getProducts = asyncHandler(async (req, res) =>{
     if(keyword){
         count = await Product.count({
             include: [ { model: Category, as: 'category' } ],
-            attributes: {
-                exclude: ['categoryId']  
-            }, 
             where: {
                 [Op.or]:[
                    {id: {[Op.like]: `%${keyword}%`}},
@@ -54,7 +51,7 @@ exports.getProducts = asyncHandler(async (req, res) =>{
         products = await Product.findAll({ 
             include: [ { model: Category, as: 'category' } ],
             attributes: {
-                exclude: ['categoryId']  
+                exclude: ['categoryId','updatedAt']  
             }, 
             where: { 
                [Op.or]:[
@@ -70,7 +67,7 @@ exports.getProducts = asyncHandler(async (req, res) =>{
             products = await Product.findAll({
                     include: [ { model: Category, as: 'category' } ],
                     attributes: {
-                        exclude: ['categoryId']  
+                        exclude: ['categoryId','updatedAt']  
                     }, 
 
                 offset: (pageSize * (page - 1)), limit: pageSize

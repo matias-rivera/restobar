@@ -6,7 +6,7 @@ const TableCrud = ({data, itemLink}) => {
     let headers = []
     if(data.length > 0){
 
-        headers = Object.keys(data[0]).filter(item => (item !== 'updatedAt'))
+        headers = Object.keys(data[0])
     }
 
 

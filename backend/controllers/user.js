@@ -108,7 +108,10 @@ exports.getUsers = asyncHandler(async (req, res) =>{
                 }
             })
          users = await User.findAll({ 
-             where: { 
+            attributes: {
+                exclude: ['updatedAt']  
+            },  
+            where: { 
                 [Op.or]:[
                     {id: {[Op.like]: `%${keyword}%`}},
                     {name: {[Op.like]: `%${keyword}%`}},
@@ -119,7 +122,12 @@ exports.getUsers = asyncHandler(async (req, res) =>{
     }
     else{
          count = await User.count({})
-         users = await User.findAll({offset: (pageSize * (page - 1)), limit: pageSize})
+         users = await User.findAll({
+            attributes: {
+                exclude: ['updatedAt']  
+            },  
+            offset: (pageSize * (page - 1)), limit: pageSize
+        })
     }
 
     

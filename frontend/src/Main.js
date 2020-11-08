@@ -61,6 +61,9 @@ const Main = () => {
                 <Route path='/table/search/:keyword/page/:pageNumber' component={TableScreen} exact/>
                 <Route path='/table' component={TableScreen} />
 
+                <Route path='/order/page/:pageNumber' component={OrderScreen} exact/>
+                <Route path='/order/search/:keyword' component={OrderScreen} exact/>
+                <Route path='/order/search/:keyword/page/:pageNumber' component={OrderScreen} exact/>
                 <Route path='/order' component={OrderScreen} />
                 <Route path='/' component={DashboardScreen} exact/>
             </Switch>
