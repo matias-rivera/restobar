@@ -9,11 +9,11 @@ import { listProducts } from '../actions/productActions';
 import SearchBox from './../components/SearchBox';
 import Paginate from './../components/Paginate';
 import Select from 'react-select'
-import { allTables } from '../actions/tableActions';
+import { allActiveTables, allFreeTables } from '../actions/tableActions';
 import { allClients } from './../actions/clientActions';
 import { createOrder } from '../actions/orderActions';
 import { PRODUCT_LIST_RESET } from '../constants/productConstants';
-import { TABLE_ALL_RESET } from '../constants/tableConstants';
+import { TABLE_ALL_FREE_RESET } from '../constants/tableConstants';
 import { CLIENT_ALL_RESET } from '../constants/clientConstants';
 import { ORDER_CREATE_RESET } from '../constants/orderConstants';
 
@@ -45,8 +45,8 @@ const OrderCreateScreen = ({history, match}) => {
     const {loading: loadingProductList, error: errorProductList, products, page, pages} = productList
     
     //tables list state
-    const tableAll = useSelector((state) => state.tableAll)
-    const {loading: loadingAllTables, error: errorAllTables, tables} = tableAll
+    const tableAllFree = useSelector((state) => state.tableAllFree)
+    const {loading: loadingAllTables, error: errorAllTables, tables} = tableAllFree
 
     //client list state
     const clientAll = useSelector((state) => state.clientAll)
@@ -56,7 +56,7 @@ const OrderCreateScreen = ({history, match}) => {
 
       if(success){
           dispatch({type: PRODUCT_LIST_RESET})
-          dispatch({type: TABLE_ALL_RESET}) 
+          dispatch({type: TABLE_ALL_FREE_RESET}) 
           dispatch({type: CLIENT_ALL_RESET})
           dispatch({type: ORDER_CREATE_RESET})
           history.push('/order')
@@ -64,8 +64,8 @@ const OrderCreateScreen = ({history, match}) => {
       else{
         
         dispatch(listProducts(keyword,pageNumber))
-        dispatch(allTables(true))
-        dispatch(allClients(true))
+        dispatch(allFreeTables())
+        dispatch(allClients())
       }
     },[dispatch, history, success, keyword, pageNumber, error])
 
@@ -172,6 +172,11 @@ const OrderCreateScreen = ({history, match}) => {
         }
       }
       return false
+    }
+
+    const mapSelect = (data) => {
+      const mapped = data.map(table => ({ label: table.name, value: table.id}))
+      return mapped
     }
 
 
@@ -310,7 +315,7 @@ const OrderCreateScreen = ({history, match}) => {
                   : (
                       <Select 
                         id='client'
-                        options={clients}
+                        options={mapSelect(clients)}
                         onChange={setClient}
                         placeholder='Select client'
                         isSearchable
@@ -327,7 +332,7 @@ const OrderCreateScreen = ({history, match}) => {
                   : (
                       <Select
                         id='table' 
-                        options={tables}
+                        options={mapSelect(tables)}
                         onChange={setTable}
                         placeholder='Select table'
                         isSearchable

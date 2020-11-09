@@ -21,6 +21,8 @@ import {
 
 import {
     tableAllReducer,
+    tableAllActiveReducer,
+    tableAllFreeReducer,
     tableListReducer,
     tableCreateReducer,
     tableDetailsReducer,
@@ -78,6 +80,8 @@ const reducer = combineReducers({
     productDelete: productDeleteReducer,
 
     tableAll: tableAllReducer,
+    tableAllActive: tableAllActiveReducer,
+    tableAllFree: tableAllFreeReducer,
     tableList: tableListReducer,
     tableCreate: tableCreateReducer,
     tableDetails: tableDetailsReducer,

@@ -18,6 +18,7 @@ import ProductEditScreen from './screens/ProductEditScreen';
 import TableEditScreen from './screens/TableEditScreen';
 import ClientEditScreen from './screens/ClientEditScreen';
 import OrderCreateScreen from './screens/OrderCreateScreen';
+import ActiveOrdersScreen from './screens/ActiveOrdersScreen';
 
 
 const Main = () => {
@@ -30,6 +31,9 @@ const Main = () => {
             
             <div className='content-wrapper'>
             <Switch>
+
+                <Route path='/active' exact component={ActiveOrdersScreen} />
+
                 <Route path='/user/:id/edit' component={UserEditScreen}/>
                 <Route path='/user/page/:pageNumber' component={UserScreen} exact/>
                 <Route path='/user/search/:keyword' component={UserScreen} exact/>

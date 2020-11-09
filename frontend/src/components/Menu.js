@@ -29,15 +29,11 @@ const Menu = () => {
             {/* Sidebar Menu */}
             <nav className="mt-2">
             <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            <li className="nav-item has-treeview menu-open">
-                <Link to='/' className='btn-link' >
                     <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
+                <Link to='/' className='nav-link' >
                             <i className="nav-icon fas fa-tachometer-alt" /> <p> Dashboard</p> 
-                        </a>
-                    </li>           
                 </Link>
-            </li>
+                    </li>           
 
 
 
@@ -46,63 +42,59 @@ const Menu = () => {
 
 
                 <li className="nav-header">ADMIN</li>
-                <Link to='/user' className='btn-link' >
                     <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
+                        <Link to='/user' className='nav-link' >
                             <i className="nav-icon fas fa-users" /> <p> Users</p> 
-                        </a>
+                        </Link>
                     </li>           
-                </Link>
                 <li className="nav-header">RESTOBAR</li>
-   
-                <Link to='/category' className='btn-link' >
                     <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
-                            <i className="nav-icon fa fa-table" /> <p> Categories</p> 
-                        </a>
+                        <Link to='/active' className='nav-link' >
+                            <i className="nav-icon fa fa-table" /> <p> Active Orders</p> 
+                        </Link>
                     </li>           
-                </Link>
 
-                <Link to='/product' className='btn-link' >
                     <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
+                        <Link to='/order' className='nav-link' >
+                            <i className="nav-icon fa fa-edit" /> <p> Orders</p>  
+                        </Link>
+                    </li> 
+
+                    <li className="nav-item">
+                        <Link to='/delivery' className='nav-link' >
+                            <i className="nav-icon fas fa-truck" /> <p> Delivery</p>  
+                        </Link>
+                    </li>   
+
+                <li className="nav-header">MANAGEMENT</li>
+
+
+                    <li className="nav-item">
+                        <Link to='/category' className='nav-link' >
+                            <i className="nav-icon fa fa-table" /> <p> Categories</p> 
+                        </Link>
+                    </li>           
+
+                    <li className="nav-item">
+                        <Link to='/product' className='nav-link' >
                         
                             <i className="nav-icon fas fa-hamburger" /> <p> Products</p> 
-                        </a>
+                        </Link>
                     </li>           
-                </Link>
                 
-                <Link to='/client' className='btn-link' >
                     <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
+                        <Link to='/client' className='nav-link' >
                             <i className="nav-icon fas fa-user" /> <p> Clients</p>  
-                        </a>
+                        </Link>
                     </li>           
-                </Link>
 
-                <Link to='/order' className='btn-link' >
-                    <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
-                            <i className="nav-icon fa fa-edit" /> <p> Orders</p>  
-                        </a>
-                    </li>           
-                </Link>
 
-                <Link to='/table' className='btn-link' >
                     <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
+                        <Link to='/table' className='nav-link' >
                             <i className="nav-icon fa fa-share" /> <p> Tables</p>  
-                        </a>
+                        </Link>
                     </li>           
-                </Link>
 
-                <Link to='/delivery' className='btn-link' >
-                    <li className="nav-item">
-                        <a href="pages/calendar.html" className="nav-link">
-                            <i className="nav-icon fas fa-truck" /> <p> Delivery</p>  
-                        </a>
-                    </li>           
-                </Link>
 
 
 

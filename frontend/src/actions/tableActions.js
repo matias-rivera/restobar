@@ -15,18 +15,21 @@ import {
     TABLE_DELETE_REQUEST,
     TABLE_DELETE_SUCCESS,
     TABLE_DELETE_FAIL,
-    TABLE_ALL_REQUEST,
-    TABLE_ALL_SUCCESS,
-    TABLE_ALL_FAIL
+    TABLE_ALL_ACTIVE_REQUEST,
+    TABLE_ALL_ACTIVE_SUCCESS,
+    TABLE_ALL_ACTIVE_FAIL,
+    TABLE_ALL_FREE_SUCCESS,
+    TABLE_ALL_FREE_REQUEST,
+    TABLE_ALL_FREE_FAIL
 
 } from '../constants/tableConstants'
 
 
-//get all tables
-export const allTables = (select = false) => async(dispatch, getState) =>{
+//get all active tables
+export const allActiveTables = () => async(dispatch, getState) =>{
     try{
         dispatch({
-            type: TABLE_ALL_REQUEST
+            type: TABLE_ALL_ACTIVE_REQUEST
         })
 
         //get user from state
@@ -38,21 +41,22 @@ export const allTables = (select = false) => async(dispatch, getState) =>{
                 Authorization: `Bearer ${userInfo.token}`
             }
         }
+        
+       
 
-        //get all tables
-        let {data} = await axios.get(`/api/tables/all`, config)
+        //if tables available is needed
+        const {data} = await axios.get(`/api/tables/all/with-orders`, config)
 
-        if (select){
-            data = data.map(table => ({ label: table.name, value: table.id}))
-        }
-     
+ 
+
+        
         dispatch({
-            type: TABLE_ALL_SUCCESS,
+            type: TABLE_ALL_ACTIVE_SUCCESS,
             payload: data
         })
     } catch(error) {
         dispatch({
-            type: TABLE_ALL_FAIL,
+            type: TABLE_ALL_ACTIVE_FAIL,
             payload: 
                 error.response && error.response.data.message
                     ? error.response.data.message
@@ -60,6 +64,47 @@ export const allTables = (select = false) => async(dispatch, getState) =>{
         })
     }
 }
+
+
+//get all tables
+export const allFreeTables = () => async(dispatch, getState) =>{
+    try{
+        dispatch({
+            type: TABLE_ALL_FREE_REQUEST
+        })
+
+        //get user from state
+        const {userLogin: {userInfo}} = getState()
+
+        //headers
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+        
+       
+
+        //if tables available is needed
+        const {data} = await axios.get(`/api/tables/all/available`, config)
+ 
+
+        
+        dispatch({
+            type: TABLE_ALL_FREE_SUCCESS,
+            payload: data
+        })
+    } catch(error) {
+        dispatch({
+            type: TABLE_ALL_FREE_FAIL,
+            payload: 
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message
+        })
+    }
+}
+
 
 
 

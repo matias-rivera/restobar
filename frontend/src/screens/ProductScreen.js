@@ -12,7 +12,6 @@ import  Modal  from 'react-modal';
 import Input from '../components/form/Input';
 import Select from '../components/form/Select';
 import { allCategories } from './../actions/categoryActions';
-import { CATEGORY_ALL_RESET } from '../constants/categoryConstants';
 
 const customStyles = {
   content : {

@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Paginate from './../components/Paginate';
-import SearchBox from './../components/SearchBox';
-import TableCrud from './../components/TableCrud';
-import Loader from './../components/Loader';
-import Message from './../components/Message';
+import Paginate from '../components/Paginate';
+import SearchBox from '../components/SearchBox';
+import TableCrud from '../components/TableCrud';
+import Loader from '../components/Loader';
+import Message from '../components/Message';
 import { Route } from 'react-router-dom';
 import HeaderContent from '../components/HeaderContent';
 import  Modal  from 'react-modal';
 import Input from '../components/form/Input';
 import { listTables } from '../actions/tableActions';
-import { createTable } from './../actions/tableActions';
+import { createTable } from '../actions/tableActions';
 
 const customStyles = {
     content : {

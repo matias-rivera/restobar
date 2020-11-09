@@ -15,7 +15,7 @@ const SearchBox = ({history, item}) => {
     return ( 
         <form
             onSubmit={submitHandler}
-            inline
+
             className='form-inline' 
         >
         <div className='form-group'>

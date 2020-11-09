@@ -12,7 +12,7 @@ const SignInScreen = ({history}) => {
 
   //get user from state
   const userLogin = useSelector(state => state.userLogin)
-  const {loading, error, userInfo} = userLogin
+  const {userInfo} = userLogin
 
   useEffect( () => {
     //if user is logged
@@ -66,9 +66,10 @@ const SignInScreen = ({history}) => {
                           <label htmlFor="inputPassword">Password</label>
                         </div>
                         <button className="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2" type="submit">Sign in</button>
-                        <div className="text-center">
-                          <a className="small" href="#">Forgot password?</a></div>
+                        
+                        
                       </form>
+                    
                     </div>
                   </div>
                 </div>

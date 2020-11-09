@@ -37,7 +37,7 @@ const ModalCreate = ({data, setData, handleSubmit, modalIsOpen, setModalIsOpen})
         {headers.map((header, i) =>  (
             data[header].type === 'checkbox' 
             ? (
-              <div className="form-check">
+              <div key={i} className="form-check">
               <input 
                 key={i}
                 type={data[header].type}
@@ -50,7 +50,7 @@ const ModalCreate = ({data, setData, handleSubmit, modalIsOpen, setModalIsOpen})
               </div>
             )
             :(
-              <div className="form-group">
+              <div key={i} className="form-group">
               <label htmlFor={header}>{header}</label>
               <input 
                 key={i}

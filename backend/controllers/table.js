@@ -77,15 +77,32 @@ exports.getTables = asyncHandler(async (req, res) =>{
 //@route    GET /api/tables/all
 //@access   Private/user
 exports.getAllTables = asyncHandler(async (req, res) =>{
-    const occupied = req.query.occupied ? true : false
+    
+    const tables = await Table.findAll({ })
+    res.json(tables)
+})
+
+//@desc     Get all tables
+//@route    GET /api/tables/all/with-orders
+//@access   Private/user
+exports.getAllTablesWithOrders = asyncHandler(async (req, res) =>{
+    
+    const allTables = await Table.findAll({ include: { all: true, nested: true },where: {'$orders.isPaid$': false}});
+    res.json(allTables)
+})
+
+
+//@desc     Get all available tables
+//@route    GET /api/tables/all/available
+//@access   Private/user
+exports.getAllAvailableTables = asyncHandler(async (req, res) =>{
     const tables = await Table.findAll({
         where:{
-            occupied: occupied
+            occupied: false
         }
     })
     res.json(tables)
 })
-
 
 
 //@desc     Get table by ID

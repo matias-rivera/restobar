@@ -21,7 +21,15 @@ import {
     TABLE_ALL_REQUEST,
     TABLE_ALL_SUCCESS,
     TABLE_ALL_FAIL,
-    TABLE_ALL_RESET
+    TABLE_ALL_RESET,
+    TABLE_ALL_ACTIVE_REQUEST,
+    TABLE_ALL_ACTIVE_SUCCESS,
+    TABLE_ALL_ACTIVE_FAIL,
+    TABLE_ALL_ACTIVE_RESET,
+    TABLE_ALL_FREE_REQUEST,
+    TABLE_ALL_FREE_SUCCESS,
+    TABLE_ALL_FREE_FAIL,
+    TABLE_ALL_FREE_RESET
 } from '../constants/tableConstants'
 
 
@@ -51,12 +59,48 @@ export const tableAllReducer = (state = { loading: true, tables: [] }, action) =
             return { loading: true, tables: [] }
         case TABLE_ALL_SUCCESS:
             return { 
-                loading: false, 
                 tables: action.payload,
+                loading: false, 
              }
         case TABLE_ALL_FAIL:
             return { loading: false, error: action.payload}
         case TABLE_ALL_RESET:
+            return { tables: [] }
+        default:
+            return state
+    }
+}
+
+export const tableAllActiveReducer = (state = { loading: true, tables: [] }, action) => {
+    switch(action.type) {
+        case TABLE_ALL_ACTIVE_REQUEST:
+            return { loading: true, tables: [] }
+        case TABLE_ALL_ACTIVE_SUCCESS:
+            return { 
+                tables: action.payload,
+                loading: false, 
+             }
+        case TABLE_ALL_ACTIVE_FAIL:
+            return { loading: false, error: action.payload}
+        case TABLE_ALL_ACTIVE_RESET:
+            return { tables: [] }
+        default:
+            return state
+    }
+}
+
+export const tableAllFreeReducer = (state = { loading: true, tables: [] }, action) => {
+    switch(action.type) {
+        case TABLE_ALL_FREE_REQUEST:
+            return { loading: true, tables: [] }
+        case TABLE_ALL_FREE_SUCCESS:
+            return { 
+                tables: action.payload,
+                loading: false, 
+             }
+        case TABLE_ALL_FREE_FAIL:
+            return { loading: false, error: action.payload}
+        case TABLE_ALL_FREE_RESET:
             return { tables: [] }
         default:
             return state

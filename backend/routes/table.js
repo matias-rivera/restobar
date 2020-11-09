@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const {protect} = require('../middleware/authMiddleware')
-const { getTables, getAllTables, createTable, getTable, updateTable, deleteTable } = require('../controllers/table')
+const { getTables, getAllTables, createTable, getTable, updateTable, deleteTable, getAllAvailableTables, getAllTablesWithOrders } = require('../controllers/table')
 
 
 //ROUTES
@@ -11,6 +11,12 @@ router.route('/')
     
 router.route('/all')
     .get(protect, getAllTables)
+
+router.route('/all/available')
+    .get(protect, getAllAvailableTables)
+
+    router.route('/all/with-orders')
+    .get(protect, getAllTablesWithOrders)
     
 router.route('/:id')
     .get(protect, getTable)
