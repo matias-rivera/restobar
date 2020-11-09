@@ -19,6 +19,8 @@ import TableEditScreen from './screens/TableEditScreen';
 import ClientEditScreen from './screens/ClientEditScreen';
 import OrderCreateScreen from './screens/OrderCreateScreen';
 import ActiveOrdersScreen from './screens/ActiveOrdersScreen';
+import OrderEditScreen from './screens/OrderViewScreen ';
+import OrderViewScreen from './screens/OrderViewScreen ';
 
 
 const Main = () => {
@@ -66,6 +68,7 @@ const Main = () => {
                 <Route path='/table/search/:keyword/page/:pageNumber' component={TableScreen} exact/>
                 <Route path='/table' component={TableScreen} />
 
+                <Route path='/order/:id/view' component={OrderViewScreen}/>
                 <Route path='/order/page/:pageNumber' component={OrderScreen} exact/>
                 <Route path='/order/search/:keyword' component={OrderScreen} exact/>
                 <Route path='/order/search/:keyword/page/:pageNumber' component={OrderScreen} exact/>

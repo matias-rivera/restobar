@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 const Table = ({table}) => {
     return ( 
+    <Link to={`/order/${table.orders[0].id}/view`}>
         <div className="small-box bg-danger">
             <div className="inner">
                 <h3>{table.name}</h3>
@@ -12,10 +13,11 @@ const Table = ({table}) => {
             <div className="icon">
             <i className="fas fa-user-friends"></i>
             </div>
-            <Link to="/" className="small-box-footer">
+            <div className="small-box-footer">
                 More info <i className="fa fa-arrow-circle-right" />
-            </Link>
+            </div>
         </div>
+    </Link>
      ) 
 }
  

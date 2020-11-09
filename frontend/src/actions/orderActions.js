@@ -189,8 +189,8 @@ export const updateOrder = (order) => async(dispatch, getState) => {
         }
 
         //update order
-        const {data} = await axios.put(
-            `/api/orders/${order.id}`,
+        const {data} = await axios.post(
+            `/api/orders/${order.id}/pay`,
             order,
             config
             )

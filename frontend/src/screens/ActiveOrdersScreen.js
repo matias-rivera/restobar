@@ -6,6 +6,7 @@ import HeaderContent from '../components/HeaderContent';
 import  Modal  from 'react-modal';
 import { allActiveTables, allFreeTables } from '../actions/tableActions';
 import Table from '../components/Table';
+import { Link } from 'react-router-dom';
 
 const customStyles = {
     content : {
@@ -46,7 +47,6 @@ const ActiveOrdersScreen = ({history, match}) => {
         dispatch(allActiveTables())
         dispatch(allFreeTables())
     }, [dispatch, history, userInfo])
-
 
 
     return ( 
@@ -107,9 +107,9 @@ const ActiveOrdersScreen = ({history, match}) => {
                       : (
                       <>
                           {tablesFree.map(table => (
-                            <button key={table.id} className="btn btn-block btn-success btn-lg">
+                            <Link to={'/order/create'} key={table.id} className="btn btn-block btn-success btn-lg" >
                           <p className='text-center my-0'><i class="fas fa-utensils float-left my-1"></i>{table.name}</p>
-                            </button>
+                            </Link>
                           ))}
                       </>
                       )}

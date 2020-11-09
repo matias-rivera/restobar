@@ -14,6 +14,7 @@ const TableEditScreen = ({history, match}) => {
     const tableId = parseInt(match.params.id)
 
     const [name, setName] = useState('')
+    const [occupied, setOccupied] = useState(false)
     
     const dispatch = useDispatch()
 
@@ -53,6 +54,7 @@ const TableEditScreen = ({history, match}) => {
             } else{
                 //set states
                 setName(table.name)
+                setOccupied(table.occupied)
 
             }
 
@@ -63,10 +65,12 @@ const TableEditScreen = ({history, match}) => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        dispatch(updateTable({
-            id: tableId,
-            name
-        }))
+        const tableUpdated={
+          id: tableId,
+          name: name,
+          occupied: occupied
+        }
+        dispatch(updateTable(tableUpdated))
     
     }
 
@@ -111,6 +115,18 @@ const TableEditScreen = ({history, match}) => {
               <form onSubmit={handleSubmit}>
 
                 <Input name={'Name'} type={'text'} data={name} setData={setName} />
+                <div className="form-check">
+                  <input 
+                    className="form-check-input" 
+                    type="checkbox"  
+                    id="defaultCheck1" 
+                    checked={occupied}
+                    onChange={(e) => setOccupied(e.target.checked) }
+                  />
+                  <label className="form-check-label" htmlFor="defaultCheck1">
+                    Occupied
+                  </label>
+                </div>
 
                     <hr/>
                     <button type="submit" className="btn btn-success">Submit</button>

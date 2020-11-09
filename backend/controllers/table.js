@@ -126,12 +126,13 @@ exports.getTable = asyncHandler(async (req, res) =>{
 //@access   Private/user
 exports.updateTable = asyncHandler(async (req, res) =>{
     
-    const { name } = req.body
+    const { name, occupied } = req.body
 
     const table = await Table.findByPk(req.params.id)
 
     if(table){
         table.name = name
+        table.occupied = occupied
         const updatedTable =  await table.save()
         res.json(updatedTable)
     } else {

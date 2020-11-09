@@ -85,7 +85,7 @@ export const orderDetailsReducer = (state = { order: {} }, action) => {
         case ORDER_DETAILS_REQUEST:
             return { ...state, loading: true }
         case ORDER_DETAILS_SUCCESS:
-            return { loading: false, ORDER: action.payload }
+            return { loading: false, order: action.payload }
         case ORDER_DETAILS_FAIL:
             return { loading: false, error: action.payload}
         case ORDER_DETAILS_RESET:

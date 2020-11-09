@@ -191,7 +191,7 @@ exports.getActiveOrders = asyncHandler(async (req, res) =>{
 //@route    GET /api/order/:id
 //@access   Private/user
 exports.getOrder = asyncHandler(async (req, res) =>{
-  const order = await Order.findByPk(req.params.id,{ include: { all: true }})
+  const order = await Order.findByPk(req.params.id,{ include: { all: true}})
   //,{ model: Table, as: 'table' },{ model: Client, as: 'client' }
   //{attributes: { exclude: ['password'] }}
   //{include: [ { model: User, as: 'user' }]}
@@ -231,7 +231,13 @@ exports.updateOrderPay = asyncHandler(async (req, res) =>{
 
   const order = await Order.findByPk(req.params.id)
 
+
+
   if(order){
+      const table = await Table.findByPk(order.tableId).then()
+      table.occupied = false
+      table.save()
+
       order.isPaid = !order.isPaid
       const updatedOrder =  await order.save()
       res.json(updatedOrder)
