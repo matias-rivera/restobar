@@ -44,6 +44,7 @@ exports.getProducts = asyncHandler(async (req, res) =>{
                 [Op.or]:[
                    {id: {[Op.like]: `%${keyword}%`}},
                    {name: {[Op.like]: `%${keyword}%`}},
+                   {price: keyword},
                    {'$category.name$':{[Op.like]: `%${keyword}%`}}
                ]
                }
@@ -57,6 +58,7 @@ exports.getProducts = asyncHandler(async (req, res) =>{
                [Op.or]:[
                    {id: {[Op.like]: `%${keyword}%`}},
                    {name: {[Op.like]: `%${keyword}%`}},
+                   {price: keyword},
                    {'$category.name$':{[Op.like]: `%${keyword}%`}}
                ]
                },

@@ -17,6 +17,7 @@ import CategoryEditScreen from './screens/CategoryEditScreen';
 import ProductEditScreen from './screens/ProductEditScreen';
 import TableEditScreen from './screens/TableEditScreen';
 import ClientEditScreen from './screens/ClientEditScreen';
+import OrderCreateScreen from './screens/OrderCreateScreen';
 
 
 const Main = () => {
@@ -64,6 +65,10 @@ const Main = () => {
                 <Route path='/order/page/:pageNumber' component={OrderScreen} exact/>
                 <Route path='/order/search/:keyword' component={OrderScreen} exact/>
                 <Route path='/order/search/:keyword/page/:pageNumber' component={OrderScreen} exact/>
+                <Route path='/order/create/page/:pageNumber' component={OrderCreateScreen} />
+                <Route path='/order/create/search/:keyword' component={OrderCreateScreen} />
+                <Route path='/order/create/search/:keyword/page/:pageNumber' component={OrderCreateScreen} />
+                <Route path='/order/create' component={OrderCreateScreen} />
                 <Route path='/order' component={OrderScreen} />
                 <Route path='/' component={DashboardScreen} exact/>
             </Switch>

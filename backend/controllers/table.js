@@ -24,7 +24,6 @@ exports.getTables = asyncHandler(async (req, res) =>{
 
     const pageSize = 5
     const page = Number(req.query.pageNumber) || 1
-    let tables
     let count
 
     const keyword =  req.query.keyword ? req.query.keyword : null
@@ -36,7 +35,6 @@ exports.getTables = asyncHandler(async (req, res) =>{
                [Op.or]:[
                    {id: {[Op.like]: `%${keyword}%`}},
                    {name: {[Op.like]: `%${keyword}%`}},
-
                ]
                }
            })
@@ -50,11 +48,15 @@ exports.getTables = asyncHandler(async (req, res) =>{
                    {name: {[Op.like]: `%${keyword}%`}},
 
                ]
+
+                
                }
            ,offset: (pageSize * (page - 1)), limit: pageSize})
     }
     else{
-            count = await Table.count({})
+            count = await Table.count({
+
+            })
             tables = await Table.findAll({
                 attributes: {
                     exclude: ['updatedAt']  
@@ -75,7 +77,12 @@ exports.getTables = asyncHandler(async (req, res) =>{
 //@route    GET /api/tables/all
 //@access   Private/user
 exports.getAllTables = asyncHandler(async (req, res) =>{
-    const tables = await Table.findAll({})
+    const occupied = req.query.occupied ? true : false
+    const tables = await Table.findAll({
+        where:{
+            occupied: occupied
+        }
+    })
     res.json(tables)
 })
 

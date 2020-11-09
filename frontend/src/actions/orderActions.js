@@ -60,7 +60,7 @@ export const allOrders = () => async(dispatch, getState) =>{
 
 
 //get all orders with pagination
-export const listOrders = (keyword = '', pageNumber = '') => async(dispatch, getState) =>{
+export const listOrders = (keyword = '', pageNumber = '', delivery=false) => async(dispatch, getState) =>{
     try{
         dispatch({
             type: ORDER_LIST_REQUEST
@@ -77,7 +77,8 @@ export const listOrders = (keyword = '', pageNumber = '') => async(dispatch, get
         }
 
         //get all orders
-        const {data} = await axios.get(`/api/orders/active?keyword=${keyword}&pageNumber=${pageNumber}`, config)
+        const {data} = await axios.get(`/api/orders/active?keyword=${keyword}&pageNumber=${pageNumber}&delivery=${delivery ? 'true' : ''}`        
+        , config)
      
         dispatch({
             type: ORDER_LIST_SUCCESS,

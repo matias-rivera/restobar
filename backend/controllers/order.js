@@ -3,70 +3,87 @@ const Order = require('../models/order')
 const Product = require('../models/product')
 const { Op } = require("sequelize");
 const Client = require('../models/client');
-const Table = require('../models/table')
+const Table = require('../models/table');
 
 
-//@desc     Create a Order
-//@route    POST /api/orders
-//@access   Private/user
-/* exports.createOrder = asyncHandler(async (req, res) =>{
-     
-  const {total, table, client, products, quantities} = req.body
-
-  //create order
-  const createdOrder = await Order.create({
-      total,
-      tableId: table,
-      userId: req.user.id,
-      clientId: client
-  })
-  
-    // create order items
-    for (let index = 0; index < products.length; index++) {
-      const product = await Product.findByPk(products[index])
-      createdOrder.addProduct(product,{
-        through:{quantity: quantities[index]}
-      })
-    }
-
-
-  res.status(201).json(createdOrder)
-
-}) */
 
 //@desc     Create a Order
 //@route    POST /api/orders
 //@access   Private/user
 exports.createOrder = asyncHandler(async (req, res) =>{
      
-  const {total, table, client, products} = req.body
+  //get data from request
+  const {total, table, client, products ,delivery} = req.body
 
-  //create order
-  const createdOrder = await Order.create({
-      total,
-      tableId: table,
-      userId: req.user.id,
-      clientId: client
-  })
+
+  //calc stock of each product in order
+  const stock = async (list) => {
+    for (let index = 0; index < list.length; index++) {
+      const productSearched = await Product.findByPk(list[index].id)
+      if(productSearched.stock < list[index].quantity){
+        return productSearched.name
+      }
+      
+    }
+    return false
+  }
+  
+  //calc stock
+  stock(products).then(result =>{
+    //if there's one product with not stock available
+    if(result){
+      //return product name
+      return result
+    }else{
+      //return created order
+      return Order.create({
+          total,
+          tableId: table,
+          userId: req.user.id,
+          clientId: client,
+          delivery: delivery
+      }) 
+    }
+  }
+  ).then( async createdOrder => {
+    //return message with product name which one has no stock
+     if(typeof createdOrder === 'string'){
+       const message= `There is not enough stock for ${createdOrder}`
+       //responde ERROR
+       res.status(404).json({message})
+    //add products in orderitems table
+    }else{
+      products.map(product =>{
+        //add product in order
+        createdOrder.addProduct(product.id,{
+          through:{quantity: product.quantity}
+        }).then(async result => {
+          //update product stock
+          const productIn = await Product.findByPk(product.id)
+          productIn.stock = productIn.stock - product.quantity
+          await productIn.save()
+        })
+      } )
+  
+      //update table to occupied
+      const tableUpdated = await Table.findByPk(createdOrder.tableId)
+      tableUpdated.occupied = true
+      await tableUpdated.save()
+
+      //response OK
+      res.status(201).json(createdOrder)
+    } 
+  }
+
+  )
+
+  
+  
   
 
-    // create order items
-    products.map(product =>{
-      createdOrder.addProduct(product.id,{
-        through:{quantity: product.quantity}
-      })
-    } )
-
-    
-    /* for (let index = 0; index < products.length; index++) {
-      const product = await Product.findByPk(products[index])
-      createdOrder.addProduct(product,{
-        through:{quantity: quantities[index]}
-      })
-    } */
 
 
-  res.status(201).json(createdOrder)
+
 
 })
 
@@ -87,6 +104,7 @@ exports.getActiveOrders = asyncHandler(async (req, res) =>{
   
   const pageSize = 5
   const page = Number(req.query.pageNumber) || 1
+  const delivery = req.query.delivery ? true : false
   let orders
   let count
 
@@ -105,10 +123,10 @@ exports.getActiveOrders = asyncHandler(async (req, res) =>{
               ,
             [Op.and]:{
               [Op.or]:[
-                {isPaid: false },
-                {isDelivered: false},
+                {isPaid: false }
               ]
-            }
+            },
+            [Op.and]:{delivery: delivery}
             
           }
         })
@@ -128,10 +146,11 @@ exports.getActiveOrders = asyncHandler(async (req, res) =>{
               ,
               [Op.and]:{
                 [Op.or]:[
-                  {isPaid: false },
-                  {isDelivered: false},
+                  {isPaid: false }
+                  
                 ]
-              }
+              },
+              [Op.and]:{delivery: delivery}
             } 
             
         ,offset: (pageSize * (page - 1)), limit: pageSize})
@@ -140,9 +159,9 @@ exports.getActiveOrders = asyncHandler(async (req, res) =>{
       count = await Order.count({
         where:{
           [Op.or]:[
-          {isPaid: false },
-          {isDelivered: false},
-          ]
+          {isPaid: false }
+          ],
+          [Op.and]:{delivery: delivery}
         }
       })
       orders = await Order.findAll({
@@ -152,26 +171,18 @@ exports.getActiveOrders = asyncHandler(async (req, res) =>{
         }, 
         where:{
             [Op.or]:[
-            {isPaid: false },
-            {isDelivered: false},
-            ]
-      }})
+            {isPaid: false }
+            ],
+            [Op.and]:{delivery: delivery}
+      }, offset: (pageSize * (page - 1)), limit: pageSize})
   }
 
-
- /*  [Op.or]:[
-    {isPaid: false },
-    {isDelivered: false},
-  ] */
-  //const users = await User.findAll({attributes: { exclude: ['password'] }})
 
   res.json({orders, page, pages: Math.ceil(count / pageSize)})
 
 
-
-
-
 })
+
 
 
 
@@ -239,7 +250,7 @@ exports.updateOrderDelivery = asyncHandler(async (req, res) =>{
   const order = await Order.findByPk(req.params.id)
 
   if(order){
-    order.isDelivered = !order.isDelivered
+    order.delivery = !order.delivery
     const updatedOrder =  await order.save()
     res.json(updatedOrder)
   } else {

@@ -17,7 +17,7 @@ const Order = sequelize.define('order',{
         allowNull: false,
         defaultValue: false
     },
-    isDelivered:{
+    delivery:{
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false

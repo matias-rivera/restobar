@@ -23,7 +23,7 @@ import {
 
 
 //get all tables
-export const allTables = () => async(dispatch, getState) =>{
+export const allTables = (select = false) => async(dispatch, getState) =>{
     try{
         dispatch({
             type: TABLE_ALL_REQUEST
@@ -40,7 +40,11 @@ export const allTables = () => async(dispatch, getState) =>{
         }
 
         //get all tables
-        const {data} = await axios.get(`/api/tables/all`, config)
+        let {data} = await axios.get(`/api/tables/all`, config)
+
+        if (select){
+            data = data.map(table => ({ label: table.name, value: table.id}))
+        }
      
         dispatch({
             type: TABLE_ALL_SUCCESS,

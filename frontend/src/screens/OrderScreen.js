@@ -5,10 +5,8 @@ import SearchBox from './../components/SearchBox';
 import TableCrud from './../components/TableCrud';
 import Loader from './../components/Loader';
 import Message from './../components/Message';
-import { Route } from 'react-router-dom';
+import { Route, Link } from 'react-router-dom';
 import HeaderContent from '../components/HeaderContent';
-import  Modal  from 'react-modal';
-import Input from '../components/form/Input';
 import { listOrders } from '../actions/orderActions';
 
 
@@ -39,7 +37,12 @@ const OrderScreen = ({history, match}) => {
             <div className="row">
                 <div className="col-12">
 
+                    <Link to='/order/create'>
+                        <button className='btn btn-success'>Create</button>
+                    </Link>
+                <hr />
                 <Route render={({history}) => <SearchBox history={history} item={'order'}/>} />
+
                 
                 <div className="card">
                     <div className="card-header">

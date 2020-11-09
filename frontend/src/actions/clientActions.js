@@ -23,7 +23,7 @@ import {
 
 
 //get all clients
-export const allClients = () => async(dispatch, getState) =>{
+export const allClients = (select = false) => async(dispatch, getState) =>{
     try{
         dispatch({
             type: CLIENT_ALL_REQUEST
@@ -40,7 +40,11 @@ export const allClients = () => async(dispatch, getState) =>{
         }
 
         //get all clients
-        const {data} = await axios.get(`/api/clients/all`, config)
+        let {data} = await axios.get(`/api/clients/all`, config)
+
+        if (select){
+            data = data.map(table => ({ label: table.name, value: table.id}))
+        }
      
         dispatch({
             type: CLIENT_ALL_SUCCESS,
