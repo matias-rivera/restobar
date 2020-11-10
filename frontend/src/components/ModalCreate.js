@@ -25,11 +25,12 @@ const ModalCreate = ({data, setData, handleSubmit, modalIsOpen, setModalIsOpen})
 
         <>
         <button 
-                className='btn btn-success float-right mr-4'
-                onClick={() => setModalIsOpen(true)}
-              >
-                Create
+          className='btn btn-success btn-lg mb-2'
+          onClick={() => setModalIsOpen(true)}
+        >
+          <i class="fas fa-plus"></i>  Create
         </button>
+
         <Modal style={customStyles} isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
       <h2>Create Form</h2>
       <form onSubmit={handleSubmit}>

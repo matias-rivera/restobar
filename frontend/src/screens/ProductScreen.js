@@ -89,6 +89,27 @@ const ProductScreen = ({history, match}) => {
           
           <section className="content">
             <div className="container-fluid">
+              <button 
+                className='btn btn-success btn-lg mb-2'
+                onClick={() => setModalIsOpen(true)}
+              >
+              <i class="fas fa-plus"></i>  Create
+              </button>
+              <Modal style={customStyles} isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
+                <h2>Create Form</h2>
+                <form onSubmit={handleSubmit}>
+                  <Input name={'Name'} type={'text'} data={name} setData={setName} />
+                  <Input name={'Price'} type={'number'} data={price} setData={setPrice} />
+                  <Input name={'Stock'} type={'number'} data={stock} setData={setStock} />
+                  <Select setData={setCategory} items={categories} loading={loadingCategories} error={errorCategories} />
+                  
+
+                  <hr/>
+                  <button type="submit" className="btn btn-primary">Submit</button>
+                  <button className='btn btn-danger float-right' onClick={() => setModalIsOpen(false)}>Close</button>
+                </form>
+              </Modal>
+
               <div className="row">
                 <div className="col-12">
         
@@ -99,29 +120,9 @@ const ProductScreen = ({history, match}) => {
                   <div className="card">
                     <div className="card-header">
                       <h3 className="card-title">Products table</h3>
-              <button 
-                className='btn btn-success float-right mr-4'
-                onClick={() => setModalIsOpen(true)}
-              >
-                Create
-              </button>
-        <Modal style={customStyles} isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
-          <h2>Create Form</h2>
-          <form onSubmit={handleSubmit}>
-            <Input name={'Name'} type={'text'} data={name} setData={setName} />
-            <Input name={'Price'} type={'number'} data={price} setData={setPrice} />
-            <Input name={'Stock'} type={'number'} data={stock} setData={setStock} />
-            <Select setData={setCategory} items={categories} loading={loadingCategories} error={errorCategories} />
-            
-
-            <hr/>
-            <button type="submit" className="btn btn-primary">Submit</button>
-            <button className='btn btn-danger float-right' onClick={() => setModalIsOpen(false)}>Close</button>
-          </form>
-        </Modal>
                     </div>
                     {/* /.card-header */}
-                    <div className="card-body">
+                    <div className="card-body table-responsive p-0">
                       {loading 
                       ? 
                       <Loader variable={loading} /> 

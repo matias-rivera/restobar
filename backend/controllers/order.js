@@ -235,9 +235,11 @@ exports.updateOrderPay = asyncHandler(async (req, res) =>{
 
 
   if(order){
-      const table = await Table.findByPk(order.tableId).then()
-      table.occupied = false
-      table.save()
+      if(!order.delivery){
+        const table = await Table.findByPk(order.tableId).then()
+        table.occupied = false
+        table.save()
+      }
 
       order.isPaid = !order.isPaid
       const updatedOrder =  await order.save()

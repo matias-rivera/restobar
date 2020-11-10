@@ -84,21 +84,11 @@ const ClientScreen = ({history, match}) => {
 
             <section className="content">
             <div className="container-fluid">
-              <div className="row">
-                <div className="col-12">
-        
-                  <Loader variable={createLoading} />
-                  <Message message={createError} color={'danger'}/>
-                  <Route render={({history}) => <SearchBox history={history} item={'client'}/>} />
-                  
-                  <div className="card">
-                    <div className="card-header">
-                      <h3 className="card-title">Clients</h3>
                     <button 
-                        className='btn btn-success float-right mr-4'
+                        className='btn btn-success btn-lg mb-2'
                         onClick={() => setModalIsOpen(true)}
                     >
-                        Create
+                      <i class="fas fa-plus"></i>  Create
                     </button>
                     <Modal style={customStyles} isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
                     <h2>Create Form</h2>
@@ -114,9 +104,19 @@ const ClientScreen = ({history, match}) => {
                         <button className='btn btn-danger float-right' onClick={() => setModalIsOpen(false)}>Close</button>
                     </form>
                     </Modal>
+              <div className="row">
+                <div className="col-12">
+        
+                  <Loader variable={createLoading} />
+                  <Message message={createError} color={'danger'}/>
+                  <Route render={({history}) => <SearchBox history={history} item={'client'}/>} />
+                  
+                  <div className="card">
+                    <div className="card-header">
+                      <h3 className="card-title">Clients</h3>
                     </div>
                     {/* /.card-header */}
-                    <div className="card-body">
+                    <div className="card-body table-responsive p-0">
                       {loading 
                       ? 
                       <Loader variable={loading} /> 

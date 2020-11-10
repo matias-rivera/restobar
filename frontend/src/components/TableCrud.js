@@ -11,7 +11,7 @@ const TableCrud = ({data, itemLink}) => {
 
 
     return ( 
-        <table id="example2" className="table table-bordered table-hover">
+        <table id="example2" className="table table-bordered table-hover ">
                 <thead>
                   <tr>
                     {headers.map((header,i) => (

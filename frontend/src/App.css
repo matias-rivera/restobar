@@ -1,7 +1,10 @@
 .App {
   text-align: center;
 }
-
+.table-overflow {
+  table-layout: fixed;
+  overflow: break-word;
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;

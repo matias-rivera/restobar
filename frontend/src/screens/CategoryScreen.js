@@ -72,6 +72,7 @@ const CategoryScreen = ({history, match}) => {
   
   <section className="content">
     <div className="container-fluid">
+      <ModalCreate data={data} setData={setData} handleSubmit={handleSubmit} modalIsOpen={modalIsOpen} setModalIsOpen={setModalIsOpen}/>
       <div className="row">
         <div className="col-12">
           <Loader variable={createLoading} />
@@ -82,11 +83,10 @@ const CategoryScreen = ({history, match}) => {
           <div className="card">
             <div className="card-header">
               <h3 className="card-title">Categories table</h3>
-              <ModalCreate data={data} setData={setData} handleSubmit={handleSubmit} modalIsOpen={modalIsOpen} setModalIsOpen={setModalIsOpen}/>
 
             </div>
             {/* /.card-header */}
-            <div className="card-body">
+            <div className="card-body table-responsive p-0">
               {loading 
               ? 
               <Loader variable={loading} /> 

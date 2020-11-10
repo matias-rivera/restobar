@@ -38,19 +38,19 @@ const OrderScreen = ({history, match}) => {
                 <div className="col-12">
 
                     <Link to='/order/create'>
-                        <button className='btn btn-success'>Create</button>
+                    <button className='btn btn-success btn-lg'><i className="fas fa-edit" /> New Order</button>
                     </Link>
                 <hr />
                 <Route render={({history}) => <SearchBox history={history} item={'order'}/>} />
 
                 
-                <div className="card">
+                <div className="card ">
                     <div className="card-header">
                     <h3 className="card-title">Orders</h3>
 
                     </div>
                     {/* /.card-header */}
-                    <div className="card-body">
+                    <div className="card-body table-responsive p-0">
                     {loading 
                     ? 
                     <Loader variable={loading} /> 

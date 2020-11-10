@@ -39,7 +39,7 @@ const DeliveryScreen = ({history, match}) => {
                 <div className="col-12">
 
                     <Link to='/order/create/delivery'>
-                        <button className='btn btn-success btn-lg'>New Deliver</button>
+                        <button className='btn btn-success btn-lg'><i className="fas fa-truck" /> New Delivery</button>
                     </Link>
                 <hr />
 
