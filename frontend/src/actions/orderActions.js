@@ -80,7 +80,7 @@ export const listOrders = (keyword = '', pageNumber = '') => async(dispatch, get
         }
 
         //get all orders
-        const {data} = await axios.get(`/api/orders/active?keyword=${keyword}&pageNumber=${pageNumber}`        
+        const {data} = await axios.get(`/api/orders/?keyword=${keyword}&pageNumber=${pageNumber}`        
         , config)
      
         dispatch({

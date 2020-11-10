@@ -122,7 +122,7 @@ const OrderViewScreen = ({history, match}) => {
     <div className="container-fluid">
       <div className="row">
         <div className="col-12">
-        <Link to={delivery ? '/delivery' : '/active'} className='btn btn-info btn-lg mb-2'>
+        <Link to={'/order'} className='btn btn-info btn-lg mb-2'>
                 Go Back
         </Link>
         
@@ -181,6 +181,49 @@ const OrderViewScreen = ({history, match}) => {
               <div className='col-12 col-md-6'> 
 
                 <div className='row'>
+
+                  <div className='col-12 col-md-6'>
+                    <div className="small-box bg-warning">
+                      <div className="inner">
+                        <h3>{order.id }</h3>
+                        <p>ORDER ID </p>
+                      </div>
+                      <div className="icon">
+                        <i className="fas fa-user" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {order.isPaid 
+                  ?(
+                    <div className='col-12 col-md-6'>
+                    <div className="small-box bg-success">
+                      <div className="inner">
+                        <h3>Paid</h3>
+                        <p>Order already paid</p>
+                      </div>
+                      <div className="icon">
+                        <i class="fas fa-check"></i>
+                      </div>
+                    </div>
+                  </div>
+                  )
+                  :(
+                    <div className='col-12 col-md-6'>
+                    <div className="small-box bg-danger">
+                      <div className="inner">
+                        <h3>Not Paid</h3>
+                        <p>Order still not paid</p>
+                      </div>
+                      <div className="icon">
+                        <i class="far fa-times-circle"></i>
+                      </div>
+                    </div>
+                  </div>
+                  )
+                  
+                  }
+
                   <div className='col-12 col-md-6'>
                     <div className="small-box bg-primary">
                       <div className="inner">
@@ -196,7 +239,7 @@ const OrderViewScreen = ({history, match}) => {
                   {table 
                   ? (
                   <div className='col-12 col-md-6'>
-                    <div className="small-box bg-danger">
+                    <div className="small-box bg-info">
                       <div className="inner">
                         <h3>{table.name}</h3>
                         <p>ID: {table.id } </p>
@@ -209,7 +252,7 @@ const OrderViewScreen = ({history, match}) => {
                   ) 
                   : (
                   <div className='col-12 col-md-6'>
-                    <div className="small-box bg-danger">
+                    <div className="small-box bg-info">
                       <div className="inner">
                         <h3>Delivery</h3>
                         <p>{client.address}</p>
@@ -243,28 +286,31 @@ const OrderViewScreen = ({history, match}) => {
       {/* /.row */}
       <div className='row'>
         <div className='col-12 col-md-9'>
-
+  
         </div>
         <div className='col-12 col-md-3'>
-          <div className='card'>
-            <div className='card-header bg-success'>
-              Update to Paid
-            </div>
-            <div className='card-body'>
-              <button className='btn btn-block' onClick={(e) => handlePay(e)}>
-                <div className="small-box bg-success">
-                    <div className="inner">
-                      <h3 className='text-left'>PAY ${productsInOrder.length > 0 ? totalPrice(productsInOrder) : 0}</h3>
-                      <p className='text-center'>Click to Pay</p>
-                    </div>
-                    <div className="icon" >
-                    <i class="fas fa-hand-holding-usd"></i>
-                    </div>
+            {!order.isPaid
+            ? (
+              <div className='card'>
+                <div className='card-header bg-success'>
+                  Update to Paid
                 </div>
-              </button>
-
-            </div>
-          </div>
+                <div className='card-body'>
+                  <button className='btn btn-block' onClick={(e) => handlePay(e)}>
+                    <div className="small-box bg-success">
+                        <div className="inner">
+                          <h3 className='text-left'>PAY ${productsInOrder.length > 0 ? totalPrice(productsInOrder) : 0}</h3>
+                          <p className='text-center'>Click to Pay</p>
+                        </div>
+                        <div className="icon" >
+                        <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            ) 
+          : ''}
         </div>
       </div>
     </div>

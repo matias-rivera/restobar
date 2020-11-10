@@ -286,7 +286,7 @@ exports.getActiveOrders = asyncHandler(async (req, res) =>{
 //@route    GET /api/order/:id
 //@access   Private/user
 exports.getOrder = asyncHandler(async (req, res) =>{
-  const order = await Order.findByPk(req.params.id,{ include: { all: true}})
+  const order = await Order.findByPk(req.params.id,{ include: { all: true, nested:true}})
   //,{ model: Table, as: 'table' },{ model: Client, as: 'client' }
   //{attributes: { exclude: ['password'] }}
   //{include: [ { model: User, as: 'user' }]}

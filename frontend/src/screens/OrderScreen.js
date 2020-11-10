@@ -1,13 +1,12 @@
 import React, {useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Paginate from './../components/Paginate';
-import SearchBox from './../components/SearchBox';
-import TableCrud from './../components/TableCrud';
 import Loader from './../components/Loader';
 import Message from './../components/Message';
 import { Route, Link } from 'react-router-dom';
 import HeaderContent from '../components/HeaderContent';
 import { listOrders } from '../actions/orderActions';
+import SearchBoxMini from './../components/SearchBoxMini';
 
 
 
@@ -41,12 +40,13 @@ const OrderScreen = ({history, match}) => {
                     <button className='btn btn-success btn-lg'><i className="fas fa-edit" /> New Order</button>
                     </Link>
                 <hr />
-                <Route render={({history}) => <SearchBox history={history} item={'order'}/>} />
-
                 
                 <div className="card ">
                     <div className="card-header">
-                    <h3 className="card-title">Orders</h3>
+                        <h3 className="card-title">All orders</h3>
+                        <div className="card-tools">
+                            <Route render={({history}) => <SearchBoxMini history={history} item={'order'}/>} />
+                        </div>
 
                     </div>
                     {/* /.card-header */}
@@ -58,20 +58,52 @@ const OrderScreen = ({history, match}) => {
                     ? 
                     <Message message={error} color={'danger'} />
                     : (
-                    <>
-                    <TableCrud  data={orders} itemLink={'order'}/>
-                    
-                    <Paginate 
-                            item={'order'}
-                            pages={pages} 
-                            page={page} 
-                            keyword={keyword ? keyword : null} />
-                    </>
+                        <table className="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                            <th>ID</th>
+                            <th>Client</th>
+                            <th>Table</th>
+                            <th>Paid</th>
+                            <th>Total</th>
+                            <th></th>
+                            </tr>
+                        </thead>
+                                                    <tbody>
+                        
+                        {orders.map(order => (
+                                <tr key={order.id}>
+                                    <td>{order.id}</td>
+                                    <td>{order.client.name}</td>
+                                    <td>
+                                        <h4>
+                                            {order.table 
+                                            ? <span className={'badge bg-primary'}>{order.table.name}</span> 
+                                            : <span className={'badge bg-info'}>DELIVERY</span>}    
+                                        </h4>
+                                    </td>
+                                    <td>{order.isPaid ? <h4 className='text-success'><i class="fas fa-check"></i></h4> : <h4 className='text-danger'><i class="far fa-times-circle"></i></h4>}</td>
+                                    <td>
+                                        <h4>
+                                            <span className={'badge bg-success'}>${order.total}</span> 
+                                        </h4>
+                                    </td>
+                                    <td><Link to={`/order/${order.id}/view`} className='btn btn-info btn-lg'>View</Link></td>
+                                </tr>
+                            ))}
+                                        
+                        </tbody>
+                        </table>
                     )}
                     </div>
                     {/* /.card-body */}
                 </div>
 
+                    <Paginate 
+                            item={'order'}
+                            pages={pages} 
+                            page={page} 
+                            keyword={keyword ? keyword : null} />
                 </div>
                 {/* /.col */}
             </div>
