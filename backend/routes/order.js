@@ -10,7 +10,11 @@ const {
     updateOrderDelivery, 
     deleteOrder,
     updateOrderItems, 
-    getActiveOrders
+    getActiveOrders,
+    getAllOrders,
+    getAllDeliveryOrders,
+    getAllInPlaceOrders,
+    getAllActiveOrders
 } = require('../controllers/order')
 
 
@@ -19,8 +23,20 @@ router.route('/')
     .post(protect, createOrder)
     .get(protect, getOrders)
 
+router.route('/all')
+    .get(protect,getAllOrders)
+
+router.route('/all/delivery')
+    .get(protect,getAllDeliveryOrders)
+
+router.route('/all/in-place')
+    .get(protect,getAllInPlaceOrders)
+
 router.route('/active')
     .get(protect, getActiveOrders)
+
+router.route('/active/all')
+    .get(protect, getAllActiveOrders)
 
 router.route('/:id')
     .get(protect, getOrder)

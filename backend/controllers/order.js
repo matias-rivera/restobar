@@ -88,14 +88,104 @@ exports.createOrder = asyncHandler(async (req, res) =>{
 
 })
 
-
-//@desc     Get all order
-//@route    GET /api/order
+//@desc     Get all orders
+//@route    GET /api/orders/all
 //@access   Private/user
-exports.getOrders = asyncHandler(async (req, res) =>{
-  const orders = await Order.findAll()
+exports.getAllOrders = asyncHandler(async (req, res) =>{
+
+  orders = await Order.findAll({order:[['id','DESC']]})
   res.json(orders)
 })
+
+
+//@desc     Get all active orders
+//@route    GET /api/orders/active/all
+//@access   Private/user
+exports.getAllActiveOrders = asyncHandler(async (req, res) =>{
+
+  orders = await Order.findAll({ include: [ { model: Client, as: 'client' },{ model: Table, as: 'table' } ], order:[['id','DESC']], where:{isPaid: false}})
+  res.json(orders)
+})
+
+//@desc     Get all delivery orders
+//@route    GET /api/orders/all/delivery
+//@access   Private/user
+exports.getAllDeliveryOrders = asyncHandler(async (req, res) =>{
+
+  orders = await Order.findAll({order:[['id','DESC']],where:{delivery:true}})
+  res.json(orders)
+})
+
+//@desc     Get all in place orders
+//@route    GET /api/orders/all/in-place
+//@access   Private/user
+exports.getAllInPlaceOrders = asyncHandler(async (req, res) =>{
+
+  orders = await Order.findAll({order:[['id','DESC']],where:{delivery:false}})
+  res.json(orders)
+})
+
+
+
+//@desc     Get all orders
+//@route    GET /api/orders
+//@access   Private/user
+exports.getOrders = asyncHandler(async (req, res) =>{
+  
+  const pageSize = 5
+  const page = Number(req.query.pageNumber) || 1
+  let orders
+  let count
+
+  const keyword =  req.query.keyword ? req.query.keyword : null
+
+  if(keyword){
+      count = await Order.count({
+          include: [ { model: Client, as: 'client' },{ model: Table, as: 'table' } ], 
+          where: {
+            [Op.or]:[
+                {id: {[Op.like]: `%${keyword}%`}},
+                {total: keyword},
+                {'$client.name$':{[Op.like]: `%${keyword}%`}},
+                {'$table.name$':{[Op.like]: `%${keyword}%`}}
+              ]
+          }
+        })
+      orders = await Order.findAll({
+          include: [ { model: Client, as: 'client' },{ model: Table, as: 'table' } ],
+          attributes: {
+            exclude: ['userId','clientId','tableId','updatedAt']  
+          },   
+          where: {
+
+              [Op.or]:[
+                  {id: {[Op.like]: `%${keyword}%`}},
+                  {total: keyword},
+                  {'$client.name$':{[Op.like]: `%${keyword}%`}},
+                  {'$table.name$':{[Op.like]: `%${keyword}%`}}
+                ]
+          },
+          order: [['id','DESC']],
+            
+        offset: (pageSize * (page - 1)), limit: pageSize})
+  }
+  else{
+      count = await Order.count({})
+      orders = await Order.findAll({
+        include: [ { model: Client, as: 'client' },{ model: Table, as: 'table' } ],
+        attributes: {
+          exclude: ['userId','clientId','tableId','updatedAt']  
+        },
+        order: [['id','DESC']],
+        offset: (pageSize * (page - 1)), limit: pageSize})
+  }
+
+
+  res.json({orders, page, pages: Math.ceil(count / pageSize)})
+
+
+})
+
 
 
 //@desc     Get all active orders
@@ -123,13 +213,13 @@ exports.getActiveOrders = asyncHandler(async (req, res) =>{
               ]
               ,
             [Op.and]:{
-              [Op.or]:[
-                {isPaid: false }
+              [Op.or]:[ 
+                false ?  {isPaid: false } : ''
               ]
             },
             [Op.and]:{delivery: delivery}
             
-          }
+          }        
         })
       orders = await Order.findAll({
           include: [ { model: Client, as: 'client' },{ model: Table, as: 'table' } ],
@@ -152,9 +242,11 @@ exports.getActiveOrders = asyncHandler(async (req, res) =>{
                 ]
               },
               [Op.and]:{delivery: delivery}
-            } 
+            },
+            order: [['id','DESC']],
+ 
             
-        ,offset: (pageSize * (page - 1)), limit: pageSize})
+            offset: (pageSize * (page - 1)), limit: pageSize})
   }
   else{
       count = await Order.count({
@@ -172,10 +264,12 @@ exports.getActiveOrders = asyncHandler(async (req, res) =>{
         }, 
         where:{
             [Op.or]:[
-            {isPaid: false }
+              {isPaid: false }
             ],
             [Op.and]:{delivery: delivery}
-      }, offset: (pageSize * (page - 1)), limit: pageSize})
+        }, 
+        order: [['id','DESC']],
+        offset: (pageSize * (page - 1)), limit: pageSize})
   }
 
 

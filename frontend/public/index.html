@@ -11,6 +11,19 @@
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
 
+
+  <!-- Tempusdominus Bbootstrap 4 -->
+  <link rel="stylesheet" href="%PUBLIC_URL%/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+  <!-- JQVMap -->
+  <link rel="stylesheet" href="%PUBLIC_URL%/plugins/jqvmap/jqvmap.min.css">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="%PUBLIC_URL%/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+  <!-- Daterange picker -->
+  <link rel="stylesheet" href="%PUBLIC_URL%/plugins/daterangepicker/daterangepicker.css">
+  <!-- summernote -->
+  <link rel="stylesheet" href="%PUBLIC_URL%/plugins/summernote/summernote-bs4.css">
+
+
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="%PUBLIC_URL%/plugins/fontawesome-free/css/all.min.css">
     <!-- IonIcons -->
@@ -39,9 +52,8 @@
   </head>
   <body class="hold-transition sidebar-mini">
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root">
-      <div class="wrapper"></div>
-    </div>
+      <div id='root' class="wrapper"></div>
+
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -66,5 +78,35 @@
     <script src="%PUBLIC_URL%/plugins/chart.js/Chart.js"></script>
     <script src="%PUBLIC_URL%/dist/js/demo.js"></script>
     <script src="%PUBLIC_URL%/dist/js/pages/dashboard3.js"></script>
+
+
+
+
+<!-- jQuery UI 1.11.4 -->
+<script src="%PUBLIC_URL%/plugins/jquery-ui/jquery-ui.min.js"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+<!-- ChartJS -->
+<script src="%PUBLIC_URL%/plugins/chart.js/Chart.min.js"></script>
+<!-- Sparkline -->
+<script src="%PUBLIC_URL%/plugins/sparklines/sparkline.js"></script>
+<!-- JQVMap -->
+<script src="%PUBLIC_URL%/plugins/jqvmap/jquery.vmap.min.js"></script>
+<script src="%PUBLIC_URL%/plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
+<!-- jQuery Knob Chart -->
+<script src="%PUBLIC_URL%/plugins/jquery-knob/jquery.knob.min.js"></script>
+<!-- daterangepicker -->
+<script src="%PUBLIC_URL%/plugins/moment/moment.min.js"></script>
+<script src="%PUBLIC_URL%/plugins/daterangepicker/daterangepicker.js"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script src="%PUBLIC_URL%/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<!-- Summernote -->
+<script src="%PUBLIC_URL%/plugins/summernote/summernote-bs4.min.js"></script>
+<!-- overlayScrollbars -->
+<script src="%PUBLIC_URL%/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+
+
   </body>
 </html>

@@ -15,21 +15,21 @@ import {
     ORDER_DELETE_REQUEST,
     ORDER_DELETE_SUCCESS,
     ORDER_DELETE_FAIL,
-    ORDER_ALL_REQUEST,
-    ORDER_ALL_SUCCESS,
-    ORDER_ALL_FAIL,
     ORDER_DELIVERY_REQUEST,
     ORDER_DELIVERY_SUCCESS,
-    ORDER_DELIVERY_FAIL
+    ORDER_DELIVERY_FAIL,
+    ORDER_ALL_ACTIVE_REQUEST,
+    ORDER_ALL_ACTIVE_SUCCESS,
+    ORDER_ALL_ACTIVE_FAIL
 
 } from '../constants/orderConstants'
 
 
 //get all orders
-export const allOrders = () => async(dispatch, getState) =>{
+export const allActiveOrders = () => async(dispatch, getState) =>{
     try{
         dispatch({
-            type: ORDER_ALL_REQUEST
+            type: ORDER_ALL_ACTIVE_REQUEST
         })
 
         //get user from state
@@ -43,15 +43,15 @@ export const allOrders = () => async(dispatch, getState) =>{
         }
 
         //get all orders
-        const {data} = await axios.get(`/api/orders/all`, config)
+        const {data} = await axios.get(`/api/orders/active/all`, config)
      
         dispatch({
-            type: ORDER_ALL_SUCCESS,
+            type: ORDER_ALL_ACTIVE_SUCCESS,
             payload: data
         })
     } catch(error) {
         dispatch({
-            type: ORDER_ALL_FAIL,
+            type: ORDER_ALL_ACTIVE_FAIL,
             payload: 
                 error.response && error.response.data.message
                     ? error.response.data.message
