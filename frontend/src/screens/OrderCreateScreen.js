@@ -24,10 +24,12 @@ const OrderCreateScreen = ({history, match}) => {
 
     const keyword = match.params.keyword || ''
     const pageNumber = match.params.pageNumber || 1
+    const tableFromUrl = match.params.table ? {label:match.params.table, value:match.params.id}  :''
+    const isDelivery = window.location.href.indexOf('delivery') != -1 ? true : false
 
-    const [table, setTable] = useState(null)
+    const [table, setTable] = useState(match.params.table ? tableFromUrl : null)
     const [client, setClient] = useState(null)
-    const [delivery, setDelivery] = useState(false)
+    const [delivery, setDelivery] = useState(isDelivery ? true : false)
     const [productsInOrder, setProductsInOrder] = useState([])
 
     const dispatch = useDispatch()
@@ -59,7 +61,11 @@ const OrderCreateScreen = ({history, match}) => {
           dispatch({type: TABLE_ALL_FREE_RESET}) 
           dispatch({type: CLIENT_ALL_RESET})
           dispatch({type: ORDER_CREATE_RESET})
-          history.push('/order')
+          if(delivery){
+            history.push('/delivery')
+          }else{
+            history.push('/active')
+          }
       }
       else{
         
@@ -74,8 +80,8 @@ const OrderCreateScreen = ({history, match}) => {
 
         const order = {
           total: totalPrice(productsInOrder),
+          table: !delivery ? table.value : 1,
           client: client.value,
-          table: table.value,
           products: productsInOrder,
           delivery: delivery
         }
@@ -334,6 +340,8 @@ const OrderCreateScreen = ({history, match}) => {
                         id='table' 
                         options={mapSelect(tables)}
                         onChange={setTable}
+                        isDisabled={delivery}
+                        value={table}
                         placeholder='Select table'
                         isSearchable
                       />
@@ -345,7 +353,7 @@ const OrderCreateScreen = ({history, match}) => {
 
                 </div>
 
-                <div className="form-check">
+{/*                 <div className="form-check">
                   <input 
                     className="form-check-input" 
                     type="checkbox" 
@@ -357,6 +365,25 @@ const OrderCreateScreen = ({history, match}) => {
                   <label className="form-check-label" htmlFor="defaultCheck1">
                     Delivery
                   </label>
+                </div> */}
+
+                <div className="col-sm-6">
+                  {/* checkbox */}
+                  <div className="form-group clearfix">
+                    <div className="icheck-primary d-inline">
+                      <input 
+                        className="form-check-input" 
+                        type="checkbox" 
+                        id="checkboxPrimary1" 
+                        defaultValue 
+                        checked={delivery}
+                        onChange={(e) => setDelivery(e.target.checked)}
+                      />
+                      <label htmlFor="checkboxPrimary1">
+                        Delivery
+                      </label>
+                    </div>
+                  </div>
                 </div>
 
 

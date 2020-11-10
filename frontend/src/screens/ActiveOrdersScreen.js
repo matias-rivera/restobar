@@ -107,7 +107,7 @@ const ActiveOrdersScreen = ({history, match}) => {
                       : (
                       <>
                           {tablesFree.map(table => (
-                            <Link to={'/order/create'} key={table.id} className="btn btn-block btn-success btn-lg" >
+                            <Link to={`/order/create/${table.id}/${table.name}/table`} key={table.id} className="btn btn-block btn-success btn-lg" >
                           <p className='text-center my-0'><i class="fas fa-utensils float-left my-1"></i>{table.name}</p>
                             </Link>
                           ))}

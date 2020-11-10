@@ -17,7 +17,10 @@ import {
     ORDER_DELETE_FAIL,
     ORDER_ALL_REQUEST,
     ORDER_ALL_SUCCESS,
-    ORDER_ALL_FAIL
+    ORDER_ALL_FAIL,
+    ORDER_DELIVERY_REQUEST,
+    ORDER_DELIVERY_SUCCESS,
+    ORDER_DELIVERY_FAIL
 
 } from '../constants/orderConstants'
 
@@ -60,7 +63,7 @@ export const allOrders = () => async(dispatch, getState) =>{
 
 
 //get all orders with pagination
-export const listOrders = (keyword = '', pageNumber = '', delivery=false) => async(dispatch, getState) =>{
+export const listOrders = (keyword = '', pageNumber = '') => async(dispatch, getState) =>{
     try{
         dispatch({
             type: ORDER_LIST_REQUEST
@@ -77,7 +80,7 @@ export const listOrders = (keyword = '', pageNumber = '', delivery=false) => asy
         }
 
         //get all orders
-        const {data} = await axios.get(`/api/orders/active?keyword=${keyword}&pageNumber=${pageNumber}&delivery=${delivery ? 'true' : ''}`        
+        const {data} = await axios.get(`/api/orders/active?keyword=${keyword}&pageNumber=${pageNumber}`        
         , config)
      
         dispatch({
@@ -94,6 +97,43 @@ export const listOrders = (keyword = '', pageNumber = '', delivery=false) => asy
         })
     }
 }
+
+//get all orders with pagination
+export const listDeliveryOrders = (keyword = '', pageNumber = '') => async(dispatch, getState) =>{
+    try{
+        dispatch({
+            type: ORDER_DELIVERY_REQUEST
+        })
+
+        //get user from state
+        const {userLogin: {userInfo}} = getState()
+
+        //headers
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        //get all orders
+        const {data} = await axios.get(`/api/orders/active?keyword=${keyword}&pageNumber=${pageNumber}&delivery=true`        
+        , config)
+     
+        dispatch({
+            type: ORDER_DELIVERY_SUCCESS,
+            payload: data
+        })
+    } catch(error) {
+        dispatch({
+            type: ORDER_DELIVERY_FAIL,
+            payload: 
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message
+        })
+    }
+}
+
 
 //create a order
 export const createOrder = (order) => async(dispatch, getState) => {

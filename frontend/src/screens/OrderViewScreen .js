@@ -77,7 +77,9 @@ const OrderViewScreen = ({history, match}) => {
             dispatch(listOrderDetails(orderId))
         } else{
             //set states
-            setTable(order.table)
+            if(!delivery){
+              setTable(order.table)
+            }
             setClient(order.client)
             setUser(order.user)
             setIsPaid(order.isPaid)
@@ -268,10 +270,11 @@ const OrderViewScreen = ({history, match}) => {
 
                 <table id="orderTable" className="table table-bordered table-hover">
                   <thead>
-    
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
+                    <tr>
+                      <th>Product</th>
+                      <th>Quantity</th>
+                      <th>Total</th>
+                    </tr>
                   </thead>
                   <tbody>
                     {productsInOrder.length > 0? (
@@ -307,6 +310,8 @@ const OrderViewScreen = ({history, match}) => {
                     </div>
                   </div>
 
+                  {table 
+                  ? (
                   <div className='col-6'>
                     <div className="small-box bg-danger">
                       <div className="inner">
@@ -318,6 +323,21 @@ const OrderViewScreen = ({history, match}) => {
                       </div>
                     </div>
                   </div>
+                  ) 
+                  : (
+                  <div className='col-6'>
+                    <div className="small-box bg-danger">
+                      <div className="inner">
+                        <h3>Delivery</h3>
+                        <p>To deliver</p>
+                      </div>
+                      <div className="icon">
+                        <i className="fas fa-truck" />
+                      </div>
+                    </div>
+                  </div>
+                  )}
+                  
                   
 
 
@@ -344,7 +364,7 @@ const OrderViewScreen = ({history, match}) => {
         </div>
         <div className='col-3'>
           <div className='card'>
-            <div className='card-header'>
+            <div className='card-header bg-success'>
               Update to Paid
             </div>
             <div className='card-body'>

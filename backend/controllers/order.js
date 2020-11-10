@@ -15,7 +15,6 @@ exports.createOrder = asyncHandler(async (req, res) =>{
   //get data from request
   const {total, table, client, products ,delivery} = req.body
 
-
   //calc stock of each product in order
   const stock = async (list) => {
     for (let index = 0; index < list.length; index++) {
@@ -38,7 +37,7 @@ exports.createOrder = asyncHandler(async (req, res) =>{
       //return created order
       return Order.create({
           total,
-          tableId: table,
+          tableId: !delivery ? table : null,
           userId: req.user.id,
           clientId: client,
           delivery: delivery
@@ -66,9 +65,11 @@ exports.createOrder = asyncHandler(async (req, res) =>{
       } )
   
       //update table to occupied
-      const tableUpdated = await Table.findByPk(createdOrder.tableId)
-      tableUpdated.occupied = true
-      await tableUpdated.save()
+      if(!delivery){
+        const tableUpdated = await Table.findByPk(createdOrder.tableId)
+        tableUpdated.occupied = true
+        await tableUpdated.save()
+      }
 
       //response OK
       res.status(201).json(createdOrder)

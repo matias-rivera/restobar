@@ -48,6 +48,10 @@ const Main = () => {
                 <Route path='/category/search/:keyword/page/:pageNumber' component={CategoryScreen} exact/>
                 <Route path='/category' component={CategoryScreen} />
 
+
+                <Route path='/delivery/page/:pageNumber' component={DeliveryScreen} exact/>
+                <Route path='/delivery/search/:keyword' component={DeliveryScreen} exact/>
+                <Route path='/delivery/search/:keyword/page/:pageNumber' component={DeliveryScreen} exact/>
                 <Route path='/delivery' component={DeliveryScreen} />
 
                 <Route path='/client/:id/edit' component={ClientEditScreen}/>
@@ -72,6 +76,7 @@ const Main = () => {
                 <Route path='/order/page/:pageNumber' component={OrderScreen} exact/>
                 <Route path='/order/search/:keyword' component={OrderScreen} exact/>
                 <Route path='/order/search/:keyword/page/:pageNumber' component={OrderScreen} exact/>
+                <Route path='/order/create/:id/:table/table' component={OrderCreateScreen} />
                 <Route path='/order/create/page/:pageNumber' component={OrderCreateScreen} />
                 <Route path='/order/create/search/:keyword' component={OrderCreateScreen} />
                 <Route path='/order/create/search/:keyword/page/:pageNumber' component={OrderCreateScreen} />
