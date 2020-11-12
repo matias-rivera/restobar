@@ -6,10 +6,12 @@ import TableCrud from './../components/TableCrud';
 import Loader from './../components/Loader';
 import Message from './../components/Message';
 import { createCategory, listCategories } from './../actions/categoryActions';
-import ModalCreate from './../components/ModalCreate';
 import { Route } from 'react-router-dom';
 import HeaderContent from '../components/HeaderContent';
-
+import ModalButton from './../components/ModalButton';
+import { customStyles } from '../utils';
+import  Modal  from 'react-modal';
+import Input from '../components/form/Input';
 
 const CategoryScreen = ({history, match}) => {
 
@@ -18,12 +20,8 @@ const CategoryScreen = ({history, match}) => {
     const pageNumber = match.params.pageNumber || 1
 
     const [modalIsOpen, setModalIsOpen] = useState(false)
-    const [data, setData] = useState({
-        name: {
-          type:'text',
-          data:''
-        }
-    })
+    const [name, setName] = useState('')
+    const [errors, setErrors] = useState({})
 
     const dispatch = useDispatch()
 
@@ -43,24 +41,36 @@ const CategoryScreen = ({history, match}) => {
     const handleSubmit = (e) => {
       
       e.preventDefault();
+
+      let errorsCheck = {}
+
+      if(!name){
+        errorsCheck.name = 'Name is required'
+      }
+
+      if(Object.keys(errorsCheck).length > 0){
+        setErrors(errorsCheck)
+      }else{
+        setErrors({})
+      }
+      
+      if(Object.keys(errorsCheck).length === 0){
       
       const category = {
-        name: data['name'].data,
+        name: name
       }
       
       
       dispatch(createCategory(category))
 
-       setData({
-        name: {
-          type: 'text',
-          data: ''
-        }
-      })
+       setName('')
       
 
       setModalIsOpen(false)
+
     }
+    
+  }
 
 
 
@@ -72,7 +82,20 @@ const CategoryScreen = ({history, match}) => {
   
   <section className="content">
     <div className="container-fluid">
-      <ModalCreate data={data} setData={setData} handleSubmit={handleSubmit} modalIsOpen={modalIsOpen} setModalIsOpen={setModalIsOpen}/>
+      <ModalButton modal={modalIsOpen} setModal={setModalIsOpen} classes={'btn-success btn-lg mb-2'} />
+      <Modal style={customStyles} isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
+        <h2>Create Form</h2>
+        <form onSubmit={handleSubmit}>
+          <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors}/>
+
+          <hr/>
+          <button type="submit" className="btn btn-primary">Submit</button>
+          
+          <ModalButton modal={modalIsOpen} setModal={setModalIsOpen} classes={'btn-danger float-right'} />
+
+        </form>
+      </Modal>
+
       <div className="row">
         <div className="col-12">
           <Loader variable={createLoading} />

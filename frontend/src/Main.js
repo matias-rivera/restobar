@@ -26,7 +26,6 @@ import PrivateRoute from './auth/PrivateRoute';
 import NotFoundScreen from './screens/NotFoundScreen';
 import AdminRoute from './auth/AdminRoute';
 import NotAuthorizedScreen from './screens/NotAuthorizedScreen';
-import FormSignup from './screens/Forms/FormSignup';
 
 
 const Main = ({history}) => {
@@ -51,7 +50,6 @@ const Main = ({history}) => {
 
                 <Route path='/active' exact component={ActiveOrdersScreen} />
                  {/* <Route path='/active' exact component={ActiveOrdersScreen} />  */}
-                 <Route path='/form' exact component={FormSignup} />
                 <AdminRoute path='/user/:id/edit' component={UserEditScreen}/>
                 <AdminRoute path='/user/page/:pageNumber' component={UserScreen} exact/>
                 <AdminRoute path='/user/search/:keyword' component={UserScreen} exact/>

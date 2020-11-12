@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { capitalize } from '../utils';
 
 const TableCrud = ({data, itemLink}) => {
 
@@ -15,7 +16,7 @@ const TableCrud = ({data, itemLink}) => {
                 <thead>
                   <tr>
                     {headers.map((header,i) => (
-                        <th key={i}>{header}</th>
+                        <th key={i}>{capitalize(header)}</th>
                         ))}
                     <th></th>
 

@@ -10,18 +10,9 @@ import HeaderContent from '../components/HeaderContent';
 import  Modal  from 'react-modal';
 import Input from '../components/form/Input';
 import { createClient, listClients } from '../actions/clientActions';
+import { customStyles } from '../utils';
+import ModalButton from '../components/ModalButton';
 
-const customStyles = {
-    content : {
-      top                   : '50%',
-      left                  : '50%',
-      right                 : 'auto',
-      bottom                : 'auto',
-      marginRight           : '-50%',
-      width: 400,
-      transform             : 'translate(-50%, -50%)'
-    }
-  }
 Modal.setAppElement('#root')
 
 const ClientScreen = ({history, match}) => {
@@ -36,6 +27,8 @@ const ClientScreen = ({history, match}) => {
     const [phone, setPhone] = useState('')
     const [email, setEmail] = useState('')
     const [dni, setDni] = useState('')
+
+    const [errors, setErrors] = useState({})
 
     const dispatch = useDispatch()
 
@@ -56,6 +49,35 @@ const ClientScreen = ({history, match}) => {
       
         e.preventDefault();
         
+        let errorsCheck = {}
+
+        if(!name){
+          errorsCheck.name = 'Name is required'
+        }
+        if(!address){
+          errorsCheck.address = 'Address is required'
+        }
+        
+        if(!phone){
+          errorsCheck.phone = 'Phone is required'
+        }
+        if(!email){
+          errorsCheck.email = 'Email is required'
+        }
+
+        if(!dni){
+          errorsCheck.dni = 'DNI is required'
+        }
+
+
+      if(Object.keys(errorsCheck).length > 0){
+        setErrors(errorsCheck)
+      }else{
+        setErrors({})
+      }
+      
+      if(Object.keys(errorsCheck).length === 0){
+
         const client = {
           name: name,
           address: address,
@@ -76,6 +98,7 @@ const ClientScreen = ({history, match}) => {
   
         setModalIsOpen(false)
       }
+    }
 
 
     return ( 
@@ -84,24 +107,18 @@ const ClientScreen = ({history, match}) => {
 
             <section className="content">
             <div className="container-fluid">
-                    <button 
-                        className='btn btn-success btn-lg mb-2'
-                        onClick={() => setModalIsOpen(true)}
-                    >
-                      <i class="fas fa-plus"></i>  Create
-                    </button>
+                    <ModalButton modal={modalIsOpen} setModal={setModalIsOpen} classes={'btn-success btn-lg mb-2'} />
                     <Modal style={customStyles} isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
                     <h2>Create Form</h2>
                     <form onSubmit={handleSubmit}>
-                        <Input name={'Name'} type={'text'} data={name} setData={setName} />
-                        <Input name={'Address'} type={'text'} data={address} setData={setAddress} />            
-                        <Input name={'Phone'} type={'text'} data={phone} setData={setPhone} />
-                        <Input name={'Email'} type={'email'} data={email} setData={setEmail} />
-                        <Input name={'DNI'} type={'text'} data={dni} setData={setDni} />
-
+                        <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors}/>
+                        <Input name={'address'} type={'text'} data={address} setData={setAddress} errors={errors} />            
+                        <Input name={'phone'} type={'text'} data={phone} setData={setPhone} errors={errors} />
+                        <Input name={'email'} type={'email'} data={email} setData={setEmail} errors={errors} />
+                        <Input name={'dni'} type={'text'} data={dni} setData={setDni} errors={errors} />
                         <hr/>
                         <button type="submit" className="btn btn-primary">Submit</button>
-                        <button className='btn btn-danger float-right' onClick={() => setModalIsOpen(false)}>Close</button>
+                        <ModalButton modal={modalIsOpen} setModal={setModalIsOpen} classes={'btn-danger float-right'} />
                     </form>
                     </Modal>
               <div className="row">

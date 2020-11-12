@@ -11,18 +11,11 @@ import  Modal  from 'react-modal';
 import Input from '../components/form/Input';
 import { listTables } from '../actions/tableActions';
 import { createTable } from '../actions/tableActions';
+import { customStyles } from '../utils';
+import ModalButton from './../components/ModalButton';
 
-const customStyles = {
-    content : {
-      top                   : '50%',
-      left                  : '50%',
-      right                 : 'auto',
-      bottom                : 'auto',
-      marginRight           : '-50%',
-      width: 400,
-      transform             : 'translate(-50%, -50%)'
-    }
-  }
+
+
 Modal.setAppElement('#root')
 
 const TableScreen = ({history, match}) => {
@@ -32,6 +25,8 @@ const TableScreen = ({history, match}) => {
 
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [name, setName] = useState('')
+
+    const [errors, setErrors] = useState({})
 
     const dispatch = useDispatch()
 
@@ -51,21 +46,34 @@ const TableScreen = ({history, match}) => {
 
 
     const handleSubmit = (e) => {
+      e.preventDefault();
+
+      let errorsCheck = {}
+
+      if(!name){
+        errorsCheck.name = 'Name is required'
+      }
+
+      if(Object.keys(errorsCheck).length > 0){
+        setErrors(errorsCheck)
+      }else{
+        setErrors({})
+      }
       
-        e.preventDefault();
-        
+      if(Object.keys(errorsCheck).length === 0){
+          
         const table = {
           name: name
         }
         
-        
         dispatch(createTable(table))
-  
-         setName('')
-
-  
+        setName('')
         setModalIsOpen(false)
+
       }
+
+        
+    }
 
     return ( 
         <>
@@ -74,21 +82,20 @@ const TableScreen = ({history, match}) => {
           
           <section className="content">
             <div className="container-fluid">
-              <button 
-                  className='btn btn-success btn-lg mb-2'
-                  onClick={() => setModalIsOpen(true)}
-              >
-                  <i class="fas fa-plus"></i> Create
-              </button>
+            <ModalButton modal={modalIsOpen} setModal={setModalIsOpen} classes={'btn-success btn-lg mb-2'} />
               <Modal style={customStyles} isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
                 <h2>Create Form</h2>
                 <form onSubmit={handleSubmit}>
-                  <Input name={'Name'} type={'text'} data={name} setData={setName} />            
+                  <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors}/>
+
                   <hr/>
                   <button type="submit" className="btn btn-primary">Submit</button>
-                  <button className='btn btn-danger float-right' onClick={() => setModalIsOpen(false)}>Close</button>
+                  
+                  <ModalButton modal={modalIsOpen} setModal={setModalIsOpen} classes={'btn-danger float-right'} />
+
                 </form>
               </Modal>
+
               <div className="row">
                 <div className="col-12">
         

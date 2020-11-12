@@ -7,8 +7,12 @@ import SearchBox from './../components/SearchBox';
 import TableCrud from './../components/TableCrud';
 import Loader from './../components/Loader';
 import Message from './../components/Message';
-import ModalCreate from './../components/ModalCreate';
 import HeaderContent from '../components/HeaderContent';
+import Input from '../components/form/Input';
+import ModalButton from '../components/ModalButton';
+import Modal from 'react-modal';
+import { customStyles } from '../utils';
+import Checkbox from '../components/form/Checkbox';
 
 
 
@@ -20,26 +24,13 @@ const UserScreen = ({history, match}) => {
 
     const [modalIsOpen, setModalIsOpen] = useState(false)
 
-    const [data, setData] = useState({
-      name: {
-        type: 'text',
-        data: ''
-      },
-      password: {
-        type: 'password',
-        data: ''
-      },
-      email: {
-        type: 'email',
-        data: ''
-      },
-      isAdmin: {
-        type: 'checkbox',
-        data: false
-      }
-    })
-    
-    
+    const [name, setName] = useState('')
+    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('')
+    const [isAdmin, setIsAdmin] = useState(false)
+    const [errors, setErrors] = useState({})
+  
+
     const dispatch = useDispatch()
 
     const userList = useSelector((state) => state.userList)
@@ -61,38 +52,47 @@ const UserScreen = ({history, match}) => {
     const handleSubmit = (e) => {
       
       e.preventDefault();
+
+
+      let errorsCheck = {}
+      if(!name){
+        errorsCheck.name = 'Name is required'
+      }
+      if(!password){
+        errorsCheck.password = 'Password is required'
+      }
+
+      if(!email){
+        errorsCheck.email = 'Email is required'
+      }
+
+      if(Object.keys(errorsCheck).length > 0){
+        setErrors(errorsCheck)
+      }else{
+        setErrors({})
+      }
       
+      if(Object.keys(errorsCheck).length === 0){
+
       const user = {
-        name: data['name'].data,
-        email: data['email'].data,
-        password: data['password'].data,
-        isAdmin: data['isAdmin'].data
+        name: name,
+        email: email,
+        password: password,
+        isAdmin: isAdmin
       }
       
       
       dispatch(register(user))
 
-       setData({
-        name: {
-          type: 'text',
-          data: ''
-        },
-        password: {
-          type: 'password',
-          data: ''
-        },
-        email: {
-          type: 'email',
-          data: ''
-        },
-        isAdmin: {
-          type: 'checkbox',
-          data: false
-        }
-      })
+      setName('')
+      setPassword('')
+      setEmail('')
+      setIsAdmin(false)
       
 
       setModalIsOpen(false)
+
+      }
     }
 
 
@@ -104,7 +104,20 @@ const UserScreen = ({history, match}) => {
   
   <section className="content">
     <div className="container-fluid">
-    <ModalCreate data={data} setData={setData} handleSubmit={handleSubmit} modalIsOpen={modalIsOpen} setModalIsOpen={setModalIsOpen}/>
+      <ModalButton modal={modalIsOpen} setModal={setModalIsOpen} classes={'btn-success btn-lg mb-2'} />
+      <Modal style={customStyles} isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
+      <h2>Create Form</h2>
+      <form onSubmit={handleSubmit}>
+          <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors}/>
+          <Input name={'email'} type={'email'} data={email} setData={setEmail} errors={errors}/>
+          <Input name={'password'} type={'password'} data={password} setData={setPassword} errors={errors}/>
+          <Checkbox name={'Admin'} data={isAdmin} setData={setIsAdmin} />
+
+          <hr/>
+          <button type="submit" className="btn btn-primary">Submit</button>
+          <ModalButton modal={modalIsOpen} setModal={setModalIsOpen} classes={'btn-danger float-right'} />
+      </form>
+      </Modal>
       <div className="row">
         <div className="col-12">
 

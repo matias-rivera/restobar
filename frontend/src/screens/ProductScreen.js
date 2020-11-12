@@ -12,18 +12,9 @@ import  Modal  from 'react-modal';
 import Input from '../components/form/Input';
 import Select from '../components/form/Select';
 import { allCategories } from './../actions/categoryActions';
+import { customStyles } from '../utils';
+import ModalButton from '../components/ModalButton';
 
-const customStyles = {
-  content : {
-    top                   : '50%',
-    left                  : '50%',
-    right                 : 'auto',
-    bottom                : 'auto',
-    marginRight           : '-50%',
-    width: 400,
-    transform             : 'translate(-50%, -50%)'
-  }
-}
 
 Modal.setAppElement('#root')
 
@@ -37,6 +28,8 @@ const ProductScreen = ({history, match}) => {
     const [price, setPrice] = useState(0)
     const [stock, setStock] = useState(0)
     const [category, setCategory] = useState(1)
+
+    const [errors, setErrors] = useState({})
 
     const dispatch = useDispatch()
 
@@ -62,6 +55,32 @@ const ProductScreen = ({history, match}) => {
     const handleSubmit = (e) => {
       
         e.preventDefault();
+
+        let errorsCheck = {}
+
+        if(!name){
+          errorsCheck.name = 'Name is required'
+        }
+        if(!price){
+          errorsCheck.price = 'Price is required'
+        }
+        
+        if(!stock){
+          errorsCheck.stock = 'Stock is required'
+        }
+        if(!category){
+          errorsCheck.category = 'Category is required'
+        }
+
+
+
+      if(Object.keys(errorsCheck).length > 0){
+        setErrors(errorsCheck)
+      }else{
+        setErrors({})
+      }
+      
+      if(Object.keys(errorsCheck).length === 0){
         
         const product = {
           name: name,
@@ -81,6 +100,7 @@ const ProductScreen = ({history, match}) => {
   
         setModalIsOpen(false)
       }
+    }
 
     return ( 
         <>
@@ -89,24 +109,21 @@ const ProductScreen = ({history, match}) => {
           
           <section className="content">
             <div className="container-fluid">
-              <button 
-                className='btn btn-success btn-lg mb-2'
-                onClick={() => setModalIsOpen(true)}
-              >
-              <i class="fas fa-plus"></i>  Create
-              </button>
+              <ModalButton modal={modalIsOpen} setModal={setModalIsOpen} classes={'btn-success btn-lg mb-2'} />
               <Modal style={customStyles} isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
                 <h2>Create Form</h2>
                 <form onSubmit={handleSubmit}>
-                  <Input name={'Name'} type={'text'} data={name} setData={setName} />
-                  <Input name={'Price'} type={'number'} data={price} setData={setPrice} />
-                  <Input name={'Stock'} type={'number'} data={stock} setData={setStock} />
+                  <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors}/>
+                  <Input name={'price'} type={'number'} data={price} setData={setPrice} errors={errors}/>
+                  <Input name={'stock'} type={'number'} data={stock} setData={setStock} errors={errors}/>
                   <Select setData={setCategory} items={categories} loading={loadingCategories} error={errorCategories} />
                   
 
                   <hr/>
                   <button type="submit" className="btn btn-primary">Submit</button>
-                  <button className='btn btn-danger float-right' onClick={() => setModalIsOpen(false)}>Close</button>
+                  
+                  <ModalButton modal={modalIsOpen} setModal={setModalIsOpen} classes={'btn-danger float-right'} />
+
                 </form>
               </Modal>
 
