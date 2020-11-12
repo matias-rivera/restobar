@@ -6,12 +6,15 @@ import Loader from '../components/Loader';
 import { CATEGORY_UPDATE_RESET, CATEGORY_DETAILS_RESET, CATEGORY_DELETE_RESET } from './../constants/categoryConstants';
 import { updateCategory, deleteCategory,listCategoryDetails } from './../actions/categoryActions';
 import HeaderContent from '../components/HeaderContent';
+import Input from '../components/form/Input';
 
 
 const CategoryEditScreen = ({history, match}) => {
     const categoryId = parseInt(match.params.id)
 
     const [name, setName] = useState('')
+
+    const [errors, setErrors] = useState({})
     
     const dispatch = useDispatch()
 
@@ -58,10 +61,24 @@ const CategoryEditScreen = ({history, match}) => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        dispatch(updateCategory({
-            id: categoryId,
-            name,
-        }))
+        let errorsCheck = {}
+
+        if(!name){
+          errorsCheck.name = 'Name is required'
+        }
+
+        if(Object.keys(errorsCheck).length > 0){
+          setErrors(errorsCheck)
+        }else{
+          setErrors({})
+        }
+        
+        if(Object.keys(errorsCheck).length === 0){
+          dispatch(updateCategory({
+              id: categoryId,
+              name,
+          }))
+        }
     
     }
 
@@ -103,21 +120,7 @@ const CategoryEditScreen = ({history, match}) => {
 
 
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                    <label htmlFor="name">Name</label>
-                    <input 
-                        type="text" 
-                        className="form-control" 
-                        id="name" 
-                        aria-describedby="name" 
-                        placeholder="Enter name" 
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                    </div>
-
-
-
+                  <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors} />
                     <hr/>
                     <button type="submit" className="btn btn-success">Submit</button>
                 </form>

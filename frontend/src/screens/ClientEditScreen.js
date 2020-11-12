@@ -20,6 +20,8 @@ const ClientEditScreen = ({history, match}) => {
     const [email, setEmail] = useState('')
     const [dni, setDni] = useState('')
 
+    const [errors, setErrors] = useState({})
+
     const dispatch = useDispatch()
 
     const userLogin = useSelector((state) => state.userLogin)
@@ -72,15 +74,44 @@ const ClientEditScreen = ({history, match}) => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        dispatch(updateClient({
-            id: clientId,
-            name,
-            address,
-            phone,
-            email,
-            dni
-        }))
-    
+
+        let errorsCheck = {}
+
+        if(!name){
+          errorsCheck.name = 'Name is required'
+        }
+        if(!address){
+          errorsCheck.address = 'Address is required'
+        }
+        
+        if(!phone){
+          errorsCheck.phone = 'Phone is required'
+        }
+        if(!email){
+          errorsCheck.email = 'Email is required'
+        }
+
+        if(!dni){
+          errorsCheck.dni = 'DNI is required'
+        }
+
+
+        if(Object.keys(errorsCheck).length > 0){
+          setErrors(errorsCheck)
+        }else{
+          setErrors({})
+        }
+        
+        if(Object.keys(errorsCheck).length === 0){
+          dispatch(updateClient({
+              id: clientId,
+              name,
+              address,
+              phone,
+              email,
+              dni
+          }))
+        }
     }
 
     const handleDelete = (e) => {
@@ -123,11 +154,11 @@ const ClientEditScreen = ({history, match}) => {
             : (
               <form onSubmit={handleSubmit}>
 
-                <Input name={'Name'} type={'text'} data={name} setData={setName} />
-                <Input name={'Address'} type={'text'} data={address} setData={setAddress} />            
-                <Input name={'Phone'} type={'text'} data={phone} setData={setPhone} />
-                <Input name={'Email'} type={'email'} data={email} setData={setEmail} />
-                <Input name={'DNI'} type={'text'} data={dni} setData={setDni} />
+                <Input name={'Name'} type={'text'} data={name} setData={setName} errors={errors} />
+                <Input name={'Address'} type={'text'} data={address} setData={setAddress} errors={errors}/>            
+                <Input name={'Phone'} type={'text'} data={phone} setData={setPhone} errors={errors}/>
+                <Input name={'Email'} type={'email'} data={email} setData={setEmail} errors={errors}/>
+                <Input name={'DNI'} type={'text'} data={dni} setData={setDni} errors={errors}/>
 
 
                     <hr/>

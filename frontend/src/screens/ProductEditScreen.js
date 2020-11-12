@@ -19,6 +19,8 @@ const ProductEditScreen = ({history, match}) => {
     const [price, setPrice] = useState(0)
     const [stock, setStock] = useState(0)
     const [category, setCategory] = useState('')
+
+    const [errors, setErrors] = useState({})
     
     const dispatch = useDispatch()
 
@@ -75,14 +77,41 @@ const ProductEditScreen = ({history, match}) => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        dispatch(updateProduct({
-            id: productId,
-            name,
-            price,
-            stock,
-            category
 
-        }))
+        let errorsCheck = {}
+
+        if(!name){
+          errorsCheck.name = 'Name is required'
+        }
+        if(!price){
+          errorsCheck.price = 'Price is required'
+        }
+        
+        if(!stock){
+          errorsCheck.stock = 'Stock is required'
+        }
+        if(!category){
+          errorsCheck.category = 'Category is required'
+        }
+
+
+
+        if(Object.keys(errorsCheck).length > 0){
+          setErrors(errorsCheck)
+        }else{
+          setErrors({})
+        }
+        
+        if(Object.keys(errorsCheck).length === 0){
+          dispatch(updateProduct({
+              id: productId,
+              name,
+              price,
+              stock,
+              category
+
+          }))
+        }
     
     }
 
@@ -126,11 +155,11 @@ const ProductEditScreen = ({history, match}) => {
             : (
               <form onSubmit={handleSubmit}>
 
-                <Input name={'Name'} type={'text'} data={name} setData={setName} />
+                <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors}/>
 
-                <Input name={'Price'} type={'number'} data={price} setData={setPrice}/>
+                <Input name={'price'} type={'number'} data={price} setData={setPrice} errors={errors}/>
 
-                <Input name={'Stock'} type={'number'} data={stock} setData={setStock}/>
+                <Input name={'stock'} type={'number'} data={stock} setData={setStock} errors={errors}/>
 
                 <Select id={product.categoryId} setData={setCategory} items={categories} loading={loadingCategories} error={errorCategories}/>
 

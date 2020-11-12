@@ -7,6 +7,7 @@ import Input from '../components/form/Input';
 import HeaderContent from '../components/HeaderContent';
 import { TABLE_UPDATE_RESET, TABLE_DETAILS_RESET, TABLE_DELETE_RESET } from './../constants/tableConstants';
 import { listTableDetails, deleteTable, updateTable } from '../actions/tableActions';
+import Checkbox from '../components/form/Checkbox';
 
 
 
@@ -15,6 +16,8 @@ const TableEditScreen = ({history, match}) => {
 
     const [name, setName] = useState('')
     const [occupied, setOccupied] = useState(false)
+
+    const [errors, setErrors] = useState({})
     
     const dispatch = useDispatch()
 
@@ -65,12 +68,29 @@ const TableEditScreen = ({history, match}) => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        const tableUpdated={
-          id: tableId,
-          name: name,
-          occupied: occupied
+
+        let errorsCheck = {}
+
+        if(!name){
+          errorsCheck.name = 'Name is required'
         }
-        dispatch(updateTable(tableUpdated))
+
+        if(Object.keys(errorsCheck).length > 0){
+          setErrors(errorsCheck)
+        }else{
+          setErrors({})
+        }
+        
+        if(Object.keys(errorsCheck).length === 0){
+
+          const tableUpdated={
+            id: tableId,
+            name: name,
+            occupied: occupied
+          }
+          dispatch(updateTable(tableUpdated))
+
+        }
     
     }
 
@@ -114,22 +134,11 @@ const TableEditScreen = ({history, match}) => {
             : (
               <form onSubmit={handleSubmit}>
 
-                <Input name={'Name'} type={'text'} data={name} setData={setName} />
-                <div className="form-check">
-                  <input 
-                    className="form-check-input" 
-                    type="checkbox"  
-                    id="defaultCheck1" 
-                    checked={occupied}
-                    onChange={(e) => setOccupied(e.target.checked) }
-                  />
-                  <label className="form-check-label" htmlFor="defaultCheck1">
-                    Occupied
-                  </label>
-                </div>
+                <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors} />
+                <Checkbox name={'occupied'} data={occupied} setData={setOccupied} />
 
-                    <hr/>
-                    <button type="submit" className="btn btn-success">Submit</button>
+                <hr/>
+                <button type="submit" className="btn btn-success">Submit</button>
               </form>
             )
 

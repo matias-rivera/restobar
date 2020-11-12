@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import Message from './../components/Message';
 import Loader from './../components/Loader';
 import HeaderContent from './../components/HeaderContent';
+import Input from './../components/form/Input';
+import Checkbox from './../components/form/Checkbox';
 
 
 const UserEditScreen = ({history, match}) => {
@@ -15,6 +17,8 @@ const UserEditScreen = ({history, match}) => {
     const [password, setPassword] = useState('')
     const [email, setEmail] = useState('')
     const [isAdmin, setIsAdmin] = useState(false)
+
+    const [errors, setErrors] = useState({})
     
     const dispatch = useDispatch()
 
@@ -38,14 +42,11 @@ const UserEditScreen = ({history, match}) => {
     useEffect( () => {
         //after update redirect to users
          if(successUpdate || successDelete){
-        
-        
             dispatch({type: USER_UPDATE_RESET})
             dispatch({type: USER_DETAILS_RESET})
             dispatch({type: USER_DELETE_RESET}) 
             history.push('/user')
         } 
-  
             //load product data
             if(!user.name || user.id !== userId) {
                 dispatch(listUserDetails(userId))
@@ -63,15 +64,35 @@ const UserEditScreen = ({history, match}) => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        dispatch(updateUser({
-            id: userId,
-            name,
-            email,
-            password,
-            isAdmin
 
-        }))
-    
+        let errorsCheck = {}
+        if(!name){
+          errorsCheck.name = 'Name is required'
+        }
+        if(!password){
+          errorsCheck.password = 'Password is required'
+        }
+  
+        if(!email){
+          errorsCheck.email = 'Email is required'
+        }
+  
+        if(Object.keys(errorsCheck).length > 0){
+          setErrors(errorsCheck)
+        }else{
+          setErrors({})
+        }
+        
+        if(Object.keys(errorsCheck).length === 0){
+            dispatch(updateUser({
+                id: userId,
+                name,
+                email,
+                password,
+                isAdmin
+
+            }))
+        }
     }
 
     const handleDelete = (e) => {
@@ -109,61 +130,14 @@ const UserEditScreen = ({history, match}) => {
             </div>
             {/* /.card-header */}
             <div className="card-body">
-            
-
-
-
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                    <label htmlFor="name">Name</label>
-                    <input 
-                        type="text" 
-                        className="form-control" 
-                        id="name" 
-                        aria-describedby="name" 
-                        placeholder="Enter name" 
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                    </div>
-                    <div className="form-group">
-                    <label htmlFor="email">Email address</label>
-                    <input 
-                        type="email" 
-                        className="form-control" 
-                        id="email" 
-                        aria-describedby="email" 
-                        placeholder="Enter email" 
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    </div>
-                    <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <input 
-                        type="password" 
-                        className="form-control" 
-                        id="password" 
-                        placeholder="password" 
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    </div>
-                    <div className="form-check">
-                    <input 
-                        type="checkbox" 
-                        className="form-check-input" 
-                        id="isAdmin" 
-                        checked={isAdmin}
-                        onChange={(e) => setIsAdmin(e.target.checked)}
-                    />
-                    <label className="form-check-label" htmlFor="admin">Is admin</label>
-                    </div>
+                    <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors}/>
+                    <Input name={'email'} type={'email'} data={email} setData={setEmail} errors={errors}/>
+                    <Input name={'password'} type={'password'} data={password} setData={setPassword} errors={errors}/>
+                    <Checkbox name={'Admin'} data={isAdmin} setData={setIsAdmin} />
                     <hr/>
                     <button type="submit" className="btn btn-success">Submit</button>
                 </form>
-
-
             </div>
             {/* /.card-body */}
           </div>
