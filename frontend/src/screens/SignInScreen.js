@@ -2,6 +2,8 @@ import React,{useState, useEffect} from 'react';
 import './SignInScreen.css'
 import {useDispatch, useSelector} from 'react-redux'
 import { login } from './../actions/userActions';
+import Message from './../components/Message';
+import Loader from './../components/Loader';
 
 const SignInScreen = ({history}) => {
 
@@ -12,7 +14,7 @@ const SignInScreen = ({history}) => {
 
   //get user from state
   const userLogin = useSelector(state => state.userLogin)
-  const {userInfo} = userLogin
+  const {userInfo, error, loading} = userLogin
 
   useEffect( () => {
     //if user is logged
@@ -38,9 +40,29 @@ const SignInScreen = ({history}) => {
                 <div className="container">
                   <div className="row">
                     <div className="col-md-9 col-lg-8 mx-auto">
+                    <div className="alert alert-info alert-dismissible">
+                        <button type="button" className="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h5><i className="icon fas fa-info" /> Test Users</h5>
+                        <div className='row justify-content-between'>
+                          <div className='col-3'>
+                            <p>admin@example.com</p>
+                            <p>123456</p>
+                          </div>
+                          <div className='col-3'>
+                          <p>user@example.com</p>
+                            <p>123456</p>
+                          </div>
+                        </div>
+                   
+                      </div>
                       <h3 className="login-heading mb-4">Welcome back!</h3>
+                      
+                      {loading && <Loader variable={loading}/>}
+                      {error && <Message message={error} color={'danger'} />}
                       <form onSubmit={submitHandler}>
+
                         <div className="form-label-group">
+                          
                           <input 
                             type="email" 
                             id="inputEmail" 
@@ -69,6 +91,9 @@ const SignInScreen = ({history}) => {
                         
                         
                       </form>
+
+                      
+
                     
                     </div>
                   </div>

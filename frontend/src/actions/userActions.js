@@ -257,3 +257,46 @@ export const deleteUser = (id) => async(dispatch, getState) => {
         })
     }
 }
+
+
+//update profile
+export const updateProfile = (user) => async(dispatch, getState) => {
+    try{
+        dispatch({
+            type: USER_UPDATE_REQUEST
+        })
+
+        //get user from state
+        const {userLogin: {userInfo}} = getState()
+        //headers
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        console.log(user)
+        //update user
+        const {data} = await axios.put(
+            `/api/users/profile/${user.id}`,
+            user,
+            config
+            )
+        dispatch({
+            type: USER_UPDATE_SUCCESS,
+            payload: data
+        })
+
+
+
+    }catch(error){
+        dispatch({
+            type: USER_UPDATE_FAIL,
+            payload: 
+                error.response && error.response.data.message
+                    ? error.response.data.message 
+                    : error.message
+        })
+    }
+}

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Paginate from '../components/Paginate';
-import SearchBox from '../components/SearchBox';
 import TableCrud from '../components/TableCrud';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
-import { Route } from 'react-router-dom';
+import { Route, Link } from 'react-router-dom';
 import HeaderContent from '../components/HeaderContent';
 import  Modal  from 'react-modal';
 import Input from '../components/form/Input';
@@ -13,6 +12,7 @@ import { listTables } from '../actions/tableActions';
 import { createTable } from '../actions/tableActions';
 import { customStyles } from '../utils';
 import ModalButton from './../components/ModalButton';
+import SearchBoxMini from './../components/SearchBoxMini';
 
 
 
@@ -100,12 +100,13 @@ const TableScreen = ({history, match}) => {
                 <div className="col-12">
         
                   <Loader variable={createLoading} />
-                  <Message message={createError} color={'danger'}/>
-                  <Route render={({history}) => <SearchBox history={history} item={'table'}/>} />
-                  
+                  <Message message={createError} color={'danger'}/>                  
                   <div className="card">
                     <div className="card-header">
                       <h3 className="card-title">Tables</h3>
+                      <div className="card-tools">
+                            <Route render={({history}) => <SearchBoxMini history={history} item={'table'}/>} />
+                        </div>
                     </div>
                     {/* /.card-header */}
                     <div className="card-body table-responsive p-0">
@@ -117,18 +118,40 @@ const TableScreen = ({history, match}) => {
                       <Message message={error} color={'danger'} />
                       : (
                       <>
-                      <TableCrud  data={tables} itemLink={'table'}/>
-                      
-                      <Paginate 
-                            item={'table'}
-                            pages={pages} 
-                            page={page} 
-                            keyword={keyword ? keyword : null} />
+                        <table className="table table-hover text-nowrap">
+                          <thead>
+                              <tr>
+                              <th >ID</th>
+                              <th>Name</th> 
+                              <th >Occupied</th> 
+                              <th className="d-none d-sm-table-cell">Created At</th>
+                              <th></th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                        
+                          {tables.map(table => (
+                                  <tr key={table.id}>
+                                      <td>{table.id}</td>
+                                      <td>{table.name}</td>
+                                      <td>{table.occupied ? <h4 className='text-success'><i class="fas fa-check"></i></h4> : <h4 className='text-danger'><i class="far fa-times-circle"></i></h4>}</td>
+                                      <td className="d-none d-sm-table-cell">{table.createdAt.slice(0,10)}</td>
+                                      <td><Link to={`/table/${table.id}/edit`} className='btn btn-warning btn-lg'>Edit</Link></td>
+                                  </tr>
+                              ))}
+                                          
+                          </tbody>
+                        </table>        
                       </>
                       )}
                     </div>
                     {/* /.card-body */}
                   </div>
+                      <Paginate 
+                            item={'table'}
+                            pages={pages} 
+                            page={page} 
+                            keyword={keyword ? keyword : null} />
         
                 </div>
                 {/* /.col */}

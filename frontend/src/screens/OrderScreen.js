@@ -63,7 +63,8 @@ const OrderScreen = ({history, match}) => {
                             <tr>
                             <th>ID</th>
                             <th>Client</th>
-                            <th>Table</th>
+                            <th className="d-none d-sm-table-cell">Table</th>
+                            
                             <th>Paid</th>
                             <th>Total</th>
                             <th></th>
@@ -75,7 +76,7 @@ const OrderScreen = ({history, match}) => {
                                 <tr key={order.id}>
                                     <td>{order.id}</td>
                                     <td>{order.client.name}</td>
-                                    <td>
+                                    <td className="d-none d-sm-table-cell">
                                         <h4>
                                             {order.table 
                                             ? <span className={'badge bg-primary'}>{order.table.name}</span> 
@@ -83,7 +84,7 @@ const OrderScreen = ({history, match}) => {
                                         </h4>
                                     </td>
                                     <td>{order.isPaid ? <h4 className='text-success'><i class="fas fa-check"></i></h4> : <h4 className='text-danger'><i class="far fa-times-circle"></i></h4>}</td>
-                                    <td>
+                                    <td className="d-none d-sm-table-cell">
                                         <h4>
                                             <span className={'badge bg-success'}>${order.total}</span> 
                                         </h4>

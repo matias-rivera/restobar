@@ -9,8 +9,8 @@ const DeliveryListItem = ({id, name, address}) => {
                     <h1 ><i className="fas fa-truck"  /></h1>
                 </div>
                 <div className="product-info">
-                <a href="javascript:void(0)" className="product-title">{name}
-                <span className="badge badge-info float-right">ID: {id}</span></a>
+                <span className="product-title">{name}
+                <span className="badge badge-info float-right">ID: {id}</span></span>
                 <span className="product-description">
                     {address}
                 </span>

@@ -10,6 +10,7 @@ import { PRODUCT_UPDATE_RESET, PRODUCT_DETAILS_RESET, PRODUCT_DELETE_RESET } fro
 import Select from '../components/form/Select';
 import Input from '../components/form/Input';
 import HeaderContent from '../components/HeaderContent';
+import ButtonGoBack from '../components/ButtonGoBack';
 
 
 const ProductEditScreen = ({history, match}) => {
@@ -131,12 +132,9 @@ const ProductEditScreen = ({history, match}) => {
   
   <section className="content">
     <div className="container-fluid">
-      <div className="row">
-        <div className="col-12">
-        <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button>
-        <Link to='/product' className='btn btn-info'>
-                Go Back
-        </Link>
+      <ButtonGoBack link={'product'} />
+      <div className="row justify-content-center">
+        <div className="col-12 col-md-6">
         
           <div className="card">
             <div className="card-header">
@@ -165,6 +163,7 @@ const ProductEditScreen = ({history, match}) => {
 
 
                     <hr/>
+                    <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button>
                     <button type="submit" className="btn btn-success">Submit</button>
               </form>
             )

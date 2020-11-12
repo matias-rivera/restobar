@@ -129,38 +129,41 @@ const DashboardScreen = ({history}) => {
                             </div>
                             <div className="card-body p-0">
                                 <div className="table-responsive">
+                                {loadingAllOrders 
+                                    ?   <Loader variable={loadingAllOrders}/>
+                                    :   errorAllOrders
+                                    ?   <Message message={errorAllOrders} color={'danger'} />
+                                    : (
+
                                 <table className="table m-0 table-hover">
                                     <thead>
                                     <tr>
                                         <th>Order ID</th>
                                         <th>Client</th>
                                         <th>Table</th>
-                                        <th>Total</th>
+                                        <th >Total</th>
                                     </tr>
                                     </thead>
                                         <tbody>
-                                    {loadingAllOrders 
-                                    ?   <Loader variable={loadingAllOrders}/>
-                                    :   errorAllOrders
-                                    ?   <Message message={errorAllOrders} color={'danger'} />
-                                    : (
+                                    
                                     
                                        
-                                        ordersInPlace(allOrders).splice(0,5).map(order => (
+                                       { ordersInPlace(allOrders).splice(0,5).map(order => (
                                             <tr key={order.id} onClick={(e) => handleRowClick(e,order.id)} style={{cursor:'pointer'}}>
                                                     <td><h4><span className={'badge bg-primary'}>{order.id} </span></h4></td>
                                                     <td>{order.client ? order.client.name : ''}</td>
                                                     <td>{order.table ? order.table.name : ''}</td>
                                                     <td><h4><span className={'badge bg-success'} >${order.total} </span></h4></td>
                                             </tr>
-                                        ))
+                                        ))}
 
                                     
-                                    )}
+                                   
                                     
                                     </tbody>
                                 </table>
-                                </div>
+                                )}
+                               </div>
                             </div>
                             <div className="card-footer clearfix">
                                 <Link to={'/order/create'} className="btn btn-sm btn-info float-left">Place New Order</Link>

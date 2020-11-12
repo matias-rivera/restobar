@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Paginate from './../components/Paginate';
-import SearchBox from './../components/SearchBox';
 import TableCrud from './../components/TableCrud';
 import Loader from './../components/Loader';
 import Message from './../components/Message';
-import { Route } from 'react-router-dom';
+import { Route, Link } from 'react-router-dom';
 import HeaderContent from '../components/HeaderContent';
 import  Modal  from 'react-modal';
 import Input from '../components/form/Input';
 import { createClient, listClients } from '../actions/clientActions';
 import { customStyles } from '../utils';
 import ModalButton from '../components/ModalButton';
+import SearchBoxMini from './../components/SearchBoxMini';
 
 Modal.setAppElement('#root')
 
@@ -126,11 +126,13 @@ const ClientScreen = ({history, match}) => {
         
                   <Loader variable={createLoading} />
                   <Message message={createError} color={'danger'}/>
-                  <Route render={({history}) => <SearchBox history={history} item={'client'}/>} />
                   
                   <div className="card">
                     <div className="card-header">
                       <h3 className="card-title">Clients</h3>
+                      <div className="card-tools">
+                        <Route render={({history}) => <SearchBoxMini history={history} item={'client'}/>} />
+                      </div>
                     </div>
                     {/* /.card-header */}
                     <div className="card-body table-responsive p-0">
@@ -142,19 +144,48 @@ const ClientScreen = ({history, match}) => {
                       <Message message={error} color={'danger'} />
                       : (
                       <>
-                      <TableCrud  data={clients} itemLink={'client'}/>
+                        <table className="table table-hover text-nowrap">
+                          <thead>
+                              <tr>
+                              <th >ID</th>
+                              <th>Name</th> 
+                              <th className="d-none d-sm-table-cell">Address</th>
+                              <th className="d-none d-sm-table-cell">Phone</th>
+                              <th className="d-none d-sm-table-cell">Email</th>
+                              <th className="d-none d-sm-table-cell">DNI</th>
+                              <th className="d-none d-sm-table-cell">Created At</th>
+                              <th></th>
+                              </tr>
+                          </thead>
+                                                      <tbody>
+                          
+                          {clients.map(client => (
+                                  <tr key={client.id}>
+                                      <td>{client.id}</td>
+                                      <td>{client.name}</td>
+                                      <td className="d-none d-sm-table-cell">{client.address}</td>
+                                      <td className="d-none d-sm-table-cell">{client.phone}</td>
+                                      <td className="d-none d-sm-table-cell">{client.email}</td>
+                                      <td className="d-none d-sm-table-cell">{client.dni}</td>
+                                      <td className="d-none d-sm-table-cell">{client.createdAt.slice(0,10)}</td>
+                                      <td><Link to={`/client/${client.id}/edit`} className='btn btn-warning btn-lg'>Edit</Link></td>
+                                  </tr>
+                              ))}
+                                          
+                          </tbody>
+                        </table>
                       
-                      <Paginate 
-                            item={'client'}
-                            pages={pages} 
-                            page={page} 
-                            keyword={keyword ? keyword : null} />
                       </>
                       )}
                     </div>
                     {/* /.card-body */}
                   </div>
         
+                      <Paginate 
+                            item={'client'}
+                            pages={pages} 
+                            page={page} 
+                            keyword={keyword ? keyword : null} />
                 </div>
                 {/* /.col */}
               </div>

@@ -154,7 +154,7 @@ exports.updateUser = asyncHandler(async (req, res) =>{
     if(user){
         user.name = name
         user.email = email
-        user.password = bcrypt.hashSync(password, salt)
+        user.password = password ? bcrypt.hashSync(password, salt) : user.password
         user.isAdmin = isAdmin
         const updatedUser =  await user.save()
         res.json(updatedUser)
@@ -162,6 +162,33 @@ exports.updateUser = asyncHandler(async (req, res) =>{
         res.status(404)
         throw new Error('User not found')
     }
+
+})
+
+//@desc     Update user
+//@route    PUT /api/users/:id
+//@access   Private/admin
+exports.updateProfile = asyncHandler(async (req, res) =>{
+    
+    const { id, name, email, password, passwordCheck } = req.body
+
+    const user = await User.scope('withPassword').findByPk(req.params.id)
+
+    const salt = bcrypt.genSaltSync(10)
+
+    if(user && (await user.validPassword(passwordCheck))){
+        
+            user.name = name
+            user.email = email
+            user.password = password ? bcrypt.hashSync(password, salt) : user.password
+            const updatedUser =  await user.save()
+            res.json(updatedUser)
+
+    } else {
+        res.status(404)
+        throw new Error('Invalid Password')
+    }
+
 
 })
 

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Paginate from './../components/Paginate';
-import SearchBox from './../components/SearchBox';
 import TableCrud from './../components/TableCrud';
 import Loader from './../components/Loader';
 import Message from './../components/Message';
-import { Route } from 'react-router-dom';
+import { Route, Link } from 'react-router-dom';
 import { listProducts, createProduct } from './../actions/productActions';
 import HeaderContent from '../components/HeaderContent';
 import  Modal  from 'react-modal';
@@ -14,6 +13,7 @@ import Select from '../components/form/Select';
 import { allCategories } from './../actions/categoryActions';
 import { customStyles } from '../utils';
 import ModalButton from '../components/ModalButton';
+import SearchBoxMini from './../components/SearchBoxMini';
 
 
 Modal.setAppElement('#root')
@@ -132,11 +132,13 @@ const ProductScreen = ({history, match}) => {
         
                   <Loader variable={createLoading} />
                   <Message message={createError} color={'danger'}/>
-                  <Route render={({history}) => <SearchBox history={history} item={'product'}/>} />
                   
                   <div className="card">
                     <div className="card-header">
                       <h3 className="card-title">Products table</h3>
+                      <div className="card-tools">
+                          <Route render={({history}) => <SearchBoxMini history={history} item={'product'}/>} />
+                      </div>
                     </div>
                     {/* /.card-header */}
                     <div className="card-body table-responsive p-0">
@@ -148,18 +150,44 @@ const ProductScreen = ({history, match}) => {
                       <Message message={error} color={'danger'} />
                       : (
                       <>
-                      <TableCrud  data={products} itemLink={'product'}/>
-                      
-                      <Paginate 
-                            item={'product'}
-                            pages={pages} 
-                            page={page} 
-                            keyword={keyword ? keyword : null} />
+                        <table className="table table-hover text-nowrap">
+                          <thead>
+                              <tr>
+                              <th>ID</th>
+                              <th>Name</th> 
+                              <th>Price</th>
+                              <th>Stock</th>
+                              <th className="d-none d-sm-table-cell">Created At</th>
+                              <th className="d-none d-sm-table-cell">Category</th>
+                              <th></th>
+                              </tr>
+                          </thead>
+                                                      <tbody>
+                          
+                          {products.map(product => (
+                                  <tr key={product.id}>
+                                      <td>{product.id}</td>
+                                      <td>{product.name}</td>
+                                      <td>{product.price}</td>
+                                      <td>{product.stock}</td>
+                                      <td className="d-none d-sm-table-cell">{product.createdAt.slice(0,10)}</td>
+                                      <td className="d-none d-sm-table-cell">{product.category.name}</td>
+                                      <td><Link to={`/product/${product.id}/edit`} className='btn btn-warning btn-lg'>Edit</Link></td>
+                                  </tr>
+                              ))}
+                                          
+                          </tbody>
+                        </table>
                       </>
                       )}
                     </div>
                     {/* /.card-body */}
                   </div>
+                      <Paginate 
+                            item={'product'}
+                            pages={pages} 
+                            page={page} 
+                            keyword={keyword ? keyword : null} />
         
                 </div>
                 {/* /.col */}

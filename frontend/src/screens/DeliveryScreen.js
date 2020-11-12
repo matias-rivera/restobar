@@ -66,8 +66,8 @@ const DeliveryScreen = ({history, match}) => {
                             <tr>
                             <th>ID</th>
                             <th>Client</th>
-                            <th>Address</th>
-                            <th>Phone</th>
+                            <th className="d-none d-sm-table-cell" >Address</th>
+                            <th className="d-none d-sm-table-cell" >Phone</th>
                             <th>Check</th>
                             </tr>
                         </thead>
@@ -77,8 +77,8 @@ const DeliveryScreen = ({history, match}) => {
                                 <tr key={order.id}>
                                     <td>{order.id}</td>
                                     <td>{order.client.name}</td>
-                                    <td>{order.client.address}</td>
-                                    <td>{order.client.phone}</td>
+                                    <td className="d-none d-sm-table-cell" >{order.client.address}</td>
+                                    <td className="d-none d-sm-table-cell" >{order.client.phone}</td>
                                     <td><Link to={`/order/${order.id}/view`} className='btn btn-info btn-lg'>View</Link></td>
                                 </tr>
                             ))}

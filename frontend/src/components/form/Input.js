@@ -1,15 +1,14 @@
 import React from 'react';
 import { capitalize } from '../../utils';
-import Message from '../Message';
 
 
-const Input = ({name, type, data, setData, errors}) => {
+const Input = ({name, type, data, setData, errors, classes=''}) => {
     return ( 
             <div className="form-group">
                 <label htmlFor={name}>{capitalize(name)}</label>
                 <input 
                     type={type} 
-                    className="form-control" 
+                    className={`form-control ${classes}`} 
                     id={name} 
                     aria-describedby={name}  
                     value={data}

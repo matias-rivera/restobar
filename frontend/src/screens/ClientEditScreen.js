@@ -7,6 +7,7 @@ import Input from '../components/form/Input';
 import HeaderContent from '../components/HeaderContent';
 import { CLIENT_DELETE_RESET, CLIENT_DETAILS_RESET, CLIENT_UPDATE_RESET } from '../constants/clientConstants';
 import { deleteClient, listClientDetails, updateClient } from '../actions/clientActions';
+import ButtonGoBack from './../components/ButtonGoBack';
 
 
 
@@ -130,12 +131,9 @@ const ClientEditScreen = ({history, match}) => {
   
   <section className="content">
     <div className="container-fluid">
-      <div className="row">
-        <div className="col-12">
-        <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button>
-        <Link to='/client' className='btn btn-info'>
-                Go Back
-        </Link>
+      <ButtonGoBack link={'client'} />
+      <div className="row justify-content-center">
+        <div className="col-12 col-md-6">
         
           <div className="card">
             <div className="card-header">
@@ -162,6 +160,7 @@ const ClientEditScreen = ({history, match}) => {
 
 
                     <hr/>
+                    <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button>
                     <button type="submit" className="btn btn-success">Submit</button>
               </form>
             )

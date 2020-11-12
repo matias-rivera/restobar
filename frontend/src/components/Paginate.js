@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 const Paginate = ({ item, pages, page, keyword = null }) => {
     return pages > 1 && (
         <ul className="pagination"  >
-            <Link style={{ pointerEvents: page > 1 ? '' : 'none'}} to={
+            <Link  style={{ pointerEvents: page > 1 ? '' : 'none'}} to={
                keyword 
                ? `/${item}/search/${keyword}/page/${page-1}`
                : `/${item}/page/${page-1}`
@@ -27,7 +27,7 @@ const Paginate = ({ item, pages, page, keyword = null }) => {
                     </>
 
             ))}
-            <Link style={{ pointerEvents: page < pages ? '' : 'none'}} to={
+            <Link  style={{ pointerEvents: page < pages ? '' : 'none'}} to={
                keyword 
                ? `/${item}/search/${keyword}/page/${page+1}`
                : `/${item}/page/${page+1}`

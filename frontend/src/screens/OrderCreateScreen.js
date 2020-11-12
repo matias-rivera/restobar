@@ -16,6 +16,7 @@ import { PRODUCT_LIST_RESET } from '../constants/productConstants';
 import { TABLE_ALL_FREE_RESET } from '../constants/tableConstants';
 import { CLIENT_ALL_RESET } from '../constants/clientConstants';
 import { ORDER_CREATE_RESET } from '../constants/orderConstants';
+import ButtonGoBack from './../components/ButtonGoBack';
 
 
 
@@ -214,11 +215,9 @@ const OrderCreateScreen = ({history, match}) => {
   {/* Main content */}
   <section className="content">
     <div className="container-fluid">
+      <ButtonGoBack link={'order'} />
       <div className="row">
         <div className="col-12">
-        <Link to='/order' className='btn btn-info'>
-                Go Back
-        </Link>
         
           <div className="card">
             <div className="card-header">

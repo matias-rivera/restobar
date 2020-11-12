@@ -6,6 +6,7 @@ import Loader from '../components/Loader';
 import HeaderContent from '../components/HeaderContent';
 import { listOrderDetails, updateOrderToPaid } from '../actions/orderActions';
 import { ORDER_UPDATE_RESET } from '../constants/orderConstants';
+import ButtonGoBack from '../components/ButtonGoBack';
 
 
 
@@ -120,9 +121,7 @@ const OrderViewScreen = ({history, match}) => {
     <div className="container-fluid">
       <div className="row">
         <div className="col-12">
-        <Link to={'/order'} className='btn btn-info btn-lg mb-2'>
-                Go Back
-        </Link>
+        <ButtonGoBack link={'order'} />
         
           <div className="card">
             <div className="card-header">
@@ -181,7 +180,7 @@ const OrderViewScreen = ({history, match}) => {
                 <div className='row'>
 
                   <div className='col-12 col-md-6'>
-                    <div className="small-box bg-warning">
+                    <div className="small-box bg-info">
                       <div className="inner">
                         <h3>{order.id }</h3>
                         <p>ORDER ID </p>
@@ -223,7 +222,7 @@ const OrderViewScreen = ({history, match}) => {
                   }
 
                   <div className='col-12 col-md-6'>
-                    <div className="small-box bg-primary">
+                    <div className="small-box bg-info">
                       <div className="inner">
                         <h3>{client.name}</h3>
                         <p>ID: {client.id } </p>

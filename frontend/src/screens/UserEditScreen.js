@@ -8,6 +8,7 @@ import Loader from './../components/Loader';
 import HeaderContent from './../components/HeaderContent';
 import Input from './../components/form/Input';
 import Checkbox from './../components/form/Checkbox';
+import ButtonGoBack from './../components/ButtonGoBack';
 
 
 const UserEditScreen = ({history, match}) => {
@@ -67,16 +68,16 @@ const UserEditScreen = ({history, match}) => {
 
         let errorsCheck = {}
         if(!name){
-          errorsCheck.name = 'Name is required'
+          errorsCheck.name = 'Name is required.'
         }
-        if(!password){
-          errorsCheck.password = 'Password is required'
+        if(password > 1 && password < 6){
+          errorsCheck.password = 'Password must be at least 6 characters long.'
         }
   
         if(!email){
-          errorsCheck.email = 'Email is required'
+          errorsCheck.email = 'Email is required.'
         }
-  
+   
         if(Object.keys(errorsCheck).length > 0){
           setErrors(errorsCheck)
         }else{
@@ -88,7 +89,7 @@ const UserEditScreen = ({history, match}) => {
                 id: userId,
                 name,
                 email,
-                password,
+                password, 
                 isAdmin
 
             }))
@@ -111,14 +112,9 @@ const UserEditScreen = ({history, match}) => {
   
   <section className="content">
     <div className="container-fluid">
-      <div className="row">
-        <div className="col-12">
-
-        <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button>
-        <Link to='/user' className='btn btn-info'>
-                Go Back
-        </Link>
-        
+      <ButtonGoBack link={'user'} />
+      <div className="row justify-content-center">
+        <div className="col-12 col-md-6">        
           <div className="card">
             <div className="card-header">
               <h3 className="card-title">Edit User</h3>
@@ -136,6 +132,7 @@ const UserEditScreen = ({history, match}) => {
                     <Input name={'password'} type={'password'} data={password} setData={setPassword} errors={errors}/>
                     <Checkbox name={'Admin'} data={isAdmin} setData={setIsAdmin} />
                     <hr/>
+                    <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button>
                     <button type="submit" className="btn btn-success">Submit</button>
                 </form>
             </div>

@@ -8,6 +8,7 @@ import HeaderContent from '../components/HeaderContent';
 import { TABLE_UPDATE_RESET, TABLE_DETAILS_RESET, TABLE_DELETE_RESET } from './../constants/tableConstants';
 import { listTableDetails, deleteTable, updateTable } from '../actions/tableActions';
 import Checkbox from '../components/form/Checkbox';
+import ButtonGoBack from './../components/ButtonGoBack';
 
 
 
@@ -110,12 +111,9 @@ const TableEditScreen = ({history, match}) => {
   
   <section className="content">
     <div className="container-fluid">
-      <div className="row">
-        <div className="col-12">
-        <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button>
-        <Link to='/table' className='btn btn-info'>
-                Go Back
-        </Link>
+      <ButtonGoBack link={'table'} />
+      <div className="row justify-content-center">
+        <div className="col-12 col-md-6">
         
           <div className="card">
             <div className="card-header">
@@ -138,6 +136,7 @@ const TableEditScreen = ({history, match}) => {
                 <Checkbox name={'occupied'} data={occupied} setData={setOccupied} />
 
                 <hr/>
+                <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button>
                 <button type="submit" className="btn btn-success">Submit</button>
               </form>
             )

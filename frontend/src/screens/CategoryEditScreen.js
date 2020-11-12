@@ -7,6 +7,7 @@ import { CATEGORY_UPDATE_RESET, CATEGORY_DETAILS_RESET, CATEGORY_DELETE_RESET } 
 import { updateCategory, deleteCategory,listCategoryDetails } from './../actions/categoryActions';
 import HeaderContent from '../components/HeaderContent';
 import Input from '../components/form/Input';
+import ButtonGoBack from './../components/ButtonGoBack';
 
 
 const CategoryEditScreen = ({history, match}) => {
@@ -97,13 +98,10 @@ const CategoryEditScreen = ({history, match}) => {
   
   <section className="content">
     <div className="container-fluid">
-      <div className="row">
-        <div className="col-12">
+      <ButtonGoBack link={'category'} />
+      <div className="row justify-content-center">
+        <div className="col-12 col-md-6">
 
-        <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button>
-        <Link to='/category' className='btn btn-info'>
-                Go Back
-        </Link>
         
           <div className="card">
             <div className="card-header">
@@ -122,6 +120,7 @@ const CategoryEditScreen = ({history, match}) => {
                 <form onSubmit={handleSubmit}>
                   <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors} />
                     <hr/>
+                    <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button>
                     <button type="submit" className="btn btn-success">Submit</button>
                 </form>
 

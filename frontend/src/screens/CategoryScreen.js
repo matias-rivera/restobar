@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Paginate from './../components/Paginate';
-import SearchBox from './../components/SearchBox';
 import TableCrud from './../components/TableCrud';
 import Loader from './../components/Loader';
 import Message from './../components/Message';
 import { createCategory, listCategories } from './../actions/categoryActions';
-import { Route } from 'react-router-dom';
+import { Route, Link } from 'react-router-dom';
 import HeaderContent from '../components/HeaderContent';
 import ModalButton from './../components/ModalButton';
 import { customStyles } from '../utils';
 import  Modal  from 'react-modal';
 import Input from '../components/form/Input';
+import SearchBoxMini from '../components/SearchBoxMini';
+
 
 const CategoryScreen = ({history, match}) => {
 
@@ -100,12 +101,13 @@ const CategoryScreen = ({history, match}) => {
         <div className="col-12">
           <Loader variable={createLoading} />
           <Message message={createError} color={'danger'}/>
-
-          <Route render={({history}) => <SearchBox history={history} item={'category'}/>} />
           
           <div className="card">
             <div className="card-header">
               <h3 className="card-title">Categories table</h3>
+              <div className="card-tools">
+                  <Route render={({history}) => <SearchBoxMini history={history} item={'category'}/>} />
+              </div>
 
             </div>
             {/* /.card-header */}
@@ -118,19 +120,39 @@ const CategoryScreen = ({history, match}) => {
               <Message message={error} color={'danger'} />
               : (
               <>
-              <TableCrud  data={categories} itemLink={'category'}/>
-              
-              <Paginate 
-                    item={'category'}
-                    pages={pages} 
-                    page={page} 
-                    keyword={keyword ? keyword : null} />
+                <table className="table table-hover text-nowrap">
+                  <thead>
+                      <tr>
+                      <th >ID</th>
+                      <th>Name</th> 
+                      <th className="d-none d-sm-table-cell">Created At</th>
+                      <th></th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                
+                  {categories.map(category => (
+                          <tr key={category.id}>
+                              <td>{category.id}</td>
+                              <td>{category.name}</td>
+                              <td className="d-none d-sm-table-cell">{category.createdAt.slice(0,10)}</td>
+                              <td><Link to={`/category/${category.id}/edit`} className='btn btn-warning btn-lg'>Edit</Link></td>
+                          </tr>
+                      ))}
+                                  
+                  </tbody>
+                </table>
               </>
               )}
             </div>
             {/* /.card-body */}
           </div>
 
+              <Paginate 
+                    item={'category'}
+                    pages={pages} 
+                    page={page} 
+                    keyword={keyword ? keyword : null} />
         </div>
         {/* /.col */}
       </div>

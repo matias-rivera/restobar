@@ -26,6 +26,7 @@ import PrivateRoute from './auth/PrivateRoute';
 import NotFoundScreen from './screens/NotFoundScreen';
 import AdminRoute from './auth/AdminRoute';
 import NotAuthorizedScreen from './screens/NotAuthorizedScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
 
 const Main = ({history}) => {
@@ -49,6 +50,7 @@ const Main = ({history}) => {
             <Switch>
 
                 <Route path='/active' exact component={ActiveOrdersScreen} />
+                <Route path='/profile' exact component={ProfileScreen} />
                  {/* <Route path='/active' exact component={ActiveOrdersScreen} />  */}
                 <AdminRoute path='/user/:id/edit' component={UserEditScreen}/>
                 <AdminRoute path='/user/page/:pageNumber' component={UserScreen} exact/>

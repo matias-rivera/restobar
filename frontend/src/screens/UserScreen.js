@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { listUsers, register } from './../actions/userActions';
-import { Route } from 'react-router-dom';
+import { Route, Link } from 'react-router-dom';
 import Paginate from './../components/Paginate';
-import SearchBox from './../components/SearchBox';
 import TableCrud from './../components/TableCrud';
 import Loader from './../components/Loader';
 import Message from './../components/Message';
@@ -13,6 +12,7 @@ import ModalButton from '../components/ModalButton';
 import Modal from 'react-modal';
 import { customStyles } from '../utils';
 import Checkbox from '../components/form/Checkbox';
+import SearchBoxMini from '../components/SearchBoxMini';
 
 
 
@@ -124,12 +124,13 @@ const UserScreen = ({history, match}) => {
   
 
           <Loader variable={createLoading} />
-          <Message message={createError} color={'danger'}/>
-          <Route render={({history}) => <SearchBox history={history} item={'user'}/>} />
-          
+          <Message message={createError} color={'danger'}/>          
           <div className="card">
             <div className="card-header">
               <h3 className="card-title">Users table</h3>
+              <div className="card-tools">
+                  <Route render={({history}) => <SearchBoxMini history={history} item={'user'}/>} />
+              </div>
              
             </div>
             {/* /.card-header */}
@@ -142,18 +143,43 @@ const UserScreen = ({history, match}) => {
               <Message message={error} color={'danger'} />
               : (
               <>
-              <TableCrud data={users} itemLink={'user'}/>
+                <table className="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                        <th className="d-none d-sm-table-cell">ID</th>
+                        <th>Name</th> 
+                        <th>Email</th>
+                        <th className="d-none d-sm-table-cell">Admin</th>
+                        <th className="d-none d-sm-table-cell">Created At</th>
+                        <th></th>
+                        </tr>
+                    </thead>
+                                                <tbody>
+                    
+                    {users.map(user => (
+                            <tr key={user.id}>
+                                <td className="d-none d-sm-table-cell" >{user.id}</td>
+                                <td>{user.name}</td>
+                                <td>{user.email}</td>
+                                <td className="d-none d-sm-table-cell">{user.isAdmin ? 'Yes' : 'No'}</td>
+                                <td className="d-none d-sm-table-cell">{user.createdAt.slice(0,10)}</td>
+                                <td><Link to={`/user/${user.id}/edit`} className='btn btn-warning btn-lg'>Edit</Link></td>
+                            </tr>
+                        ))}
+                                    
+                    </tbody>
+                  </table>
               
-              <Paginate 
-                    item={'user'}
-                    pages={pages} 
-                    page={page} 
-                    keyword={keyword ? keyword : null} />
               </>
               )}
             </div>
             {/* /.card-body */}
           </div>
+              <Paginate 
+                    item={'user'}
+                    pages={pages} 
+                    page={page} 
+                    keyword={keyword ? keyword : null} />
 
         </div>
         {/* /.col */}
