@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import HeaderContent from '../components/HeaderContent';
-import { listOrderDetails, updateOrder } from '../actions/orderActions';
+import { listOrderDetails, updateOrderToPaid } from '../actions/orderActions';
 import { ORDER_UPDATE_RESET } from '../constants/orderConstants';
 
 
@@ -13,10 +13,6 @@ import { ORDER_UPDATE_RESET } from '../constants/orderConstants';
 const OrderViewScreen = ({history, match}) => {
 
     const orderId = parseInt(match.params.id)
-
-
-    const keyword = match.params.keyword || ''
-    const pageNumber = match.params.pageNumber || 1
 
     const [table, setTable] = useState({})
     const [client, setClient] = useState({})
@@ -40,9 +36,6 @@ const OrderViewScreen = ({history, match}) => {
     const {loading:loadingUpdate, success: successUpdate,errorUpdate} = orderUpdate
 
     
-
-
-
     useEffect( () => {
 
       if(successUpdate){
@@ -81,7 +74,7 @@ const OrderViewScreen = ({history, match}) => {
 
         }
       }
-    },[dispatch, history, keyword, pageNumber, error, orderId, order, successUpdate])
+    },[dispatch, history, error, orderId, order, successUpdate])
 
 
     const handlePay = (e) => {
@@ -91,12 +84,17 @@ const OrderViewScreen = ({history, match}) => {
         id: orderId,
         total: totalPrice(productsInOrder),
         client: client.id,
-        table: !delivery ? table.id : null,
+        table: table ? table.id : null,
         products: productsInOrder,
         delivery: delivery
       }
 
-      dispatch(updateOrder(updatedOrder))
+      dispatch(updateOrderToPaid(updatedOrder))
+    }
+
+    const handleEdit = (e) => {
+      e.preventDefault()
+      history.push(`/order/${orderId}/edit`)
     }
 
 
@@ -189,7 +187,7 @@ const OrderViewScreen = ({history, match}) => {
                         <p>ORDER ID </p>
                       </div>
                       <div className="icon">
-                        <i className="fas fa-user" />
+                      <i className="far fa-clipboard"></i>
                       </div>
                     </div>
                   </div>
@@ -284,9 +282,30 @@ const OrderViewScreen = ({history, match}) => {
         {/* /.col */}
       </div>
       {/* /.row */}
-      <div className='row'>
-        <div className='col-12 col-md-9'>
-  
+      <div className='row justify-content-between'>
+        <div className='col-12 col-md-3'>
+        {!order.isPaid
+            ? (
+              <div className='card'>
+                <div className='card-header bg-warning'>
+                  Edit Order
+                </div>
+                <div className='card-body'>
+                  <button className='btn btn-block' onClick={(e) => handleEdit(e)}>
+                    <div className="small-box bg-warning">
+                        <div className="inner">
+                          <h3 className='text-left'>Edit Order</h3>
+                          <p className='text-center'>Click to Edit</p>
+                        </div>
+                        <div className="icon" >
+                        <i class="fas fa-edit"></i>
+                        </div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            ) 
+          : ''}
         </div>
         <div className='col-12 col-md-3'>
             {!order.isPaid

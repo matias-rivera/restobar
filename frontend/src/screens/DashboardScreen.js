@@ -143,8 +143,8 @@ const DashboardScreen = ({history}) => {
                                             {ordersInPlace(allOrders).splice(0,5).map(order => (
                                                 <tr key={order.id} onClick={(e) => handleRowClick(e,order.id)} style={{cursor:'pointer'}}>
                                                         <td><h4><span className={'badge bg-primary'}>{order.id} </span></h4></td>
-                                                        <td>{order.client.name}</td>
-                                                        <td>{order.table.name}</td>
+                                                        <td>{order.client ? order.client.name : ''}</td>
+                                                        <td>{order.table ? order.table.name : ''}</td>
                                                         <td><h4><span className={'badge bg-success'} >${order.total} </span></h4></td>
                                                 </tr>
                                             ))}
@@ -178,8 +178,8 @@ const DashboardScreen = ({history}) => {
                                     ordersForDelivery(allOrders).splice(0,5).map(order => (
                                         <DeliveryListItem
                                             id={order.id} 
-                                            name={order.client.name}  
-                                            address={order.client.address}
+                                            name={order.client ? order.client.name : ''}  
+                                            address={order.client ? order.client.address: ''}
                                             key={order.id}
                                         />
                                     ))

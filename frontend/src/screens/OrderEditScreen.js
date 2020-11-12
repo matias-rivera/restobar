@@ -3,44 +3,44 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, Route } from 'react-router-dom';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import Input from '../components/form/Input';
 import HeaderContent from '../components/HeaderContent';
+import { listOrderDetails, updateOrder } from '../actions/orderActions';
+import { ORDER_DETAILS_RESET, ORDER_UPDATE_RESET } from '../constants/orderConstants';
+import { allClients } from '../actions/clientActions';
+import { allFreeTables } from '../actions/tableActions';
 import { listProducts } from '../actions/productActions';
 import SearchBox from './../components/SearchBox';
 import Paginate from './../components/Paginate';
 import Select from 'react-select'
-import { allActiveTables, allFreeTables } from '../actions/tableActions';
-import { allClients } from './../actions/clientActions';
-import { createOrder } from '../actions/orderActions';
-import { PRODUCT_LIST_RESET } from '../constants/productConstants';
-import { TABLE_ALL_FREE_RESET } from '../constants/tableConstants';
-import { CLIENT_ALL_RESET } from '../constants/clientConstants';
-import { ORDER_CREATE_RESET } from '../constants/orderConstants';
 
 
-
-
-const OrderCreateScreen = ({history, match}) => {
+const OrderEditScreen = ({history, match}) => {
+    
+    const orderId = parseInt(match.params.id)
 
     const keyword = match.params.keyword || ''
     const pageNumber = match.params.pageNumber || 1
-    const tableFromUrl = match.params.table ? {label:match.params.table, value:match.params.id}  :''
-    const isDelivery = window.location.href.indexOf('delivery') != -1 ? true : false
 
-    const [table, setTable] = useState(match.params.table ? tableFromUrl : null)
-    const [client, setClient] = useState(null)
-    const [delivery, setDelivery] = useState(isDelivery ? true : false)
+    const [table, setTable] = useState({})
+    const [client, setClient] = useState({})
+    const [delivery, setDelivery] = useState(false)
+    const [user, setUser] = useState({})
     const [productsInOrder, setProductsInOrder] = useState([])
+    const [isPaid, setIsPaid] = useState(false)
+    const [total, setTotal] = useState(0)
 
     const dispatch = useDispatch()
 
     const userLogin = useSelector((state) => state.userLogin)
     const {userInfo} = userLogin
  
+    //order details state
+    const orderDetails = useSelector(state => state.orderDetails)
+    const {loading, error, order} = orderDetails
 
-    //order create state
-    const orderCreate = useSelector((state) => state.orderCreate)
-    const {success, loading, error} = orderCreate
+    //order edit state
+    const orderUpdate = useSelector((state) => state.orderUpdate)
+    const {loading:loadingUpdate, success: successUpdate,errorUpdate} = orderUpdate
 
     //product list state
     const productList = useSelector((state) => state.productList)
@@ -54,139 +54,168 @@ const OrderCreateScreen = ({history, match}) => {
     const clientAll = useSelector((state) => state.clientAll)
     const {loading: loadingAllClients, error: errorAllClients, clients} = clientAll
 
+
     useEffect( () => {
 
-      if(success){
-          dispatch({type: PRODUCT_LIST_RESET})
-          dispatch({type: TABLE_ALL_FREE_RESET}) 
-          dispatch({type: CLIENT_ALL_RESET})
-          dispatch({type: ORDER_CREATE_RESET})
-          if(delivery){
-            history.push('/delivery')
-          }else{
-            history.push('/active')
+        if(successUpdate){
+            dispatch({type: ORDER_UPDATE_RESET})
+            dispatch({type: ORDER_DETAILS_RESET})
+            if(delivery){
+              history.push('/delivery')
+            }else{
+              history.push('/active')
+            }
+        }
+        else{
+          
+          //load client data
+          if(!order.id || order.id !== orderId) {
+            dispatch(listOrderDetails(orderId))
+          } else{
+              //set states
+             
+            setTable({
+                label: order.table ? order.table.name : '', 
+                value: order.table ? order.table.id : ''
+            })
+            setClient({
+                label: order.client ? order.client.name : '', 
+                value: order.client ? order.client.id : ''})
+            setUser(order.user)
+            setIsPaid(order.isPaid)
+            setDelivery(order.delivery)
+            setTotal(order.total)
+            const products = order.products.map(product => {
+                return   {
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  stock: product.stock,
+                  quantity: product.orderItem.quantity
+                } 
+              })
+            setProductsInOrder(products)
+            dispatch(listProducts(keyword,pageNumber))
+            dispatch(allFreeTables())
+            dispatch(allClients())
+  
           }
-      }
-      else{
-        
-        dispatch(listProducts(keyword,pageNumber))
-        dispatch(allFreeTables())
-        dispatch(allClients())
-      }
-    },[dispatch, history, success, keyword, pageNumber, error])
+        }
+      },[dispatch, history, keyword, pageNumber, error, orderId, order, successUpdate])
 
-    const handleSubmit = (e) => {
+
+      const handleSubmit = (e) => {
         e.preventDefault()
 
         const order = {
-          total: totalPrice(productsInOrder),
-          table: !delivery ? table.value : 1,
-          client: client.value,
-          products: productsInOrder,
-          delivery: delivery
+            id: orderId,
+            total: totalPrice(productsInOrder),
+            table: !delivery ? table.value : null,
+            client: client.value,
+            products: productsInOrder,
+            delivery: delivery
         }
         
-        console.log(order)
+        dispatch(updateOrder(order))
         
-        dispatch(createOrder(order))
 
 
     }
 
-    //add product to order
-    const addProduct = (e, product) => {
-      e.preventDefault()
-
-      //product object
-        const productIn = {
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          stock: product.stock,
-          quantity: 1
-        }
-        //if is already in order
-        if(!inOrder(productIn, productsInOrder)){
-          setProductsInOrder([...productsInOrder, productIn])
-        }else{
-          alert('Product already in order')
-        }
-
-    }
-
-    //remove product from order
-    const removeProduct = (e, product) => {
-      e.preventDefault()
-
-    //remove product
-      const productsIn = productsInOrder.filter(function (item) {
-        return item.id !== product.id;
-      })
-
-      setProductsInOrder(productsIn)
-    }
-
-    //increase product quantiity
-    const addUnit = (e, product) => {
-      e.preventDefault()
-
-      const newProducts = productsInOrder.map(el => (el.id === product.id ? {...el, quantity:el.quantity+1} : el))
-      setProductsInOrder(newProducts)
-
-    }
-
-    //decrease product quantity
-    const removeUnit = (e, product) =>{
-      e.preventDefault()
-
-      const newProducts = productsInOrder.map(el => (el.id === product.id ? {...el, quantity:el.quantity-1} : el))
-      setProductsInOrder(newProducts)
-
-    }
-
-    //get order total price 
+      //get order total price 
     const totalPrice = (productsIn) => {
-      return productsIn.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2)
-    }
+        return productsIn.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2)
+      }
+  
+      //get all order items
+      const totalItems = (productsIn) => {
+        return productsIn.reduce((acc, item) => acc + item.quantity, 0)
+      }
 
-    //get all order items
-    const totalItems = (productsIn) => {
-      return productsIn.reduce((acc, item) => acc + item.quantity, 0)
-    }
+      //add product to order
+    const addProduct = (e, product) => {
+        e.preventDefault()
+  
+        //product object
+          const productIn = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            stock: product.stock,
+            quantity: 1
+          }
+          //if is already in order
+          if(!inOrder(productIn, productsInOrder)){
+            setProductsInOrder([...productsInOrder, productIn])
+          }else{
+            alert('Product already in order')
+          }
+  
+      }
+  
+      //remove product from order
+      const removeProduct = (e, product) => {
+        e.preventDefault()
+  
+      //remove product
+        const productsIn = productsInOrder.filter(function (item) {
+          return item.id !== product.id;
+        })
+  
+        setProductsInOrder(productsIn)
+      }
+  
+      //increase product quantiity
+      const addUnit = (e, product) => {
+        e.preventDefault()
+  
+        const newProducts = productsInOrder.map(el => (el.id === product.id ? {...el, quantity:el.quantity+1} : el))
+        setProductsInOrder(newProducts)
+  
+      }
+  
+      //decrease product quantity
+      const removeUnit = (e, product) =>{
+        e.preventDefault()
+  
+        const newProducts = productsInOrder.map(el => (el.id === product.id ? {...el, quantity:el.quantity-1} : el))
+        setProductsInOrder(newProducts)
+  
+      }
 
-    //refresh products table
+      //refresh products table
     const refreshProducts = (e) => {
-      e.preventDefault()
-      dispatch(listProducts(keyword,pageNumber))
-    }
-
-    //refresh product in order
-    const refreshProductsInOrder = (e) => {
-      e.preventDefault()
-      let newProducts = productsInOrder
-      for (let index = 0; index < products.length; index++) {
-        newProducts = newProducts.map(el => (el.id === products[index].id ? {...el, stock:products[index].stock} : el))
+        e.preventDefault()
+        dispatch(listProducts(keyword,pageNumber))
       }
-      setProductsInOrder(newProducts)
-    }
-
-    //check if product is already in order
-    const inOrder = (obj, list) => {
-      for (let index = 0; index < list.length; index++) {
-        if (obj.id === list[index].id){
-          return true
+  
+      //refresh product in order
+      const refreshProductsInOrder = (e) => {
+        e.preventDefault()
+        let newProducts = productsInOrder
+        for (let index = 0; index < products.length; index++) {
+          newProducts = newProducts.map(el => (el.id === products[index].id ? {...el, stock:products[index].stock} : el))
         }
+        setProductsInOrder(newProducts)
       }
-      return false
-    }
-
-    const mapSelect = (data) => {
-      const mapped = data.map(table => ({ label: table.name, value: table.id}))
-      return mapped
-    }
-
-
-
+  
+      //check if product is already in order
+      const inOrder = (obj, list) => {
+        for (let index = 0; index < list.length; index++) {
+          if (obj.id === list[index].id){
+            return true
+          }
+        }
+        return false
+      }
+  
+      const mapSelect = (data) => {
+        const mapped = data.map(table => ({ label: table.name, value: table.id}))
+        return mapped
+      }
+  
+  
+    
     return ( 
         <>  
   {/* Content Header (Page header) */}
@@ -297,7 +326,7 @@ const OrderCreateScreen = ({history, match}) => {
                           <button disabled={productIn.quantity < 2} className='btn btn-danger btn-block' onClick={(e) => removeUnit(e,productIn)} >-</button> 
                         </td>
                         <td className='text-center'>
-                          <button disabled={productIn.quantity >= productIn.stock} className='btn btn-primary btn-block' onClick={(e) => addUnit(e,productIn)}>+</button>
+                          <button  className='btn btn-primary btn-block' onClick={(e) => addUnit(e,productIn)}>+</button>
                         </td>
                         <td className='text-center'><h4>${productIn.price * productIn.quantity}</h4></td>
                         <td className='text-center'><button className='btn btn-danger' onClick={(e) => removeProduct(e,productIn)}>X</button></td>
@@ -325,6 +354,7 @@ const OrderCreateScreen = ({history, match}) => {
                         onChange={setClient}
                         placeholder='Select client'
                         isSearchable
+                        value={client}
                       />
                       )}
                   </div>
@@ -398,8 +428,7 @@ const OrderCreateScreen = ({history, match}) => {
 
 
         </>
-        
      );
 }
  
-export default OrderCreateScreen;
+export default OrderEditScreen;

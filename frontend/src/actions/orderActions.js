@@ -210,9 +210,48 @@ export const listOrderDetails = (id) =>  async (dispatch, getState) => {
     }
 }
 
-
 //update a order
 export const updateOrder = (order) => async(dispatch, getState) => {
+    try{
+        dispatch({
+            type: ORDER_UPDATE_REQUEST
+        })
+
+        //get user from state
+        const {userLogin: {userInfo}} = getState()
+        //headers
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        //update order
+        const {data} = await axios.put(
+            `/api/orders/${order.id}`,
+            order,
+            config
+            )
+        dispatch({
+            type: ORDER_UPDATE_SUCCESS,
+            payload: data
+        })
+
+    }catch(error){
+        dispatch({
+            type: ORDER_UPDATE_FAIL,
+            payload: 
+                error.response && error.response.data.message
+                    ? error.response.data.message 
+                    : error.message
+        })
+    }
+}
+
+
+//update a order
+export const updateOrderToPaid = (order) => async(dispatch, getState) => {
     try{
         dispatch({
             type: ORDER_UPDATE_REQUEST

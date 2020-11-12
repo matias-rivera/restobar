@@ -130,6 +130,8 @@ const TableScreen = ({history, match}) => {
             </div>
             {/* /.container-fluid */}
           </section>
+
+
         </>
      );
 }

@@ -5,7 +5,8 @@ const {
     createOrder, 
     getOrders, 
     getOrderItems, 
-    getOrder, 
+    getOrder,
+    updateOrder, 
     updateOrderPay, 
     updateOrderDelivery, 
     deleteOrder,
@@ -40,6 +41,7 @@ router.route('/active/all')
 
 router.route('/:id')
     .get(protect, getOrder)
+    .put(protect, updateOrder)
     .delete(protect, deleteOrder)
 
 router.post('/:id/pay', protect, updateOrderPay)

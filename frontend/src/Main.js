@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom';
 import Header from './components/Header';
 import Menu from './components/Menu';
@@ -19,12 +19,23 @@ import TableEditScreen from './screens/TableEditScreen';
 import ClientEditScreen from './screens/ClientEditScreen';
 import OrderCreateScreen from './screens/OrderCreateScreen';
 import ActiveOrdersScreen from './screens/ActiveOrdersScreen';
-import OrderEditScreen from './screens/OrderViewScreen ';
 import OrderViewScreen from './screens/OrderViewScreen ';
+import OrderEditScreen from './screens/OrderEditScreen';
+import { useDispatch, useSelector } from 'react-redux';
+import PrivateRoute from './auth/PrivateRoute';
 
 
-const Main = () => {
+const Main = ({history}) => {
 
+    const dispatch = useDispatch()
+    const userLogin = useSelector((state) => state.userLogin)
+    const {userInfo} = userLogin
+
+    useEffect(() => {
+        if(!userInfo){
+            history.push('/sign-in')
+        }
+    },[dispatch, userInfo, history])
     
     return ( 
 <>
@@ -34,7 +45,8 @@ const Main = () => {
             <div className='content-wrapper'>
             <Switch>
 
-                <Route path='/active' exact component={ActiveOrdersScreen} />
+                <PrivateRoute path='/active' exact component={ActiveOrdersScreen} />
+                 {/* <Route path='/active' exact component={ActiveOrdersScreen} />  */}
 
                 <Route path='/user/:id/edit' component={UserEditScreen}/>
                 <Route path='/user/page/:pageNumber' component={UserScreen} exact/>
@@ -72,7 +84,6 @@ const Main = () => {
                 <Route path='/table/search/:keyword/page/:pageNumber' component={TableScreen} exact/>
                 <Route path='/table' component={TableScreen} />
 
-                <Route path='/order/:id/view' component={OrderViewScreen}/>
                 <Route path='/order/page/:pageNumber' component={OrderScreen} exact/>
                 <Route path='/order/search/:keyword' component={OrderScreen} exact/>
                 <Route path='/order/search/:keyword/page/:pageNumber' component={OrderScreen} exact/>
@@ -80,6 +91,8 @@ const Main = () => {
                 <Route path='/order/create/page/:pageNumber' component={OrderCreateScreen} />
                 <Route path='/order/create/search/:keyword' component={OrderCreateScreen} />
                 <Route path='/order/create/search/:keyword/page/:pageNumber' component={OrderCreateScreen} />
+                <Route path='/order/:id/edit' component={OrderEditScreen} exact/>
+                <Route path='/order/:id/view' component={OrderViewScreen} exact/>
                 <Route path='/order/create' component={OrderCreateScreen} />
                 <Route path='/order' component={OrderScreen} />
                 <Route path='/' component={DashboardScreen} exact/>

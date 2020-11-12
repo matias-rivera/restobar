@@ -329,8 +329,8 @@ exports.updateOrderPay = asyncHandler(async (req, res) =>{
 
 
   if(order){
-      if(!order.delivery){
-        const table = await Table.findByPk(order.tableId).then()
+      if(order.tableId){
+        const table = await Table.findByPk(order.tableId)
         table.occupied = false
         table.save()
       }
@@ -344,6 +344,162 @@ exports.updateOrderPay = asyncHandler(async (req, res) =>{
   }
 
 })
+
+
+//@desc     Update order
+//@route    PUT /api/orders/:id
+//@access   Private/user
+exports.updateOrder = asyncHandler(async (req, res) =>{
+
+  const order = await Order.findByPk(req.params.id, { include: { all: true, nested:true}})
+  const {total, client, table, delivery, products} = req.body;
+
+
+  //check if product is already in order
+  const inOrder = (obj, list) => {
+    for (let index = 0; index < list.length; index++) {
+      if (obj.id === list[index].id){
+        return true
+      }
+    }
+    return false
+  }
+
+  //return product quantity difference
+  const getProductDifference = (obj, list) => {
+    for (let index = 0; index < list.length; index++) {
+      if (obj.id === list[index].id){
+        return obj.orderItem.quantity - list[index].quantity  
+      }
+    }
+    return 0
+  }
+
+  
+  //check for stock
+  const checkNoStock = async (item, products) => {
+
+    const product = await Product.findByPk(item.id)
+
+    //get difference
+    const difference = getProductDifference(item, products)
+
+    if(difference < 0 && product.stock < Math.abs(difference)){
+      return `Not enough stock of ${product.name}`
+    }
+    return false
+ 
+    
+  }
+
+
+
+  if(order){
+
+    let error = false
+
+    //if product were updated
+    if(parseInt(order.total) !== parseInt(total)){
+
+    
+      await order.getProducts().then(async productsIn => {
+        
+        //get list of products to update
+        const productsToUpdate = productsIn.filter(function (item) {
+          return inOrder(item,products)
+        })
+
+        //check stock
+        const productsCheck = productsToUpdate.map(async product => {
+          await checkNoStock(product,products).then(stock => {
+            if(stock){
+              error = stock
+            }
+          })
+        })
+
+        //wait for stock checking
+        Promise.all(productsCheck).then(() => {
+          //if there is no stock available
+          if(error){
+            res.status(404).json(error)
+          }else{
+            //get list of products to delete
+            const productsToDelete  = productsIn.filter(function (item){
+              return !inOrder(item, products)
+            })
+
+            //Decrease stock for each product added
+            productsToUpdate.map(async product => {
+              
+              const difference = getProductDifference(product,products)
+              const UpdatedProduct = await Product.findByPk(product.id)
+              UpdatedProduct.stock = UpdatedProduct.stock + difference
+              UpdatedProduct.save()
+          })
+            //increase stock of each deleted product
+            productsToDelete.map(async productToDelete => {
+              const productToDeleteUpdated = await Product.findByPk(productToDelete.id)
+              productToDeleteUpdated.stock = productToDeleteUpdated.stock + productToDelete.orderItem.quantity
+              productToDeleteUpdated.save()
+            })
+
+
+            
+
+
+
+            //delete related products
+            order.setProducts(null).then( item => {
+              // create order items
+              products.map(product =>{
+                order.addProduct(product.id,{
+                  through:{quantity: product.quantity}
+                })
+              } )
+            })
+          
+
+            //save
+            order.clientId= client
+            order.delivery = delivery
+            order.tableId = table ? table : null
+            order.save()
+            res.status(200).json('updated')
+          }
+
+        })
+        
+   
+      })
+            
+            
+              
+      
+
+      
+
+    
+    }else{
+      //save
+      order.clientId= client
+      order.delivery = delivery
+      order.tableId = table ? table : null
+      const updatedOrder = await order.save()
+      res.status(200).json(updatedOrder)
+    }
+
+
+  } else {
+      res.status(404)
+      throw new Error('Order not found')
+      
+  }
+ 
+
+
+})
+
 
 //@desc     Update order to delivered
 //@route    POST /api/orders/:id/delivery

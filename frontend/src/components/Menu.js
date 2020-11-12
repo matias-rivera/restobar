@@ -1,12 +1,31 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { Link, Redirect } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
-const Menu = () => {
+const Menu = ({history}) => {
     
+    const dispatch = useDispatch()
 
     const userLogin = useSelector((state) => state.userLogin)
     const {userInfo} = userLogin
+
+    useEffect(() => {
+        if(!userInfo){
+            
+            redirectTo()
+            
+
+        }
+    },[dispatch, userInfo])
+
+    const redirectTo = () => {
+        return <Redirect
+            to={{
+                pathname: "/sign-in",
+                state: { referrer: '/' }
+            }}
+            />
+    }
 
     return ( 
         <aside className="main-sidebar sidebar-dark-primary elevation-4">
@@ -23,7 +42,7 @@ const Menu = () => {
                 <img src="/dist/img/user2-160x160.jpg" className="img-circle elevation-2" alt="User" />
             </div>
             <div className="info">
-                <a href="/" className="d-block">{userInfo.name}</a>
+                <a href="/" className="d-block">{userInfo ? userInfo.name : ''}</a>
             </div>
             </div>
             {/* Sidebar Menu */}
@@ -61,7 +80,7 @@ const Menu = () => {
                     </li>   
                     <li className="nav-item">
                         <Link to='/order' className='nav-link' >
-                            <i className="nav-icon fa fa-edit" /> <p> Orders</p>  
+                            <i className="nav-icon far fa-clipboard" /> <p> Orders</p>  
                         </Link>
                     </li> 
 
