@@ -31,6 +31,7 @@ const OrderCreateScreen = ({history, match}) => {
     const [client, setClient] = useState(null)
     const [delivery, setDelivery] = useState(isDelivery ? true : false)
     const [productsInOrder, setProductsInOrder] = useState([])
+    const [errors, setErrors] = useState({})
 
     const dispatch = useDispatch()
 
@@ -77,19 +78,35 @@ const OrderCreateScreen = ({history, match}) => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
+        let errorsCheck = {}
+        if(!table && !delivery){
+          errorsCheck.table = 'Table is required'
+        }
+        if(!client){
+          errorsCheck.client = 'Client is required'
+        }
 
+        if(productsInOrder.length < 1){
+          errorsCheck.products = 'Cart cannot by empty'
+        }
+
+        if(Object.keys(errorsCheck).length > 0){
+          setErrors(errorsCheck)
+        }else{
+          setErrors({})
+        }
+  
+        if(Object.keys(errorsCheck).length === 0){
         const order = {
           total: totalPrice(productsInOrder),
-          table: !delivery ? table.value : 1,
+          table: table ? table.value : null,
           client: client.value,
           products: productsInOrder,
           delivery: delivery
         }
-        
-        console.log(order)
-        
         dispatch(createOrder(order))
-
+                
+      }
 
     }
 
@@ -97,20 +114,23 @@ const OrderCreateScreen = ({history, match}) => {
     const addProduct = (e, product) => {
       e.preventDefault()
 
-      //product object
-        const productIn = {
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          stock: product.stock,
-          quantity: 1
-        }
-        //if is already in order
-        if(!inOrder(productIn, productsInOrder)){
-          setProductsInOrder([...productsInOrder, productIn])
-        }else{
-          alert('Product already in order')
-        }
+
+        //product object
+          const productIn = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            stock: product.stock,
+            quantity: 1
+          }
+          //if is already in order
+          if(!inOrder(productIn, productsInOrder)){
+            setProductsInOrder([...productsInOrder, productIn])
+          }else{
+            alert('Product already in order')
+          }
+
+      
 
     }
 
@@ -184,7 +204,6 @@ const OrderCreateScreen = ({history, match}) => {
       const mapped = data.map(table => ({ label: table.name, value: table.id}))
       return mapped
     }
-
 
 
     return ( 
@@ -276,6 +295,8 @@ const OrderCreateScreen = ({history, match}) => {
               </div>
 
                 <form onSubmit={handleSubmit}>
+                {errors.products && <Message message={errors.products} color={'warning'} />}
+
                 <table id="orderTable" className="table table-bordered table-hover">
                   <thead>
                     <th></th>
@@ -305,13 +326,8 @@ const OrderCreateScreen = ({history, match}) => {
                     ))
                     ) : 'Add products'}
                   </tbody>
-                
                 </table>
                 <div className="form-row">
-
-
-                  
-
                   <div className="form-group col-md-6">
                   <label htmlFor="client">Client</label>
                   {loadingAllClients
@@ -327,6 +343,7 @@ const OrderCreateScreen = ({history, match}) => {
                         isSearchable
                       />
                       )}
+                      {errors.client && <Message message={errors.client} color={'warning'} />}
                   </div>
 
                   <div className="form-group col-md-6">
@@ -346,6 +363,7 @@ const OrderCreateScreen = ({history, match}) => {
                         isSearchable
                       />
                       )}
+                      {errors.table && <Message message={errors.table} color={'warning'} />}
 
                   </div>
 

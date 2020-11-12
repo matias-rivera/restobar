@@ -138,17 +138,26 @@ const DashboardScreen = ({history}) => {
                                         <th>Total</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
+                                        <tbody>
+                                    {loadingAllOrders 
+                                    ?   <Loader variable={loadingAllOrders}/>
+                                    :   errorAllOrders
+                                    ?   <Message message={errorAllOrders} color={'danger'} />
+                                    : (
+                                    
                                        
-                                            {ordersInPlace(allOrders).splice(0,5).map(order => (
-                                                <tr key={order.id} onClick={(e) => handleRowClick(e,order.id)} style={{cursor:'pointer'}}>
-                                                        <td><h4><span className={'badge bg-primary'}>{order.id} </span></h4></td>
-                                                        <td>{order.client ? order.client.name : ''}</td>
-                                                        <td>{order.table ? order.table.name : ''}</td>
-                                                        <td><h4><span className={'badge bg-success'} >${order.total} </span></h4></td>
-                                                </tr>
-                                            ))}
-  
+                                        ordersInPlace(allOrders).splice(0,5).map(order => (
+                                            <tr key={order.id} onClick={(e) => handleRowClick(e,order.id)} style={{cursor:'pointer'}}>
+                                                    <td><h4><span className={'badge bg-primary'}>{order.id} </span></h4></td>
+                                                    <td>{order.client ? order.client.name : ''}</td>
+                                                    <td>{order.table ? order.table.name : ''}</td>
+                                                    <td><h4><span className={'badge bg-success'} >${order.total} </span></h4></td>
+                                            </tr>
+                                        ))
+
+                                    
+                                    )}
+                                    
                                     </tbody>
                                 </table>
                                 </div>
@@ -174,15 +183,21 @@ const DashboardScreen = ({history}) => {
                                 <ul className="products-list product-list-in-card pl-2 pr-2">
                                 
 
-                                {
-                                    ordersForDelivery(allOrders).splice(0,5).map(order => (
-                                        <DeliveryListItem
-                                            id={order.id} 
-                                            name={order.client ? order.client.name : ''}  
-                                            address={order.client ? order.client.address: ''}
-                                            key={order.id}
-                                        />
-                                    ))
+                                 {loadingAllOrders 
+                                    ?   <Loader variable={loadingAllOrders}/>
+                                    :   errorAllOrders
+                                    ?   <Message message={errorAllOrders} color={'danger'} />
+                                    : (
+
+                                        ordersForDelivery(allOrders).splice(0,5).map(order => (
+                                            <DeliveryListItem
+                                                id={order.id} 
+                                                name={order.client ? order.client.name : ''}  
+                                                address={order.client ? order.client.address: ''}
+                                                key={order.id}
+                                            />
+                                        ))
+                                    )
                                     
                                 }
 

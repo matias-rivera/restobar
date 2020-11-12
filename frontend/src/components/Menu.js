@@ -59,13 +59,24 @@ const Menu = ({history}) => {
                
  
 
-
-                <li className="nav-header">ADMIN</li>
+                {!userInfo
+                ? ''
+                : userInfo.isAdmin === true
+                ? (
+                    <>
+                    <li className="nav-header">ADMIN</li>
                     <li className="nav-item">
                         <Link to='/user' className='nav-link' >
                             <i className="nav-icon fas fa-users" /> <p> Users</p> 
                         </Link>
-                    </li>           
+                    </li> 
+                    </>
+                )
+                : ''}
+                     
+
+
+                     
                 <li className="nav-header">RESTOBAR</li>
                     <li className="nav-item">
                         <Link to='/active' className='nav-link' >

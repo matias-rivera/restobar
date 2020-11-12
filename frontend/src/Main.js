@@ -23,6 +23,10 @@ import OrderViewScreen from './screens/OrderViewScreen ';
 import OrderEditScreen from './screens/OrderEditScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import PrivateRoute from './auth/PrivateRoute';
+import NotFoundScreen from './screens/NotFoundScreen';
+import AdminRoute from './auth/AdminRoute';
+import NotAuthorizedScreen from './screens/NotAuthorizedScreen';
+import FormSignup from './screens/Forms/FormSignup';
 
 
 const Main = ({history}) => {
@@ -45,14 +49,14 @@ const Main = ({history}) => {
             <div className='content-wrapper'>
             <Switch>
 
-                <PrivateRoute path='/active' exact component={ActiveOrdersScreen} />
+                <Route path='/active' exact component={ActiveOrdersScreen} />
                  {/* <Route path='/active' exact component={ActiveOrdersScreen} />  */}
-
-                <Route path='/user/:id/edit' component={UserEditScreen}/>
-                <Route path='/user/page/:pageNumber' component={UserScreen} exact/>
-                <Route path='/user/search/:keyword' component={UserScreen} exact/>
-                <Route path='/user/search/:keyword/page/:pageNumber' component={UserScreen} exact/>
-                <Route path='/user' exact component={UserScreen} />
+                 <Route path='/form' exact component={FormSignup} />
+                <AdminRoute path='/user/:id/edit' component={UserEditScreen}/>
+                <AdminRoute path='/user/page/:pageNumber' component={UserScreen} exact/>
+                <AdminRoute path='/user/search/:keyword' component={UserScreen} exact/>
+                <AdminRoute path='/user/search/:keyword/page/:pageNumber' component={UserScreen} exact/>
+                <AdminRoute path='/user' exact component={UserScreen} />
 
                 <Route path='/category/:id/edit' component={CategoryEditScreen}/>
                 <Route path='/category/page/:pageNumber' component={CategoryScreen} exact/>
@@ -95,7 +99,9 @@ const Main = ({history}) => {
                 <Route path='/order/:id/view' component={OrderViewScreen} exact/>
                 <Route path='/order/create' component={OrderCreateScreen} />
                 <Route path='/order' component={OrderScreen} />
+                <Route path='/not-authorized' component={NotAuthorizedScreen} />
                 <Route path='/' component={DashboardScreen} exact/>
+                <Route component={NotFoundScreen} />
             </Switch>
 
   

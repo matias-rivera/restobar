@@ -21,13 +21,14 @@ const OrderEditScreen = ({history, match}) => {
     const keyword = match.params.keyword || ''
     const pageNumber = match.params.pageNumber || 1
 
-    const [table, setTable] = useState({})
-    const [client, setClient] = useState({})
+    const [table, setTable] = useState(null)
+    const [client, setClient] = useState(null)
     const [delivery, setDelivery] = useState(false)
     const [user, setUser] = useState({})
     const [productsInOrder, setProductsInOrder] = useState([])
     const [isPaid, setIsPaid] = useState(false)
     const [total, setTotal] = useState(0)
+    const [errors, setErrors] = useState({})
 
     const dispatch = useDispatch()
 
@@ -74,13 +75,14 @@ const OrderEditScreen = ({history, match}) => {
           } else{
               //set states
              
-            setTable({
-                label: order.table ? order.table.name : '', 
-                value: order.table ? order.table.id : ''
-            })
-            setClient({
-                label: order.client ? order.client.name : '', 
-                value: order.client ? order.client.id : ''})
+            setTable(order.table ? {
+                label: order.table.name, 
+                value: order.table.id
+            } : null)
+            setClient(order.client ? {
+              label: order.client.name, 
+              value: order.client.id
+          } : null)
             setUser(order.user)
             setIsPaid(order.isPaid)
             setDelivery(order.delivery)
@@ -91,7 +93,8 @@ const OrderEditScreen = ({history, match}) => {
                   name: product.name,
                   price: product.price,
                   stock: product.stock,
-                  quantity: product.orderItem.quantity
+                  quantity: product.orderItem.quantity,
+                  oldQuantity: product.orderItem.quantity
                 } 
               })
             setProductsInOrder(products)
@@ -106,6 +109,27 @@ const OrderEditScreen = ({history, match}) => {
 
       const handleSubmit = (e) => {
         e.preventDefault()
+        let errorsCheck = {}
+        if(!table){
+          if(!delivery){
+            errorsCheck.table = 'Table is required'
+          }
+        }
+        if(!client){
+          errorsCheck.client = 'Client is required'
+        }
+
+        if(productsInOrder.length < 1){
+          errorsCheck.products = 'Cart cannot by empty'
+        }
+
+        if(Object.keys(errorsCheck).length > 0){
+          setErrors(errorsCheck)
+        }else{
+          setErrors({})
+        }
+  
+        if(Object.keys(errorsCheck).length === 0){
 
         const order = {
             id: orderId,
@@ -118,7 +142,7 @@ const OrderEditScreen = ({history, match}) => {
         
         dispatch(updateOrder(order))
         
-
+        }
 
     }
 
@@ -161,6 +185,12 @@ const OrderEditScreen = ({history, match}) => {
         const productsIn = productsInOrder.filter(function (item) {
           return item.id !== product.id;
         })
+
+        products.map(productInList => {
+          if(productInList.id === product.id){
+            productInList.stock = productInList.stock + product.oldQuantity
+          }
+        })
   
         setProductsInOrder(productsIn)
       }
@@ -184,11 +214,11 @@ const OrderEditScreen = ({history, match}) => {
       }
 
       //refresh products table
-    const refreshProducts = (e) => {
+   /*  const refreshProducts = (e) => {
         e.preventDefault()
         dispatch(listProducts(keyword,pageNumber))
       }
-  
+   */
       //refresh product in order
       const refreshProductsInOrder = (e) => {
         e.preventDefault()
@@ -207,6 +237,15 @@ const OrderEditScreen = ({history, match}) => {
           }
         }
         return false
+      }
+
+      const returnProduct = (obj, list) => {
+        for (let index = 0; index < list.length; index++) {
+          if (obj.id === list[index].id){
+            return list[index]
+          }
+        }
+        return 0
       }
   
       const mapSelect = (data) => {
@@ -233,6 +272,8 @@ const OrderEditScreen = ({history, match}) => {
           <div className="card">
             <div className="card-header">
               <h3 className="card-title">Create Order</h3>
+              <Loader variable={loadingUpdate} />
+              <Message message={errorUpdate} color={'danger'}/>
               <Loader variable={loading} />
               <Message message={error} color={'danger'}/>
 
@@ -242,7 +283,6 @@ const OrderEditScreen = ({history, match}) => {
         
             <div className='row'>
               <div className='col-6'> 
-                  <button className='btn btn-info float-right' onClick={(e) => refreshProducts(e)}><i class="fas fa-sync-alt"></i></button>
                   <Route render={({history}) => <SearchBox history={history} item={'order/create'}/>} />
               
               {loadingProductList 
@@ -305,6 +345,7 @@ const OrderEditScreen = ({history, match}) => {
               </div>
 
                 <form onSubmit={handleSubmit}>
+                {errors.products && <Message message={errors.products} color={'warning'} />}
                 <table id="orderTable" className="table table-bordered table-hover">
                   <thead>
                     <th></th>
@@ -326,7 +367,7 @@ const OrderEditScreen = ({history, match}) => {
                           <button disabled={productIn.quantity < 2} className='btn btn-danger btn-block' onClick={(e) => removeUnit(e,productIn)} >-</button> 
                         </td>
                         <td className='text-center'>
-                          <button  className='btn btn-primary btn-block' onClick={(e) => addUnit(e,productIn)}>+</button>
+                          <button disabled={productIn.quantity >= returnProduct(productIn,products).stock + (productIn.oldQuantity ? productIn.oldQuantity : 0)} className='btn btn-primary btn-block' onClick={(e) => addUnit(e,productIn)}>+</button>
                         </td>
                         <td className='text-center'><h4>${productIn.price * productIn.quantity}</h4></td>
                         <td className='text-center'><button className='btn btn-danger' onClick={(e) => removeProduct(e,productIn)}>X</button></td>
@@ -357,6 +398,7 @@ const OrderEditScreen = ({history, match}) => {
                         value={client}
                       />
                       )}
+                  {errors.client && <Message message={errors.client} color={'warning'} />}
                   </div>
 
                   <div className="form-group col-md-6">
@@ -376,7 +418,7 @@ const OrderEditScreen = ({history, match}) => {
                         isSearchable
                       />
                       )}
-
+                  {errors.table && <Message message={errors.table} color={'warning'} />}
                   </div>
 
                   
