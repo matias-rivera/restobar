@@ -26,6 +26,8 @@ const Menu = ({history}) => {
             }}
             />
     }
+    
+    console.log(userInfo)
 
     return ( 
         <aside className="main-sidebar sidebar-dark-primary elevation-4">
@@ -39,7 +41,7 @@ const Menu = ({history}) => {
             {/* Sidebar user panel (optional) */}
             <div className="user-panel mt-3 pb-3 mb-3 d-flex">
                 <div className="image">
-                    <img src="/dist/img/user2-160x160.jpg" className="img-circle elevation-2" alt="User" />
+                    <img src={userInfo ? userInfo.image : "/dist/img/user2-160x160.jpg"} className="img-circle elevation-2" alt="User" />
                 </div>
                 <div className="info">
                     <Link to="/profile" className="d-block">{userInfo ? userInfo.name : ''}</Link>

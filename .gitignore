@@ -6,12 +6,14 @@ node_modules/
 frontend/public/pages
 /.pnp
 .pnp.js
+uploads/
 
 # testing
 /coverage
 
 # production
 /build
+
 
 # misc
 .DS_Store

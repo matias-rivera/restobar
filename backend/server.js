@@ -2,6 +2,7 @@ const express = require('express')
 const dotenv = require('dotenv')
 const bodyParser = require('body-parser');
 const morgan = require('morgan')
+const path = require('path')
 
 const sequelize = require('./database/database')
 
@@ -29,8 +30,9 @@ const categoryRoutes = require('./routes/category')
 const productRoutes = require('./routes/product')
 const clientRoutes = require('./routes/client')
 const tableRoutes = require('./routes/table')
-const orderRoutes = require('./routes/order');
-const Product = require('./models/product');
+const orderRoutes = require('./routes/order')
+const uploadRoutes = require('./routes/upload')
+
 
 app.use('/api/users', userRoutes)
 app.use('/api/categories', categoryRoutes)
@@ -38,6 +40,12 @@ app.use('/api/products', productRoutes)
 app.use('/api/clients', clientRoutes)
 app.use('/api/tables',tableRoutes)
 app.use('/api/orders',orderRoutes)
+app.use('/api/upload', uploadRoutes)
+
+
+const __dirname1 = path.resolve()
+app.use('/uploads', express.static(path.join(__dirname1, '/uploads')))
+
 
 //middlewares
 app.use(notFound)

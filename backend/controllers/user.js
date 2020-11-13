@@ -25,7 +25,8 @@ exports.registerUser = asyncHandler(async (req, res) =>{
         name,
         email,
         password,
-        isAdmin
+        isAdmin,
+        image
     })
     if(user){
         //return created user
@@ -33,7 +34,8 @@ exports.registerUser = asyncHandler(async (req, res) =>{
             _id: user._id,
             name: user.name,
             email: user.email,
-            isAdmin: user.isAdmin
+            isAdmin: user.isAdmin,
+            image: user.image
         })
     }else{
         res.status(400)
@@ -59,6 +61,7 @@ exports.login = asyncHandler(async (req, res) =>{
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin,
+            image: user.image,
             token: generateToken(user.id)
         })
     }else{
@@ -170,7 +173,7 @@ exports.updateUser = asyncHandler(async (req, res) =>{
 //@access   Private/admin
 exports.updateProfile = asyncHandler(async (req, res) =>{
     
-    const { id, name, email, password, passwordCheck } = req.body
+    const { id, name, email, password, passwordCheck, image } = req.body
 
     const user = await User.scope('withPassword').findByPk(req.params.id)
 
@@ -180,6 +183,7 @@ exports.updateProfile = asyncHandler(async (req, res) =>{
         
             user.name = name
             user.email = email
+            user.image = image ? image : user.image
             user.password = password ? bcrypt.hashSync(password, salt) : user.password
             const updatedUser =  await user.save()
             res.json(updatedUser)

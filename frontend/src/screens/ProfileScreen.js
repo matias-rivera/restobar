@@ -9,7 +9,7 @@ import { listUserDetails, login, updateProfile } from '../actions/userActions';
 import  Modal  from 'react-modal';
 import { customStyles } from '../utils';
 import ModalButton from './../components/ModalButton';
-
+import axios from 'axios'
 
 const ProfileScreen = ({history}) => {
 
@@ -21,6 +21,9 @@ const ProfileScreen = ({history}) => {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [passwordCheck, setPasswordCheck] = useState('')
+    const [image, setImage] = useState('')
+    const [uploading, setUploading] = useState(false)
+
 
     const [modal, setModal] = useState(false)
 
@@ -51,12 +54,13 @@ const ProfileScreen = ({history}) => {
 
 
          //load product data
-         if(!user.name) {
+         if(!user && !user.name) {
             dispatch(listUserDetails(userInfo._id))
         } else{
             //set states
             setName(user.name)
             setEmail(user.email)
+            setImage(user.image)
         }
 
 
@@ -122,12 +126,42 @@ const ProfileScreen = ({history}) => {
                 name,
                 email,
                 password,
+                image,
                 passwordCheck,
     
             }))
             setModal(false)
         }
 
+    }
+
+    // upload file
+    const uploadingFileHandler = async(e) => {
+        //get first element from files which one is the image
+        const file = e.target.files[0]
+        //form instance
+        const formData = new FormData()
+        //add file
+        formData.append('image', file)
+        //start loader
+        setUploading(true)
+        try {
+            //form config
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+            //api call to upload image
+            const {data} = await axios.post('/api/upload',formData, config)
+            //set image path
+            setImage(data)
+            //stop loader
+            setUploading(false)
+        } catch (error) {
+            console.error(error)
+            setUploading(false)
+        }
     }
 
     return ( 
@@ -162,13 +196,23 @@ const ProfileScreen = ({history}) => {
                     : (
                         <>
                             <div className="text-center">
-                                <img className="profile-user-img img-fluid img-circle" src="../../dist/img/user4-128x128.jpg" alt="User profile picture" />
+                                <img className="profile-user-img img-fluid img-circle" src={userInfo ? userInfo.image : '../../dist/img/user4-128x128.jpg'} alt="User profile picture" />
                             </div>
                             <h3 className="profile-username text-center">{userInfo && userInfo.name}</h3>
                             <p className="text-muted text-center">{userInfo && userInfo.isAdmin ? 'Administrator' : 'Employee'}</p>
                             {loadingUpdate && <Loader variable={loadingUpdate} />}
                             {errorUpdate && <Message message={errorUpdate} color={'danger'} />}
                             <form onSubmit={handleSubmit}>
+                                <div className="form-group">
+                                    <label htmlFor="exampleFormControlFile1">Example file input</label>
+                                    <input 
+                                        type="file" 
+                                        className="form-control-file" 
+                                        id="image-file"
+                                        onChange={uploadingFileHandler}
+                                    />
+                                {uploading && <Loader variable={uploading}/>}
+                                </div>
                                 <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors}/>
                                 <Input name={'email'} type={'email'} data={email} setData={setEmail} errors={errors}/>
                                 <Input name={'password'} type={'password'} data={password} setData={setPassword} errors={errors}/>
