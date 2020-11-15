@@ -83,12 +83,13 @@ const CategoryEditScreen = ({history, match}) => {
     
     }
 
-    const handleDelete = (e) => {
+    //delete function
+    /* const handleDelete = (e) => {
         e.preventDefault()
         if(window.confirm('Are you sure?')){
             dispatch(deleteCategory(categoryId))
         }
-    }
+    } */
 
     return ( 
         <>  
@@ -120,7 +121,7 @@ const CategoryEditScreen = ({history, match}) => {
                 <form onSubmit={handleSubmit}>
                   <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors} />
                     <hr/>
-                    <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button>
+                    {/* <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button> */}
                     <button type="submit" className="btn btn-success">Submit</button>
                 </form>
 

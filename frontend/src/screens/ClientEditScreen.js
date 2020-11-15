@@ -115,12 +115,13 @@ const ClientEditScreen = ({history, match}) => {
         }
     }
 
-    const handleDelete = (e) => {
+    //delete function
+    /* const handleDelete = (e) => {
         e.preventDefault()
         if(window.confirm('Are you sure?')){
             dispatch(deleteClient(clientId))
         }
-    }
+    } */
 
     return ( 
         <>  
@@ -160,7 +161,7 @@ const ClientEditScreen = ({history, match}) => {
 
 
                     <hr/>
-                    <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button>
+                    {/* <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button> */}
                     <button type="submit" className="btn btn-success">Submit</button>
               </form>
             )

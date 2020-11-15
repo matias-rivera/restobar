@@ -20,12 +20,51 @@ import {
     ORDER_DELIVERY_FAIL,
     ORDER_ALL_ACTIVE_REQUEST,
     ORDER_ALL_ACTIVE_SUCCESS,
-    ORDER_ALL_ACTIVE_FAIL
+    ORDER_ALL_ACTIVE_FAIL,
+    ORDER_SALES_REQUEST,
+    ORDER_SALES_SUCCESS,
+    ORDER_SALES_FAIL
 
 } from '../constants/orderConstants'
 
+//get all sales
+export const allSales = () => async(dispatch, getState) =>{
+    try{
+        dispatch({
+            type: ORDER_SALES_REQUEST
+        })
 
-//get all orders
+        //get user from state
+        const {userLogin: {userInfo}} = getState()
+
+        //headers
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        //get all sales
+        const {data} = await axios.get(`/api/orders/all/sales`, config)
+     
+        dispatch({
+            type: ORDER_SALES_SUCCESS,
+            payload: data
+        })
+    } catch(error) {
+        dispatch({
+            type: ORDER_SALES_FAIL,
+            payload: 
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message
+        })
+    }
+}
+
+
+
+//get all active orders
 export const allActiveOrders = () => async(dispatch, getState) =>{
     try{
         dispatch({

@@ -5,7 +5,7 @@ const { Op } = require("sequelize");
 const Client = require('../models/client');
 const Table = require('../models/table');
 
-
+const sequelize = require('../database/database')
 
 //@desc     Create a Order
 //@route    POST /api/orders
@@ -13,7 +13,7 @@ const Table = require('../models/table');
 exports.createOrder = asyncHandler(async (req, res) =>{
      
   //get data from request
-  const {total, table, client, products ,delivery} = req.body
+  const {total, table, client, products ,delivery, note} = req.body
 
   //calc stock of each product in order
   const stock = async (list) => {
@@ -40,7 +40,8 @@ exports.createOrder = asyncHandler(async (req, res) =>{
           tableId: !delivery ? table : null,
           userId: req.user.id,
           clientId: client,
-          delivery: delivery
+          delivery: delivery,
+          note:note
       }) 
     }
   }
@@ -124,6 +125,52 @@ exports.getAllInPlaceOrders = asyncHandler(async (req, res) =>{
   orders = await Order.findAll({order:[['id','DESC']],where:{delivery:false}})
   res.json(orders)
 })
+
+
+//@desc     Get all sales
+//@route    GET /api/orders/sales
+//@access   Private/user
+exports.getAllSales = asyncHandler(async (req, res) =>{
+  orders = await Order.findAll({
+    attributes: [
+      'id',
+      'delivery',
+      'total',
+      'updatedAt',
+      [sequelize.fn("COUNT", "products.id"), "total_products"]
+  ],
+    include: [{
+      model: Product,
+      attributes: [],
+      duplicating: false
+  }],
+  group: ["id"],
+  order:[['updatedAt','DESC']],
+    where:{isPaid:true}})
+  res.json(orders)
+})
+
+/* 
+db.Tag.findAll({
+        group: ["Tag.id"],
+        includeIgnoreAttributes:false,
+        include: [{
+            model: db.Story,
+            where: {
+                isPublic: true
+            }
+        }],
+        attributes: [
+            "id",
+            "TagName",
+            [db.sequelize.fn("COUNT", db.sequelize.col("stories.id")), "num_stories"],
+        ],
+        order: [[db.sequelize.fn("COUNT", db.sequelize.col("stories.id")), "DESC"]]
+    }).then(function(result){
+        return result;
+    });
+*/
+
 
 
 
@@ -352,7 +399,7 @@ exports.updateOrderPay = asyncHandler(async (req, res) =>{
 exports.updateOrder = asyncHandler(async (req, res) =>{
 
   const order = await Order.findByPk(req.params.id, { include: { all: true, nested:true}})
-  const {total, client, table, delivery, products} = req.body;
+  const {total, client, table, delivery, products, note} = req.body;
 
 
   //check if product is already in order
@@ -463,6 +510,7 @@ exports.updateOrder = asyncHandler(async (req, res) =>{
             //save
             order.clientId= client
             order.delivery = delivery
+            order.note = note
             order.tableId = table ? table : null
             order.save()
             res.status(200).json('updated')
@@ -484,6 +532,7 @@ exports.updateOrder = asyncHandler(async (req, res) =>{
       //save
       order.clientId= client
       order.delivery = delivery
+      order.note = note
       order.tableId = table ? table : null
       const updatedOrder = await order.save()
       res.status(200).json(updatedOrder)

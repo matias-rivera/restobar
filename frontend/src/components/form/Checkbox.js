@@ -1,17 +1,25 @@
 import React from 'react';
+import { capitalize } from '../../utils';
 
 const Checkbox = ({name, data, setData}) => {
     return ( 
-        <div className="form-check">
-              <input 
-                type='checkbox'
-                id={name}
-                className="form-check-input" 
-                checked={data}
-                onChange={(e) => setData(e.target.checked )}
-              />
-               <label className="form-check-label" htmlFor={name}>{name}</label>
+
+
+      <div className="form-group clearfix">
+        <div className="icheck-primary d-inline">
+          <input 
+            className="form-check-input" 
+            type="checkbox" 
+            id={name} 
+            defaultValue 
+            checked={data}
+            onChange={(e) => setData(e.target.checked)}
+          />
+          <label htmlFor={name}>
+            {capitalize(name)}
+          </label>
         </div>
+      </div>
      );
 }
  

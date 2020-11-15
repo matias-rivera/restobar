@@ -18,6 +18,7 @@ const UserEditScreen = ({history, match}) => {
     const [password, setPassword] = useState('')
     const [email, setEmail] = useState('')
     const [isAdmin, setIsAdmin] = useState(false)
+    const [avatar, setAvatar] = useState(false)
 
     const [errors, setErrors] = useState({})
     
@@ -41,6 +42,14 @@ const UserEditScreen = ({history, match}) => {
 
 
     useEffect( () => {
+        if(user){
+          if(user.isAdmin){
+            dispatch({type: USER_UPDATE_RESET})
+            dispatch({type: USER_DETAILS_RESET})
+            dispatch({type: USER_DELETE_RESET}) 
+            history.push('/not-authorized')
+          }
+        }
         //after update redirect to users
          if(successUpdate || successDelete){
             dispatch({type: USER_UPDATE_RESET})
@@ -49,10 +58,10 @@ const UserEditScreen = ({history, match}) => {
             history.push('/user')
         } 
             //load product data
-            if(!user.name || user.id !== userId) {
-                dispatch(listUserDetails(userId))
+            if(!user || !user.name || user.id !== userId) {
+                dispatch(listUserDetails(userId))  
             } else{
-                //set states
+                //set states s
                 setName(user.name)
                 setEmail(user.email)
                 setIsAdmin(user.isAdmin)
@@ -84,24 +93,26 @@ const UserEditScreen = ({history, match}) => {
           setErrors({})
         }
         
-        if(Object.keys(errorsCheck).length === 0){
+        if(Object.keys(errorsCheck).length === 0 && !user.isAdmin){
             dispatch(updateUser({
                 id: userId,
                 name,
                 email,
-                password, 
+                password,
+                avatar, 
                 isAdmin
 
             }))
         }
     }
 
-    const handleDelete = (e) => {
+    //handle delete
+    /* const handleDelete = (e) => {
         e.preventDefault()
         if(window.confirm('Are you sure?')){
             dispatch(deleteUser(userId))
         }
-    }
+    } */
 
     return ( 
         <>  
@@ -130,9 +141,11 @@ const UserEditScreen = ({history, match}) => {
                     <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors}/>
                     <Input name={'email'} type={'email'} data={email} setData={setEmail} errors={errors}/>
                     <Input name={'password'} type={'password'} data={password} setData={setPassword} errors={errors}/>
+                    <Checkbox name={'Reset Avatar'} data={avatar} setData={setAvatar} />
+                    <hr />
                     <Checkbox name={'Admin'} data={isAdmin} setData={setIsAdmin} />
                     <hr/>
-                    <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button>
+                    {/* <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button> */}
                     <button type="submit" className="btn btn-success">Submit</button>
                 </form>
             </div>

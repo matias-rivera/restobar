@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import Input from '../components/form/Input';
 import HeaderContent from '../components/HeaderContent';
 import { listProducts } from '../actions/productActions';
 import SearchBox from './../components/SearchBox';
 import Paginate from './../components/Paginate';
 import Select from 'react-select'
-import { allActiveTables, allFreeTables } from '../actions/tableActions';
+import { allFreeTables } from '../actions/tableActions';
 import { allClients } from './../actions/clientActions';
 import { createOrder } from '../actions/orderActions';
 import { PRODUCT_LIST_RESET } from '../constants/productConstants';
@@ -17,6 +16,9 @@ import { TABLE_ALL_FREE_RESET } from '../constants/tableConstants';
 import { CLIENT_ALL_RESET } from '../constants/clientConstants';
 import { ORDER_CREATE_RESET } from '../constants/orderConstants';
 import ButtonGoBack from './../components/ButtonGoBack';
+import Textarea from '../components/form/Textarea';
+import Checkbox from './../components/form/Checkbox';
+import SearchBoxMini from '../components/SearchBoxMini';
 
 
 
@@ -31,6 +33,7 @@ const OrderCreateScreen = ({history, match}) => {
     const [table, setTable] = useState(match.params.table ? tableFromUrl : null)
     const [client, setClient] = useState(null)
     const [delivery, setDelivery] = useState(isDelivery ? true : false)
+    const [note, setNote] =  useState('')
     const [productsInOrder, setProductsInOrder] = useState([])
     const [errors, setErrors] = useState({})
 
@@ -71,9 +74,11 @@ const OrderCreateScreen = ({history, match}) => {
       }
       else{
         
+          dispatch(allClients())
+
+          dispatch(allFreeTables())
+        
         dispatch(listProducts(keyword,pageNumber))
-        dispatch(allFreeTables())
-        dispatch(allClients())
       }
     },[dispatch, history, success, keyword, pageNumber, error])
 
@@ -102,8 +107,9 @@ const OrderCreateScreen = ({history, match}) => {
           total: totalPrice(productsInOrder),
           table: table ? table.value : null,
           client: client.value,
-          products: productsInOrder,
-          delivery: delivery
+          products: productsInOrder, 
+          delivery: delivery,
+          note:note
         }
         dispatch(createOrder(order))
                 
@@ -230,9 +236,9 @@ const OrderCreateScreen = ({history, match}) => {
             <div className="card-body">
         
             <div className='row'>
-              <div className='col-6'> 
-                  <button className='btn btn-info float-right' onClick={(e) => refreshProducts(e)}><i class="fas fa-sync-alt"></i></button>
-                  <Route render={({history}) => <SearchBox history={history} item={'order/create'}/>} />
+              <div className='col-12 col-lg-6'> 
+                  <button className='btn btn-info float-right' onClick={(e) => refreshProducts(e)}><i className="fas fa-sync-alt"></i></button>
+                  <Route render={({history}) => <SearchBoxMini history={history} item={'order/create'}/>} />
               
               {loadingProductList 
                       ? 
@@ -242,8 +248,8 @@ const OrderCreateScreen = ({history, match}) => {
                       <Message message={errorProductList} color={'danger'} />
                       : (
                       <>
-                      <table id="productsTable" className="table table-bordered table-hover">
-                        <thead>
+                      <table id="productsTable" className="table table-bordered table-hover ">
+                        <thead style={{color:'#fff'}} className='bg-info'>
                           <tr>
                             <th>ID</th>
                             <th>Name</th>
@@ -262,7 +268,7 @@ const OrderCreateScreen = ({history, match}) => {
                                 {inOrder(product, productsInOrder)
                                 ? <td className='text-center'><button disabled className='btn btn-primary'>In Order</button></td>
                                 : product.stock > 0 
-                                ?<td className='text-center'><button  className='btn btn-success' onClick={(e) => addProduct(e,product)}>Add to order</button></td>
+                                ?<td className='text-center'><button  className='btn btn-success' onClick={(e) => addProduct(e,product)}><i class="fas fa-plus"></i></button></td>
                                 : <td className='text-center'><button disabled className='btn btn-danger'>Out of Stock</button></td>
                                 }
                               </tr>
@@ -273,14 +279,14 @@ const OrderCreateScreen = ({history, match}) => {
                       </table>
                       
                       <Paginate 
-                            item={'product'}
+                            item={'order/create'}
                             pages={pages} 
                             page={page} 
                             keyword={keyword ? keyword : null} />
                       </>
                 )}
               </div>
-              <div className='col-6'>
+              <div className='col-12 col-lg-6'>
               {/* small card */}
               <div className="small-box bg-success">
                 <div className="inner">
@@ -296,34 +302,38 @@ const OrderCreateScreen = ({history, match}) => {
                 <form onSubmit={handleSubmit}>
                 {errors.products && <Message message={errors.products} color={'warning'} />}
 
-                <table id="orderTable" className="table table-bordered table-hover">
+                <table id="orderTable" className="table table-bordered table-hover table-responsive p-0">
                   <thead>
-                    <th></th>
+                    <tr>
+                    <th className="d-none d-sm-table-cell"></th>
                     <th>Product</th>
-                    <th>Quantity</th>
+                    <th>Units</th>
                     <th></th>
                     <th></th>
                     <th>Total</th>
                     <th></th>
+                    </tr>
                   </thead>
                   <tbody>
                     {productsInOrder.length > 0? (
                     productsInOrder.map((productIn, i) => (
                       <tr key={i}>
-                        <td className='text-center'><button onClick={(e) => refreshProductsInOrder(e)}><i class="fas fa-sync-alt btn-xs"></i></button></td>
+                        <td className="text-center d-none d-sm-table-cell" ><button onClick={(e) => refreshProductsInOrder(e)}><i className="fas fa-sync-alt btn-xs"></i></button></td>
                         <td>{productIn.name}</td>
                         <td>{productIn.quantity}</td>
                         <td className='text-center'>
-                          <button disabled={productIn.quantity < 2} className='btn btn-danger btn-block' onClick={(e) => removeUnit(e,productIn)} >-</button> 
+                          <button disabled={productIn.quantity < 2} className='btn btn-danger' onClick={(e) => removeUnit(e,productIn)} >-</button> 
                         </td>
                         <td className='text-center'>
-                          <button disabled={productIn.quantity >= productIn.stock} className='btn btn-primary btn-block' onClick={(e) => addUnit(e,productIn)}>+</button>
+
+                          <button disabled={productIn.quantity >= productIn.stock} className='btn btn-primary' onClick={(e) => addUnit(e,productIn)}>+</button>
+
                         </td>
-                        <td className='text-center'><h4>${productIn.price * productIn.quantity}</h4></td>
+                        <td className='text-center'><h6>${productIn.price * productIn.quantity}</h6></td>
                         <td className='text-center'><button className='btn btn-danger' onClick={(e) => removeProduct(e,productIn)}>X</button></td>
                       </tr>
                     ))
-                    ) : 'Add products'}
+                    ) : <tr></tr>}
                   </tbody>
                 </table>
                 <div className="form-row">
@@ -340,6 +350,7 @@ const OrderCreateScreen = ({history, match}) => {
                         onChange={setClient}
                         placeholder='Select client'
                         isSearchable
+                        value={client}
                       />
                       )}
                       {errors.client && <Message message={errors.client} color={'warning'} />}
@@ -365,36 +376,13 @@ const OrderCreateScreen = ({history, match}) => {
                       {errors.table && <Message message={errors.table} color={'warning'} />}
 
                   </div>
-
-                  
-
                 </div>
-
-
+                  <Textarea title={'Note (optional)'} rows={3} data={note} setData={setNote} />
                 <div className="col-sm-6">
-                  {/* checkbox */}
-                  <div className="form-group clearfix">
-                    <div className="icheck-primary d-inline">
-                      <input 
-                        className="form-check-input" 
-                        type="checkbox" 
-                        id="checkboxPrimary1" 
-                        defaultValue 
-                        checked={delivery}
-                        onChange={(e) => setDelivery(e.target.checked)}
-                      />
-                      <label htmlFor="checkboxPrimary1">
-                        Delivery
-                      </label>
-                    </div>
-                  </div>
+                  <Checkbox name={'delivery'} data={delivery} setData={setDelivery} />
                 </div>
-
-
-                
-
                   <hr/>
-                  <button type="submit" className="btn btn-success float-right ">Submit</button>
+                  <button type="submit" className="btn btn-success btn-lg float-right ">Submit</button>
                 </form>
               </div>
 

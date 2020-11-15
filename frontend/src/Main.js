@@ -37,7 +37,7 @@ const Main = ({history}) => {
 
     useEffect(() => {
         if(!userInfo){
-            history.push('/sign-in')
+            history.push('/login')
         }
     },[dispatch, userInfo, history])
     
@@ -91,11 +91,18 @@ const Main = ({history}) => {
                 <Route path='/order/page/:pageNumber' component={OrderScreen} exact/>
                 <Route path='/order/search/:keyword' component={OrderScreen} exact/>
                 <Route path='/order/search/:keyword/page/:pageNumber' component={OrderScreen} exact/>
+
                 <Route path='/order/create/:id/:table/table' component={OrderCreateScreen} />
                 <Route path='/order/create/page/:pageNumber' component={OrderCreateScreen} />
                 <Route path='/order/create/search/:keyword' component={OrderCreateScreen} />
                 <Route path='/order/create/search/:keyword/page/:pageNumber' component={OrderCreateScreen} />
+
+                <Route path='/order/:id/edit/page/:pageNumber' component={OrderEditScreen} exact/>
+                <Route path='/order/:id/edit/search/:keyword' component={OrderEditScreen} exact/>
+                <Route path='/order/:id/edit/search/:keyword/page/:pageNumber' component={OrderEditScreen} exact/>
                 <Route path='/order/:id/edit' component={OrderEditScreen} exact/>
+
+
                 <Route path='/order/:id/view' component={OrderViewScreen} exact/>
                 <Route path='/order/create' component={OrderCreateScreen} />
                 <Route path='/order' component={OrderScreen} />

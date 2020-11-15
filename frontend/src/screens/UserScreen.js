@@ -163,9 +163,9 @@ const UserScreen = ({history, match}) => {
                                 <td>{user.name}</td>
                                 <td>{user.email}</td>
                                 <td className="d-none d-sm-table-cell" ><img src={user.image ? user.image : "/dist/img/user2-160x160.jpg"} style={{height:'2em'}} className="img-circle elevation-2" alt="User" /></td>
-                                <td className="d-none d-sm-table-cell">{user.isAdmin ? 'Yes' : 'No'}</td>
+                                <td className="d-none d-sm-table-cell">{user.isAdmin ? <h4 className='text-success'><i class="fas fa-check"></i></h4> : <h4 className='text-danger'><i class="far fa-times-circle"></i></h4>}</td>
                                 <td className="d-none d-sm-table-cell">{user.createdAt.slice(0,10)}</td>
-                                <td><Link to={`/user/${user.id}/edit`} className='btn btn-warning btn-lg'>Edit</Link></td>
+                                <td>{user.isAdmin ? '' : <Link to={`/user/${user.id}/edit`} className='btn btn-warning btn-lg'>Edit</Link>}</td>
                             </tr>
                         ))}
                                     

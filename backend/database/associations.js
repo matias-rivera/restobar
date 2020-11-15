@@ -6,18 +6,18 @@ const Product = require('../models/product')
 const Table = require('../models/table')
 const OrderItem = require('../models/order_item')
 
-Order.belongsTo(User)
-Order.belongsTo(Client)
-Order.belongsTo(Table)
+Order.belongsTo(User, {onDelete: 'CASCADE'})
+Order.belongsTo(Client, {onDelete: 'CASCADE'})
+Order.belongsTo(Table, {onDelete: 'CASCADE'})
 
 User.hasMany(Order)
 Client.hasMany(Order)
 Table.hasMany(Order)
 
 
-Product.belongsTo(Category)
+Product.belongsTo(Category, {onDelete: 'CASCADE'})
 Category.hasMany(Product)
 
 
-Order.belongsToMany(Product, {through: OrderItem})
-Product.belongsToMany(Order,{through: OrderItem})
+Order.belongsToMany(Product, {onDelete: 'CASCADE', through: OrderItem})
+Product.belongsToMany(Order,{onDelete: 'CASCADE', through: OrderItem})

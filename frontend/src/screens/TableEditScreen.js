@@ -95,12 +95,13 @@ const TableEditScreen = ({history, match}) => {
     
     }
 
-    const handleDelete = (e) => {
+    //Delete function
+   /*  const handleDelete = (e) => {
         e.preventDefault()
         if(window.confirm('Are you sure?')){
             dispatch(deleteTable(tableId))
         }
-    }
+    } */
 
     return ( 
         <>  
@@ -136,7 +137,7 @@ const TableEditScreen = ({history, match}) => {
                 <Checkbox name={'occupied'} data={occupied} setData={setOccupied} />
 
                 <hr/>
-                <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button>
+                {/* <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button> */}
                 <button type="submit" className="btn btn-success">Submit</button>
               </form>
             )

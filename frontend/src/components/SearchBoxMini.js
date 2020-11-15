@@ -16,7 +16,7 @@ const SearchBoxMini = ({history, item}) => {
 <>
         <form>
 
-        <div className="input-group input-group-sm" style={{width: 150}}>
+        <div className="input-group input-group-sm" style={{width: 160}}>
             <input 
                 type="text" 
                 name="table_search"
@@ -25,7 +25,7 @@ const SearchBoxMini = ({history, item}) => {
                 placeholder="Search" 
                 />
             <div className="input-group-append">
-                <button onClick={(e) => submitHandler(e)} type="submit" className="btn btn-default"><i className="fas fa-search" /></button>
+                <button onClick={(e) => submitHandler(e)} type="submit" className="btn btn-default bg-primary"><i className="fas fa-search" /></button>
             </div>
         </div>
 

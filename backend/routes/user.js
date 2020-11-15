@@ -9,7 +9,7 @@ router.route('/')
     .get(protect, admin, getUsers)
 
 router.route('/:id')
-    .get(protect, admin, getUser)
+    .get(protect, getUser)
     .put(protect, admin, updateUser)
     .delete(protect, admin, deleteUser)
 

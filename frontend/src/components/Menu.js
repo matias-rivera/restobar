@@ -21,19 +21,19 @@ const Menu = ({history}) => {
     const redirectTo = () => {
         return <Redirect
             to={{
-                pathname: "/sign-in",
+                pathname: "/login",
                 state: { referrer: '/' }
             }}
             />
     }
     
-    console.log(userInfo)
+ 
 
     return ( 
         <aside className="main-sidebar sidebar-dark-primary elevation-4">
         {/* Brand Logo */}
         <Link to={'/'} className="brand-link">
-            <img src="logo.png" alt="AdminLTE Logo" className="brand-image img-circle elevation-3" style={{opacity: '.8'}} />
+            <img src="/logo.png" alt="AdminLTE Logo" className="brand-image img-circle elevation-3" style={{opacity: '.8'}} />
             <span className="brand-text font-weight-light">Restobar</span>
         </Link>
         {/* Sidebar */}
@@ -82,7 +82,7 @@ const Menu = ({history}) => {
                 <li className="nav-header">RESTOBAR</li>
                     <li className="nav-item">
                         <Link to='/active' className='nav-link' >
-                            <i className="nav-icon fa fa-table" /> <p> Active Orders</p> 
+                            <i className="nav-icon fas fa-bell" /> <p> Active Orders</p> 
                         </Link>
                     </li>           
 
@@ -103,7 +103,7 @@ const Menu = ({history}) => {
 
                     <li className="nav-item">
                         <Link to='/category' className='nav-link' >
-                            <i className="nav-icon fa fa-table" /> <p> Categories</p> 
+                            <i className="nav-icon fas fa-list-alt" /> <p> Categories</p> 
                         </Link>
                     </li>           
 
@@ -123,7 +123,7 @@ const Menu = ({history}) => {
 
                     <li className="nav-item">
                         <Link to='/table' className='nav-link' >
-                            <i className="nav-icon fa fa-share" /> <p> Tables</p>  
+                            <i className="nav-icon fas fa-border-all" /> <p> Tables</p>  
                         </Link>
                     </li>           
 

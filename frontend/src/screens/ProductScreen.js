@@ -9,11 +9,11 @@ import { listProducts, createProduct } from './../actions/productActions';
 import HeaderContent from '../components/HeaderContent';
 import  Modal  from 'react-modal';
 import Input from '../components/form/Input';
-import Select from '../components/form/Select';
 import { allCategories } from './../actions/categoryActions';
 import { customStyles } from '../utils';
 import ModalButton from '../components/ModalButton';
 import SearchBoxMini from './../components/SearchBoxMini';
+import  Select  from 'react-select';
 
 
 Modal.setAppElement('#root')
@@ -27,7 +27,7 @@ const ProductScreen = ({history, match}) => {
     const [name, setName] = useState('')
     const [price, setPrice] = useState(0)
     const [stock, setStock] = useState(0)
-    const [category, setCategory] = useState(1)
+    const [category, setCategory] = useState({})
 
     const [errors, setErrors] = useState({})
 
@@ -68,7 +68,7 @@ const ProductScreen = ({history, match}) => {
         if(!stock){
           errorsCheck.stock = 'Stock is required'
         }
-        if(!category){
+        if(!category || Object.keys(category).length === 0){
           errorsCheck.category = 'Category is required'
         }
 
@@ -86,7 +86,7 @@ const ProductScreen = ({history, match}) => {
           name: name,
           price: price,
           stock: stock,
-          category: category
+          category: category.value
         }
         
         
@@ -100,6 +100,11 @@ const ProductScreen = ({history, match}) => {
   
         setModalIsOpen(false)
       }
+    }
+
+    const mapSelect = (data) => {
+      const mapped = data.map(table => ({ label: table.name, value: table.id}))
+      return mapped
     }
 
     return ( 
@@ -116,9 +121,18 @@ const ProductScreen = ({history, match}) => {
                   <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors}/>
                   <Input name={'price'} type={'number'} data={price} setData={setPrice} errors={errors}/>
                   <Input name={'stock'} type={'number'} data={stock} setData={setStock} errors={errors}/>
-                  <Select setData={setCategory} items={categories} loading={loadingCategories} error={errorCategories} />
-                  
 
+{/*                   <Select setData={setCategory} items={categories} loading={loadingCategories} error={errorCategories} />
+ */}                  <Select
+                        id='category' 
+                        options={categories ? mapSelect(categories) : ''}
+                        onChange={setCategory}
+                        value={category}
+                        placeholder='Select Category'
+                        isSearchable
+                      />
+                      
+                    {errors.category  && <label className='text-danger'>{errors.category} </label>}
                   <hr/>
                   <button type="submit" className="btn btn-primary">Submit</button>
                   

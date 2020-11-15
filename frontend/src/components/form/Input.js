@@ -13,6 +13,7 @@ const Input = ({name, type, data, setData, errors, classes=''}) => {
                     aria-describedby={name}  
                     value={data}
                     onChange={(e) => setData(e.target.value)}
+                    
                 />
                 
                 {errors[name]  && <label className='text-danger'>{errors[name]} </label>}

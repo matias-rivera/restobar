@@ -10,6 +10,7 @@ import  Modal  from 'react-modal';
 import { customStyles } from '../utils';
 import ModalButton from './../components/ModalButton';
 import axios from 'axios'
+import FileInput from './../components/form/FileInput';
 
 const ProfileScreen = ({history}) => {
 
@@ -54,7 +55,7 @@ const ProfileScreen = ({history}) => {
 
 
          //load product data
-         if(!user && !user.name) {
+         if((!user || !user.name) && userInfo) {
             dispatch(listUserDetails(userInfo._id))
         } else{
             //set states
@@ -164,6 +165,11 @@ const ProfileScreen = ({history}) => {
         }
     }
 
+    const imageName = (image) => {
+        const imageArray = image.split(`uploads`);
+        return imageArray[1]
+    }
+
     return ( 
         <>
 {/* Content Header (Page header) */}
@@ -174,7 +180,7 @@ const ProfileScreen = ({history}) => {
     <div className="row justify-content-center">
     <Modal style={customStyles} isOpen={modal} onRequestClose={() => setModal(false)}>
         <h2>Password check</h2>
-        <p>For your security, please insert your password to confirm changes.</p>
+        <p>For security reasons, please insert your actual password to confirm changes.</p>
         <form onSubmit={handleModalSubmit}>
             <Input name={'passwordCheck'} type={'password'} data={passwordCheck} setData={setPasswordCheck} errors={errors}/>
             <hr/>
@@ -192,31 +198,22 @@ const ProfileScreen = ({history}) => {
                     {loading 
                     ? <Loader variable={loading} />
                     : error
-                    ? <Message message={error} color={'danger'} />
-                    : (
+                    ? <Message message={error} color={'danger'} />: (
                         <>
                             <div className="text-center">
-                                <img className="profile-user-img img-fluid img-circle" src={userInfo ? userInfo.image : '../../dist/img/user4-128x128.jpg'} alt="User profile picture" />
+                                <img className="profile-user-img img-fluid img-circle" src={image} alt="User profile picture" />
                             </div>
                             <h3 className="profile-username text-center">{userInfo && userInfo.name}</h3>
                             <p className="text-muted text-center">{userInfo && userInfo.isAdmin ? 'Administrator' : 'Employee'}</p>
                             {loadingUpdate && <Loader variable={loadingUpdate} />}
                             {errorUpdate && <Message message={errorUpdate} color={'danger'} />}
                             <form onSubmit={handleSubmit}>
-                                <div className="form-group">
-                                    <label htmlFor="exampleFormControlFile1">Example file input</label>
-                                    <input 
-                                        type="file" 
-                                        className="form-control-file" 
-                                        id="image-file"
-                                        onChange={uploadingFileHandler}
-                                    />
-                                {uploading && <Loader variable={uploading}/>}
-                                </div>
+
                                 <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors}/>
                                 <Input name={'email'} type={'email'} data={email} setData={setEmail} errors={errors}/>
                                 <Input name={'password'} type={'password'} data={password} setData={setPassword} errors={errors}/>
                                 <Input name={'confirmPassword'} type={'password'} data={confirmPassword} setData={setConfirmPassword} errors={errors}/>
+                                <FileInput fileHandler={uploadingFileHandler} name={'photo'} image={imageName(image)} uploading={uploading} />
                                 <hr/>
                                 <button type="submit" className="btn btn-primary btn-block">Update</button>
                             </form>

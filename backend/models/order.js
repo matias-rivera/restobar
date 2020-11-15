@@ -21,6 +21,10 @@ const Order = sequelize.define('order',{
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
+    },
+    note:{
+        type:Sequelize.STRING,
+        allowNull:true
     }
     
 

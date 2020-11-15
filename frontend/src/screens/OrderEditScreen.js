@@ -12,6 +12,9 @@ import { listProducts } from '../actions/productActions';
 import SearchBox from './../components/SearchBox';
 import Paginate from './../components/Paginate';
 import Select from 'react-select'
+import Textarea from './../components/form/Textarea';
+import Checkbox from './../components/form/Checkbox';
+import SearchBoxMini from '../components/SearchBoxMini';
 
 
 const OrderEditScreen = ({history, match}) => {
@@ -24,11 +27,11 @@ const OrderEditScreen = ({history, match}) => {
     const [table, setTable] = useState(null)
     const [client, setClient] = useState(null)
     const [delivery, setDelivery] = useState(false)
-    const [user, setUser] = useState({})
+    const [note, setNote] = useState('')
     const [productsInOrder, setProductsInOrder] = useState([])
-    const [isPaid, setIsPaid] = useState(false)
-    const [total, setTotal] = useState(0)
     const [errors, setErrors] = useState({})
+    const [productsInOrderOld, setProductsInOrderOld] = useState([])
+  
 
     const dispatch = useDispatch()
 
@@ -70,23 +73,27 @@ const OrderEditScreen = ({history, match}) => {
         else{
           
           //load client data
-          if(!order.id || order.id !== orderId) {
+          if(!order || order.id !== orderId) {
             dispatch(listOrderDetails(orderId))
           } else{
               //set states
-             
-            setTable(order.table ? {
-                label: order.table.name, 
-                value: order.table.id
-            } : null)
-            setClient(order.client ? {
-              label: order.client.name, 
-              value: order.client.id
-          } : null)
-            setUser(order.user)
-            setIsPaid(order.isPaid)
-            setDelivery(order.delivery)
-            setTotal(order.total)
+            if(!table){
+              setTable(order.table ? {
+                  label: order.table.name, 
+                  value: order.table.id
+              } : null)
+            }
+
+            if(!client){
+                setClient(order.client ? {
+                  label: order.client.name, 
+                  value: order.client.id
+                  } : null)
+            }
+            setNote(note ? note :order.note)
+            setDelivery(delivery ? delivery : order.delivery)
+
+
             const products = order.products.map(product => {
                 return   {
                   id: product.id,
@@ -97,10 +104,16 @@ const OrderEditScreen = ({history, match}) => {
                   oldQuantity: product.orderItem.quantity
                 } 
               })
-            setProductsInOrder(products)
-            dispatch(listProducts(keyword,pageNumber))
-            dispatch(allFreeTables())
-            dispatch(allClients())
+            if(productsInOrder.length === 0 && productsInOrderOld.length === 0){
+              setProductsInOrder(products)
+              setProductsInOrderOld(setDeletedState(products))
+            }
+            
+
+              dispatch(listProducts(keyword,pageNumber))
+              dispatch(allFreeTables())
+              dispatch(allClients())
+            
   
           }
         }
@@ -137,7 +150,8 @@ const OrderEditScreen = ({history, match}) => {
             table: !delivery ? table.value : null,
             client: client.value,
             products: productsInOrder,
-            delivery: delivery
+            delivery: delivery,
+            note: note
         }
         
         dispatch(updateOrder(order))
@@ -182,15 +196,26 @@ const OrderEditScreen = ({history, match}) => {
         e.preventDefault()
   
       //remove product
+        
         const productsIn = productsInOrder.filter(function (item) {
           return item.id !== product.id;
         })
 
-        products.map(productInList => {
+
+        const setDeletedProduct = productsInOrderOld.map(productDeleted => {
+          if(product.id === productDeleted.id){
+            productDeleted.deleted = true
+          }
+          return productDeleted
+        })
+
+        setProductsInOrderOld(setDeletedProduct)
+
+  /*       products.map(productInList => {
           if(productInList.id === product.id){
             productInList.stock = productInList.stock + product.oldQuantity
           }
-        })
+        }) */
   
         setProductsInOrder(productsIn)
       }
@@ -245,12 +270,35 @@ const OrderEditScreen = ({history, match}) => {
             return list[index]
           }
         }
-        return 0
+        return false
       }
   
       const mapSelect = (data) => {
         const mapped = data.map(table => ({ label: table.name, value: table.id}))
         return mapped
+      }
+
+      const setDeletedState = (list) => {
+        return list.map(item => {
+          return {...item, deleted: false}
+        })
+      }
+
+      const mapProducts = (list) => {
+        const mappedProducts = list.map(product => {
+
+        const productIn = returnProduct(product, productsInOrderOld)
+        if(productIn){
+
+          if(productIn.deleted){
+            product.stock = productIn.stock + productIn.quantity
+          }
+      
+        }
+          return product
+        })
+
+        return mappedProducts
       }
   
   
@@ -282,8 +330,8 @@ const OrderEditScreen = ({history, match}) => {
             <div className="card-body">
         
             <div className='row'>
-              <div className='col-6'> 
-                  <Route render={({history}) => <SearchBox history={history} item={'order/create'}/>} />
+              <div className='col-12 col-lg-6'> 
+                  <Route render={({history}) => <SearchBoxMini history={history} item={`order/${orderId}/edit`}/>} />
               
               {loadingProductList 
                       ? 
@@ -294,7 +342,7 @@ const OrderEditScreen = ({history, match}) => {
                       : (
                       <>
                       <table id="productsTable" className="table table-bordered table-hover">
-                        <thead>
+                        <thead style={{color:'#fff'}} className='bg-info'>
                           <tr>
                             <th>ID</th>
                             <th>Name</th>
@@ -304,7 +352,7 @@ const OrderEditScreen = ({history, match}) => {
                           </tr>
                         </thead>
                         <tbody>
-                            {products.map(product => (
+                            {mapProducts(products).map(product => (
                               <tr key={product.id}>
                                 <td>{product.id}</td>
                                 <td>{product.name}</td>
@@ -313,7 +361,7 @@ const OrderEditScreen = ({history, match}) => {
                                 {inOrder(product, productsInOrder)
                                 ? <td className='text-center'><button disabled className='btn btn-primary'>In Order</button></td>
                                 : product.stock > 0 
-                                ?<td className='text-center'><button  className='btn btn-success' onClick={(e) => addProduct(e,product)}>Add to order</button></td>
+                                ?<td className='text-center'><button  className='btn btn-success' onClick={(e) => addProduct(e,product)}><i class="fas fa-plus"></i></button></td>
                                 : <td className='text-center'><button disabled className='btn btn-danger'>Out of Stock</button></td>
                                 }
                               </tr>
@@ -324,14 +372,14 @@ const OrderEditScreen = ({history, match}) => {
                       </table>
                       
                       <Paginate 
-                            item={'product'}
+                            item={`order/${orderId}/edit`}
                             pages={pages} 
                             page={page} 
                             keyword={keyword ? keyword : null} />
                       </>
                 )}
               </div>
-              <div className='col-6'>
+              <div className='col-12 col-lg-6'>
               {/* small card */}
               <div className="small-box bg-success">
                 <div className="inner">
@@ -346,21 +394,24 @@ const OrderEditScreen = ({history, match}) => {
 
                 <form onSubmit={handleSubmit}>
                 {errors.products && <Message message={errors.products} color={'warning'} />}
-                <table id="orderTable" className="table table-bordered table-hover">
-                  <thead>
-                    <th></th>
+                <table id="orderTable" className="table table-bordered table-hover table-responsive p-0">
+                  <thead >
+                    <tr>
+                    <th className='d-sm-table-cell'></th>
                     <th>Product</th>
                     <th>Quantity</th>
                     <th></th>
                     <th></th>
                     <th>Total</th>
                     <th></th>
+
+                    </tr>
                   </thead>
                   <tbody>
                     {productsInOrder.length > 0? (
                     productsInOrder.map((productIn, i) => (
                       <tr key={i}>
-                        <td className='text-center'><button onClick={(e) => refreshProductsInOrder(e)}><i class="fas fa-sync-alt btn-xs"></i></button></td>
+                        <td className='text-center d-sm-table-cell'><button onClick={(e) => refreshProductsInOrder(e)}><i className="fas fa-sync-alt btn-xs"></i></button></td>
                         <td>{productIn.name}</td>
                         <td>{productIn.quantity}</td>
                         <td className='text-center'>
@@ -373,7 +424,7 @@ const OrderEditScreen = ({history, match}) => {
                         <td className='text-center'><button className='btn btn-danger' onClick={(e) => removeProduct(e,productIn)}>X</button></td>
                       </tr>
                     ))
-                    ) : 'Add products'}
+                    ) : <tr></tr>}
                   </tbody>
                 
                 </table>
@@ -425,24 +476,9 @@ const OrderEditScreen = ({history, match}) => {
 
                 </div>
 
-
+                <Textarea title={'Note (optional)'} rows={3} data={note} setData={setNote} />
                 <div className="col-sm-6">
-                  {/* checkbox */}
-                  <div className="form-group clearfix">
-                    <div className="icheck-primary d-inline">
-                      <input 
-                        className="form-check-input" 
-                        type="checkbox" 
-                        id="checkboxPrimary1" 
-                        defaultValue 
-                        checked={delivery}
-                        onChange={(e) => setDelivery(e.target.checked)}
-                      />
-                      <label htmlFor="checkboxPrimary1">
-                        Delivery
-                      </label>
-                    </div>
-                  </div>
+                  <Checkbox name={'delivery'} data={delivery} setData={setDelivery} />
                 </div>
 
 

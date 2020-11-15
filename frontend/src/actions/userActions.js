@@ -276,7 +276,7 @@ export const updateProfile = (user) => async(dispatch, getState) => {
             }
         }
 
-        console.log(user)
+       
         //update user
         const {data} = await axios.put(
             `/api/users/profile/${user.id}`,

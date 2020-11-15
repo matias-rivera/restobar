@@ -5,6 +5,7 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import SignInScreen from './screens/SignInScreen';
 
 import Main from './Main';
+import LoginScreen from './screens/LoginScreen';
 
 const App = () => {
 
@@ -14,7 +15,8 @@ const App = () => {
     
   <Router>
    <Switch>
-      <Route path='/sign-in' component={SignInScreen} />
+
+      <Route path='/login' component={LoginScreen} />
       <Route path='/' component={Main} />
    </Switch>
 

@@ -7,6 +7,7 @@ import HeaderContent from '../components/HeaderContent';
 import { listOrderDetails, updateOrderToPaid } from '../actions/orderActions';
 import { ORDER_UPDATE_RESET } from '../constants/orderConstants';
 import ButtonGoBack from '../components/ButtonGoBack';
+import ViewBox from './../components/ViewBox';
 
 
 
@@ -22,6 +23,7 @@ const OrderViewScreen = ({history, match}) => {
     const [productsInOrder, setProductsInOrder] = useState([])
     const [isPaid, setIsPaid] = useState(false)
     const [total, setTotal] = useState(0)
+    const [note, setNote] = useState('')
 
     const dispatch = useDispatch()
 
@@ -62,6 +64,7 @@ const OrderViewScreen = ({history, match}) => {
             setIsPaid(order.isPaid)
             setDelivery(order.delivery)
             setTotal(order.total)
+            setNote(order.note)
             const products = order.products.map(product => {
               return   {
                 id: product.id,
@@ -180,91 +183,47 @@ const OrderViewScreen = ({history, match}) => {
                 <div className='row'>
 
                   <div className='col-12 col-md-6'>
-                    <div className="small-box bg-info">
-                      <div className="inner">
-                        <h3>{order.id }</h3>
-                        <p>ORDER ID </p>
-                      </div>
-                      <div className="icon">
-                      <i className="far fa-clipboard"></i>
-                      </div>
-                    </div>
+                    <ViewBox title={order.id} paragraph={'ORDER ID'} icon={'far fa-clipboard'} color={'bg-info'} />
                   </div>
 
                   {order.isPaid 
                   ?(
                     <div className='col-12 col-md-6'>
-                    <div className="small-box bg-success">
-                      <div className="inner">
-                        <h3>Paid</h3>
-                        <p>Order already paid</p>
-                      </div>
-                      <div className="icon">
-                        <i class="fas fa-check"></i>
-                      </div>
+                      <ViewBox title={'Paid'} paragraph={'Order is already paid'} icon={'fas fa-check'} color={'bg-success'} />
                     </div>
-                  </div>
                   )
                   :(
                     <div className='col-12 col-md-6'>
-                    <div className="small-box bg-danger">
-                      <div className="inner">
-                        <h3>Not Paid</h3>
-                        <p>Order still not paid</p>
-                      </div>
-                      <div className="icon">
-                        <i class="far fa-times-circle"></i>
-                      </div>
+                      <ViewBox title={'Not Paid'} paragraph={'Order is still not paid'} icon={'far fa-times-circle'} color={'bg-danger'} />
                     </div>
-                  </div>
                   )
                   
                   }
 
                   <div className='col-12 col-md-6'>
-                    <div className="small-box bg-info">
-                      <div className="inner">
-                        <h3>{client.name}</h3>
-                        <p>ID: {client.id } </p>
-                      </div>
-                      <div className="icon">
-                        <i className="fas fa-user" />
-                      </div>
-                    </div>
+                    <ViewBox title={client.name} paragraph={`ID: ${client.id}`} icon={'fas fa-user'} color={'bg-info'} />
                   </div>
 
                   {table 
                   ? (
                   <div className='col-12 col-md-6'>
-                    <div className="small-box bg-info">
-                      <div className="inner">
-                        <h3>{table.name}</h3>
-                        <p>ID: {table.id } </p>
-                      </div>
-                      <div className="icon">
-                        <i className="fas fa-utensils" />
-                      </div>
-                    </div>
+                    <ViewBox title={table.name} paragraph={`ID: ${table.id}`} icon={'fas fa-utensils'} color={'bg-info'} />
                   </div>
                   ) 
                   : (
                   <div className='col-12 col-md-6'>
-                    <div className="small-box bg-info">
-                      <div className="inner">
-                        <h3>Delivery</h3>
-                        <p>{client.address}</p>
-                      </div>
-                      <div className="icon">
-                        <i className="fas fa-truck" />
-                      </div>
-                    </div>
+                    <ViewBox title={'Delivery'} paragraph={client.address} icon={'fas fa-truck'} color={'bg-primary'} />
                   </div>
                   )}
-                  
-                  
-
 
                 </div>
+
+
+                <div className='col-12'>
+                    <ViewBox title={'Note:'} paragraph={note} icon={'far fa-sticky-note'} color={'bg-silver'} />
+                </div>
+
+        
 
                 
     
@@ -291,15 +250,7 @@ const OrderViewScreen = ({history, match}) => {
                 </div>
                 <div className='card-body'>
                   <button className='btn btn-block' onClick={(e) => handleEdit(e)}>
-                    <div className="small-box bg-warning">
-                        <div className="inner">
-                          <h3 className='text-left'>Edit Order</h3>
-                          <p className='text-center'>Click to Edit</p>
-                        </div>
-                        <div className="icon" >
-                        <i class="fas fa-edit"></i>
-                        </div>
-                    </div>
+                    <ViewBox title={`Edit Order`} paragraph={`Click to Edit`} icon={'fas fa-edit'} color={'bg-warning'} />
                   </button>
                 </div>
               </div>
@@ -315,15 +266,7 @@ const OrderViewScreen = ({history, match}) => {
                 </div>
                 <div className='card-body'>
                   <button className='btn btn-block' onClick={(e) => handlePay(e)}>
-                    <div className="small-box bg-success">
-                        <div className="inner">
-                          <h3 className='text-left'>PAY ${productsInOrder.length > 0 ? totalPrice(productsInOrder) : 0}</h3>
-                          <p className='text-center'>Click to Pay</p>
-                        </div>
-                        <div className="icon" >
-                        <i class="fas fa-hand-holding-usd"></i>
-                        </div>
-                    </div>
+                    <ViewBox title={`PAY $${productsInOrder.length > 0 ? totalPrice(productsInOrder) : 0}`} paragraph={`Click to Pay`} icon={'fas fa-hand-holding-usd'} color={'bg-success'} />
                   </button>
                 </div>
               </div>

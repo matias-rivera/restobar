@@ -7,18 +7,9 @@ import  Modal  from 'react-modal';
 import { allActiveTables, allFreeTables } from '../actions/tableActions';
 import Table from '../components/Table';
 import { Link } from 'react-router-dom';
+import { customStyles } from '../utils';
 
-const customStyles = {
-    content : {
-      top                   : '50%',
-      left                  : '50%',
-      right                 : 'auto',
-      bottom                : 'auto',
-      marginRight           : '-50%',
-      width: 400,
-      transform             : 'translate(-50%, -50%)'
-    }
-  }
+
 Modal.setAppElement('#root')
 
 const ActiveOrdersScreen = ({history, match}) => {
@@ -108,7 +99,7 @@ const ActiveOrdersScreen = ({history, match}) => {
                       <>
                           {tablesFree.map(table => (
                             <Link to={`/order/create/${table.id}/${table.name}/table`} key={table.id} className="btn btn-block btn-success btn-lg" >
-                          <p className='text-center my-0'><i class="fas fa-utensils float-left my-1"></i>{table.name}</p>
+                          <p className='text-center my-0'><i className="fas fa-utensils float-left my-1"></i>{table.name}</p>
                             </Link>
                           ))}
                       </>

@@ -25,8 +25,7 @@ exports.registerUser = asyncHandler(async (req, res) =>{
         name,
         email,
         password,
-        isAdmin,
-        image
+        isAdmin
     })
     if(user){
         //return created user
@@ -148,7 +147,7 @@ exports.getUsers = asyncHandler(async (req, res) =>{
 //@access   Private/admin
 exports.updateUser = asyncHandler(async (req, res) =>{
     
-    const { name, email, password, isAdmin } = req.body
+    const { name, email, password, isAdmin, avatar } = req.body
 
     const user = await User.findByPk(req.params.id)
 
@@ -156,9 +155,10 @@ exports.updateUser = asyncHandler(async (req, res) =>{
 
     if(user){
         user.name = name
+        user.image = avatar ? '/avatar.png' : user.image
         user.email = email
         user.password = password ? bcrypt.hashSync(password, salt) : user.password
-        user.isAdmin = isAdmin
+        user.isAdmin = user.isAdmin ? user.isAdmin : isAdmin ? isAdmin : user.isAdmin
         const updatedUser =  await user.save()
         res.json(updatedUser)
     } else {

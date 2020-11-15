@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {protect} = require('../middleware/authMiddleware')
+const {protect, admin} = require('../middleware/authMiddleware')
 const { 
     createOrder, 
     getOrders, 
@@ -15,7 +15,8 @@ const {
     getAllOrders,
     getAllDeliveryOrders,
     getAllInPlaceOrders,
-    getAllActiveOrders
+    getAllActiveOrders,
+    getAllSales
 } = require('../controllers/order')
 
 
@@ -32,6 +33,9 @@ router.route('/all/delivery')
 
 router.route('/all/in-place')
     .get(protect,getAllInPlaceOrders)
+
+router.route('/all/sales')
+    .get(protect, admin, getAllSales)
 
 router.route('/active')
     .get(protect, getActiveOrders)
