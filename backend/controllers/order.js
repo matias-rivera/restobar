@@ -132,6 +132,8 @@ exports.getAllInPlaceOrders = asyncHandler(async (req, res) =>{
 //@access   Private/user
 exports.getAllSales = asyncHandler(async (req, res) =>{
   orders = await Order.findAll({
+    group: ["order.id"],
+    includeIgnoreAttributes:false,
     attributes: [
       'id',
       'delivery',
@@ -144,7 +146,6 @@ exports.getAllSales = asyncHandler(async (req, res) =>{
       attributes: [],
       duplicating: false
   }],
-  group: ["id"],
   order:[['updatedAt','DESC']],
     where:{isPaid:true}})
   res.json(orders)

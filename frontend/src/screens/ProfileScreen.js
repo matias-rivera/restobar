@@ -49,7 +49,7 @@ const ProfileScreen = ({history}) => {
             dispatch({type: USER_DETAILS_RESET})
             dispatch({type: USER_LOGOUT})
             dispatch(login(email, password ? password : passwordCheck))
-            history.push('/')
+            history.push('/login')
 
         } 
 

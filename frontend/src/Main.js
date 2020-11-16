@@ -50,7 +50,7 @@ const Main = ({history}) => {
             <Switch>
 
                 <Route path='/active' exact component={ActiveOrdersScreen} />
-                <Route path='/profile' exact component={ProfileScreen} />
+                <Route path='/profile' component={ProfileScreen} />
                  {/* <Route path='/active' exact component={ActiveOrdersScreen} />  */}
                 <AdminRoute path='/user/:id/edit' component={UserEditScreen}/>
                 <AdminRoute path='/user/page/:pageNumber' component={UserScreen} exact/>
@@ -107,7 +107,7 @@ const Main = ({history}) => {
                 <Route path='/order/create' component={OrderCreateScreen} />
                 <Route path='/order' component={OrderScreen} />
                 <Route path='/not-authorized' component={NotAuthorizedScreen} />
-                <Route path='/' component={DashboardScreen} exact/>
+                <Route path='/' component={DashboardScreen} />
                 <Route component={NotFoundScreen} />
             </Switch>
 
