@@ -6,13 +6,13 @@ node_modules/
 frontend/public/pages
 /.pnp
 .pnp.js
-uploads/
+
 
 # testing
 /coverage
 
 # production
-/build
+/frontend/build
 
 
 # misc

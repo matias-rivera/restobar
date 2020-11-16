@@ -46,47 +46,39 @@ app.use('/api/upload', uploadRoutes)
 const __dirname1 = path.resolve()
 app.use('/uploads', express.static(path.join(__dirname1, '/uploads')))
 
+if(process.env.NODE_ENV === 'production'){
+    app.use(express.static(path.join(__dirname1,'/frontend/build')))
+
+    app.get('*',(req, res) => res.sendFile(path.resolve(__dirname1, 'frontend', 'build', 'index.html')))
+}else{
+    app.get('/', (req,res) => {
+        res.send('API is running...')
+    });
+}
+
 
 //middlewares
 app.use(notFound)
 app.use(errorHandler)
 
 
-/* app.get('/',(req, res) => {
-    res.send('API is running...')
-})
-
-app.get('/api/products',(req, res) => {
-    res.send('Products...')
-}) */
-
-//test connection
-/*  try {
-    async () => {
-        await sequelize.authenticate();
-    }
-    console.log('Connection has been established successfully.');
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
-  }  */
-/* sequelize.sync({force:true}).then(user =>
-    User.create({
-        name: 'Admin',
-        password: '123456',
-        email:'admin@example.com',
-        isAdmin: true
-    }) 
-) */
-sequelize.sync()
-/*     .then(user => {
-        
-    })
-    .catch(err => console.log(err)) */
-
-
-
- 
 
 const PORT = process.env.PORT || 5000
 
-app.listen(PORT, console.log(`Server running on port ${PORT}`))
+sequelize.sync()
+    .then(result => {
+    return User.findByPk(2) 
+    })
+    .then(user => {
+        if(!user) {
+            return User.create({name: 'Admin Doe', email: 'admin@example.com', password: '123456'})
+        }
+        return user
+    })
+    .then(user => {
+        app.listen(PORT, console.log(`Server running on port ${PORT}`))
+    })
+    .catch(err => {console.log(err)})
+
+ 
+
