@@ -12,6 +12,7 @@ import { customStyles } from '../utils';
 import  Modal  from 'react-modal';
 import Input from '../components/form/Input';
 import SearchBoxMini from '../components/SearchBoxMini';
+import DataTableLoader from '../components/loader/DataTableLoader';
 
 
 const CategoryScreen = ({history, match}) => {
@@ -114,7 +115,7 @@ const CategoryScreen = ({history, match}) => {
             <div className="card-body table-responsive p-0">
               {loading 
               ? 
-              <Loader variable={loading} /> 
+              <DataTableLoader />  
               : error 
               ? 
               <Message message={error} color={'danger'} />

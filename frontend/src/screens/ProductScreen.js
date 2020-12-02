@@ -14,6 +14,7 @@ import { customStyles } from '../utils';
 import ModalButton from '../components/ModalButton';
 import SearchBoxMini from './../components/SearchBoxMini';
 import  Select  from 'react-select';
+import DataTableLoader from '../components/loader/DataTableLoader';
 
 
 Modal.setAppElement('#root')
@@ -158,7 +159,7 @@ const ProductScreen = ({history, match}) => {
                     <div className="card-body table-responsive p-0">
                       {loading 
                       ? 
-                      <Loader variable={loading} /> 
+                      <DataTableLoader /> 
                       : error 
                       ? 
                       <Message message={error} color={'danger'} />

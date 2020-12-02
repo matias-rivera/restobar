@@ -8,7 +8,7 @@ import { allActiveTables, allFreeTables } from '../actions/tableActions';
 import Table from '../components/Table';
 import { Link } from 'react-router-dom';
 import { customStyles } from '../utils';
-
+import {OccupiedTableLoader, FreeTableLoader} from '../components/loader/TableLoader';
 
 Modal.setAppElement('#root')
 
@@ -39,6 +39,21 @@ const ActiveOrdersScreen = ({history, match}) => {
         dispatch(allFreeTables())
     }, [dispatch, history, userInfo])
 
+    const occupiedTableLoader = () => {
+      let tableSkeleton = []
+      for (let i = 0; i < 16; i++){
+        tableSkeleton.push( <div className="col-12 col-md-6 col-lg-4 col-xl-3" key={i}> <OccupiedTableLoader/> </div> )
+      }
+      return tableSkeleton
+    }
+
+    const freeTableLoader = () => {
+      let tableSkeleton = []
+      for (let i = 0; i < 6; i++){
+        tableSkeleton.push( <div className="col-3" key={i}> <FreeTableLoader/> </div> )
+      }
+      return tableSkeleton 
+    }
 
     return ( 
         <>
@@ -59,9 +74,12 @@ const ActiveOrdersScreen = ({history, match}) => {
                     </div>
                     {/* /.card-header */}
                     <div className="card-body">
+            
                       {loading 
                       ? 
-                      <Loader variable={loading} /> 
+                      <div className='row'>
+                        {occupiedTableLoader()}
+                      </div>
                       : error 
                       ? 
                       <Message message={error} color={'danger'} />
@@ -69,7 +87,7 @@ const ActiveOrdersScreen = ({history, match}) => {
                       <>
                         <div className='row'>
                           {tables.map(table => (
-                            <div key={table.id} className="col-lg-3 col-xs-6">
+                            <div key={table.id} className="col-12 col-md-6 col-lg-4 col-xl-3">
                               {/* small box */}
                               <Table table={table} />
                             </div>
@@ -91,7 +109,7 @@ const ActiveOrdersScreen = ({history, match}) => {
                     <div className='card-body'>
                       {loadingFree
                       ? 
-                      <Loader variable={loadingFree} /> 
+                      freeTableLoader() 
                       : errorFree
                       ? 
                       <Message message={errorFree} color={'danger'} />

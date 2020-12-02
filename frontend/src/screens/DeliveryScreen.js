@@ -9,6 +9,7 @@ import { Route, Link } from 'react-router-dom';
 import HeaderContent from '../components/HeaderContent';
 import { listDeliveryOrders } from '../actions/orderActions';
 import SearchBoxMini from '../components/SearchBoxMini';
+import DataTableLoader from '../components/loader/DataTableLoader';
 
 
 
@@ -55,7 +56,7 @@ const DeliveryScreen = ({history, match}) => {
   <div className="card-body table-responsive p-0">
       {loading 
                     ? 
-                    <Loader variable={loading} /> 
+                    <DataTableLoader />  
                     : error 
                     ? 
                     <Message message={error} color={'danger'} />

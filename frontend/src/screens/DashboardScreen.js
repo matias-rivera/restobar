@@ -8,6 +8,8 @@ import Loader from '../components/Loader';
 import Message from './../components/Message';
 import { allActiveOrders, allSales } from './../actions/orderActions';
 import DeliveryListItem from '../components/DeliveryListItem';
+import { OccupiedTableLoader } from '../components/loader/TableLoader';
+import DataTableLoader from '../components/loader/DataTableLoader';
 
 
 const DashboardScreen = ({history}) => {
@@ -131,6 +133,23 @@ const DashboardScreen = ({history}) => {
         return indents;
 }
 
+const skeletonBoxes = () => {
+    let tableSkeleton = []
+    for (let i = 0; i < 4; i++){
+      tableSkeleton.push( <div className="col-lg-3 col-6" key={i}><OccupiedTableLoader/> </div> )
+    }
+    return tableSkeleton
+}
+
+const skeletonSales = () => {
+    
+    return (
+        <div className='row'>
+            <div className="col-12 col-lg-6" > <div className='card'><div className='card-body'><DataTableLoader/></div></div> </div>
+            <div className="col-12 col-lg-6" > <div className='card'><div className='card-body'><DataTableLoader/></div></div> </div>
+        </div>
+    )
+}
 
 
     return ( 
@@ -141,6 +160,14 @@ const DashboardScreen = ({history}) => {
             <div className="container-fluid">
                 <div className="row">
 
+                      
+
+                    {loadingAllOrders
+                    ? skeletonBoxes()
+                    : errorAllOrders
+                    ? <Message message={errorAllOrders} color={'danger'} />
+                    :(
+                    <>
                         {loadingFree
                         ? 
                         <Loader variable={loadingFree} /> 
@@ -157,13 +184,6 @@ const DashboardScreen = ({history}) => {
                             />
                             )
                         }
-
-                    {loadingAllOrders
-                    ? <Loader variable={loadingAllOrders} />
-                    : errorAllOrders
-                    ? <Message message={errorAllOrders} color={'danger'} />
-                    :(
-                    <>
                         <SmallBox 
                             number={ordersInPlace(allOrders).length} 
                             paragraph={'In Place Orders'} 
@@ -193,7 +213,7 @@ const DashboardScreen = ({history}) => {
                 {!userInfo.isAdmin
                 ? ''
                 : loadingSales
-                ? <Loader variable={loadingSales} />
+                ? skeletonSales()
                 : errorSales
                 ? <Message message={errorSales} color={'danger'} />
                 :(
@@ -227,60 +247,60 @@ const DashboardScreen = ({history}) => {
                             </div>
                         </div>
                         <div className='col-12 col-lg-6'>
-     <div className="card">
-  <div className="card-header border-0">
-    <h3 className="card-title">Restobar Overview</h3>
-  </div>
-  <div className="card-body">
-    <div className="d-flex justify-content-between align-items-center border-bottom mb-3">
-      <p className="text-warning text-xl">
-        <i class="fas fa-shopping-cart"></i>
-      </p>
-      <p className="d-flex flex-column text-right">
-        <span className="font-weight-bold">
-          <i className="ion ion-android-arrow-up text-warning" /> {sales ? getTodayProducts(sales) : 0}
-        </span>
-        <span className="text-muted">TODAY PRODUCTS SOLD</span>
-      </p>
-    </div>
-    {/* /.d-flex */}
-    <div className="d-flex justify-content-between align-items-center border-bottom mb-3">
-      <p className="text-info text-xl">
-        <i class="fas fa-truck"></i>
-      </p>
-      <p className="d-flex flex-column text-right">
-        <span className="font-weight-bold">
-          <i className="ion ion-android-arrow-up text-info" /> {sales ? getTodayDelivery(sales) : 0}
-        </span>
-        <span className="text-muted">TODAY DELIVERIES MADE </span>
-      </p>
-    </div>
-    <div className="d-flex justify-content-between align-items-center border-bottom mb-3">
-      <p className="text-success text-xl">
-        <i class="fas fa-money-bill-wave"></i>
-      </p>
-      <p className="d-flex flex-column text-right">
-        <span className="font-weight-bold">
-        <span className='text-success'><i class="fas fa-dollar-sign text-success"></i> {sales ? `${getTodayTotal(sales)}` : 0}</span> ({getTodaySales(sales).length}) 
-        </span>
-        <span className="text-muted">TODAY SALES</span>
-      </p>
-    </div>
-    {/* /.d-flex */}
-    <div className="d-flex justify-content-between align-items-center mb-0">
-      <p className="text-danger text-xl">
-        <i class="fas fa-piggy-bank"></i>
-      </p>
-      <p className="d-flex flex-column text-right">
-        <span className="font-weight-bold">
-        <span className='text-success'><i class="fas fa-dollar-sign"></i> {sales ? `${getTotalSales(sales)}` : 0}</span>
-        </span>
-        <span className="text-muted">TOTAL SALES</span>
-      </p>
-    </div>
-    {/* /.d-flex */}
-  </div>
-</div>
+                                <div className="card">
+                            <div className="card-header border-0">
+                                <h3 className="card-title">Restobar Overview</h3>
+                            </div>
+                            <div className="card-body">
+                                <div className="d-flex justify-content-between align-items-center border-bottom mb-3">
+                                <p className="text-warning text-xl">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </p>
+                                <p className="d-flex flex-column text-right">
+                                    <span className="font-weight-bold">
+                                    <i className="ion ion-android-arrow-up text-warning" /> {sales ? getTodayProducts(sales) : 0}
+                                    </span>
+                                    <span className="text-muted">TODAY PRODUCTS SOLD</span>
+                                </p>
+                                </div>
+                                {/* /.d-flex */}
+                                <div className="d-flex justify-content-between align-items-center border-bottom mb-3">
+                                <p className="text-info text-xl">
+                                    <i class="fas fa-truck"></i>
+                                </p>
+                                <p className="d-flex flex-column text-right">
+                                    <span className="font-weight-bold">
+                                    <i className="ion ion-android-arrow-up text-info" /> {sales ? getTodayDelivery(sales) : 0}
+                                    </span>
+                                    <span className="text-muted">TODAY DELIVERIES MADE </span>
+                                </p>
+                                </div>
+                                <div className="d-flex justify-content-between align-items-center border-bottom mb-3">
+                                <p className="text-success text-xl">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </p>
+                                <p className="d-flex flex-column text-right">
+                                    <span className="font-weight-bold">
+                                    <span className='text-success'><i class="fas fa-dollar-sign text-success"></i> {sales ? `${getTodayTotal(sales)}` : 0}</span> ({getTodaySales(sales).length}) 
+                                    </span>
+                                    <span className="text-muted">TODAY SALES</span>
+                                </p>
+                                </div>
+                                {/* /.d-flex */}
+                                <div className="d-flex justify-content-between align-items-center mb-0">
+                                <p className="text-danger text-xl">
+                                    <i class="fas fa-piggy-bank"></i>
+                                </p>
+                                <p className="d-flex flex-column text-right">
+                                    <span className="font-weight-bold">
+                                    <span className='text-success'><i class="fas fa-dollar-sign"></i> {sales ? `${getTotalSales(sales)}` : 0}</span>
+                                    </span>
+                                    <span className="text-muted">TOTAL SALES</span>
+                                </p>
+                                </div>
+                                {/* /.d-flex */}
+                            </div>
+                            </div>
 
                         </div>
                     </div>
@@ -300,7 +320,7 @@ const DashboardScreen = ({history}) => {
                             <div className="card-body p-0">
                                 <div className="table-responsive">
                                 {loadingAllOrders 
-                                    ?   <Loader variable={loadingAllOrders}/>
+                                    ?   <DataTableLoader />
                                     :   errorAllOrders
                                     ?   <Message message={errorAllOrders} color={'danger'} />
                                     : (
@@ -357,7 +377,7 @@ const DashboardScreen = ({history}) => {
                                 
 
                                  {loadingAllOrders 
-                                    ?   <Loader variable={loadingAllOrders}/>
+                                    ?   <DataTableLoader />
                                     :   errorAllOrders
                                     ?   <Message message={errorAllOrders} color={'danger'} />
                                     : (
@@ -380,6 +400,8 @@ const DashboardScreen = ({history}) => {
                                 <Link to={'/delivery'} className="uppercase">View All Delivery Orders</Link>
                             </div>
                         </div>
+
+                        
 
                     </div>
                 </div>

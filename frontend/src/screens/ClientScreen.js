@@ -12,6 +12,7 @@ import { createClient, listClients } from '../actions/clientActions';
 import { customStyles } from '../utils';
 import ModalButton from '../components/ModalButton';
 import SearchBoxMini from './../components/SearchBoxMini';
+import DataTableLoader from '../components/loader/DataTableLoader';
 
 Modal.setAppElement('#root')
 
@@ -138,7 +139,7 @@ const ClientScreen = ({history, match}) => {
                     <div className="card-body table-responsive p-0">
                       {loading 
                       ? 
-                      <Loader variable={loading} /> 
+                      <DataTableLoader /> 
                       : error 
                       ? 
                       <Message message={error} color={'danger'} />

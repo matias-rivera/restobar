@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Paginate from '../components/Paginate';
-import TableCrud from '../components/TableCrud';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { Route, Link } from 'react-router-dom';
@@ -13,6 +12,7 @@ import { createTable } from '../actions/tableActions';
 import { customStyles } from '../utils';
 import ModalButton from './../components/ModalButton';
 import SearchBoxMini from './../components/SearchBoxMini';
+import DataTableLoader from '../components/loader/DataTableLoader';
 
 
 
@@ -87,7 +87,6 @@ const TableScreen = ({history, match}) => {
                 <h2>Create Form</h2>
                 <form onSubmit={handleSubmit}>
                   <Input name={'name'} type={'text'} data={name} setData={setName} errors={errors}/>
-
                   <hr/>
                   <button type="submit" className="btn btn-primary">Submit</button>
                   
@@ -112,7 +111,7 @@ const TableScreen = ({history, match}) => {
                     <div className="card-body table-responsive p-0">
                       {loading 
                       ? 
-                      <Loader variable={loading} /> 
+                      <DataTableLoader /> 
                       : error 
                       ? 
                       <Message message={error} color={'danger'} />

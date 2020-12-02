@@ -11,6 +11,7 @@ import { customStyles } from '../utils';
 import ModalButton from './../components/ModalButton';
 import axios from 'axios'
 import FileInput from './../components/form/FileInput';
+import DataTableLoader from '../components/loader/DataTableLoader';
 
 const ProfileScreen = ({history}) => {
 
@@ -196,7 +197,7 @@ const ProfileScreen = ({history}) => {
                 <div className="card-body box-profile">
                     
                     {loading 
-                    ? <Loader variable={loading} />
+                    ? <DataTableLoader />
                     : error
                     ? <Message message={error} color={'danger'} />: (
                         <>
