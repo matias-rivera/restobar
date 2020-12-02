@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Aplicacion para restaurantes",
   "main": "server.js",
+  "engines":{
+    "node": "14.13.1",
+    "npm": "6.14.8"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "nodemon backend/server",
