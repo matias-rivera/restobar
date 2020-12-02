@@ -1,15 +1,15 @@
 //get order total price 
-exports.totalPrice = (productsIn) => {
+export const totalPrice = (productsIn) => {
     return productsIn.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2)
 }
 
   //get all order items
-exports.totalItems = (productsIn) => {
+export const totalItems = (productsIn) => {
     return productsIn.reduce((acc, item) => acc + item.quantity, 0)
 }
 
 //increase product quantiity
-exports.addUnit = (e, product, productsInOrder, setProductsInOrder) => {
+export const addUnit = (e, product, productsInOrder, setProductsInOrder) => {
     e.preventDefault()
 
     const newProducts = productsInOrder.map(el => (el.id === product.id ? {...el, quantity:el.quantity+1} : el))
@@ -18,7 +18,7 @@ exports.addUnit = (e, product, productsInOrder, setProductsInOrder) => {
 }
 
 //decrease product quantity
-exports.removeUnit = (e, product, productsInOrder, setProductsInOrder) =>{
+export const removeUnit = (e, product, productsInOrder, setProductsInOrder) =>{
     e.preventDefault()
 
     const newProducts = productsInOrder.map(el => (el.id === product.id ? {...el, quantity:el.quantity-1} : el))
@@ -28,7 +28,7 @@ exports.removeUnit = (e, product, productsInOrder, setProductsInOrder) =>{
 
 
 //check if product is already in order
-const inOrder = (obj, list) => {
+export const inOrder = (obj, list) => {
     for (let index = 0; index < list.length; index++) {
       if (obj.id === list[index].id){
         return true
@@ -37,7 +37,7 @@ const inOrder = (obj, list) => {
     return false
   }
 
-const returnProduct = (obj, list) => {
+export const returnProduct = (obj, list) => {
     for (let index = 0; index < list.length; index++) {
       if (obj.id === list[index].id){
         return list[index]
@@ -46,12 +46,12 @@ const returnProduct = (obj, list) => {
     return false
   }
 
-exports.mapSelect = (data) => {
+export const mapSelect = (data) => {
     const mapped = data.map(table => ({ label: table.name, value: table.id}))
     return mapped
   }
 
-exports.setDeletedState = (list) => {
+export const setDeletedState = (list) => {
     return list.map(item => {
       return {...item, deleted: false}
     })
@@ -59,7 +59,7 @@ exports.setDeletedState = (list) => {
 
 
 
-exports.mapProducts = (list, productsInOrderOld) => {
+export const mapProducts = (list, productsInOrderOld) => {
     const mappedProducts = list.map(product => {
 
     const productIn = returnProduct(product, productsInOrderOld)
@@ -78,7 +78,7 @@ exports.mapProducts = (list, productsInOrderOld) => {
 
 
 //refresh product in order
-exports.refreshProductsInOrder = (e, products, productsInOrder, setProductsInOrder) => {
+export const refreshProductsInOrder = (e, products, productsInOrder, setProductsInOrder) => {
     e.preventDefault()
     let newProducts = productsInOrder
     for (let index = 0; index < products.length; index++) {
@@ -89,7 +89,7 @@ exports.refreshProductsInOrder = (e, products, productsInOrder, setProductsInOrd
 
 
 //remove product from order
-exports.removeProduct = (e, product, productsInOrder, setProductsInOrder, productsInOrderOld, setProductsInOrderOld) => {
+export const removeProduct = (e, product, productsInOrder, setProductsInOrder, productsInOrderOld, setProductsInOrderOld) => {
     e.preventDefault()
 
     //remove product
@@ -111,7 +111,7 @@ exports.removeProduct = (e, product, productsInOrder, setProductsInOrder, produc
 }
 
 //add product to order
-exports.addProduct = (e, product, productsInOrder, setProductsInOrder) => {
+export const addProduct = (e, product, productsInOrder, setProductsInOrder) => {
     e.preventDefault()
 
     //product object
@@ -132,6 +132,3 @@ exports.addProduct = (e, product, productsInOrder, setProductsInOrder) => {
 }
 
 
-  
-module.exports.returnProduct = returnProduct
-module.exports.inOrder = inOrder

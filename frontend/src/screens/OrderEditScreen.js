@@ -173,9 +173,7 @@ const OrderEditScreen = ({history, match}) => {
 
     }
 
-      
-
-
+  
 
     return ( 
         <>  
@@ -235,7 +233,7 @@ const OrderEditScreen = ({history, match}) => {
                                 {inOrder(product, productsInOrder)
                                 ? <td className='text-center'><button disabled className='btn btn-primary'>In Order</button></td>
                                 : product.stock > 0 
-                                ?<td className='text-center'><button  className='btn btn-success' onClick={(e) => addProduct(e,product,productsInOrder, setProductsInOrder)}><i class="fas fa-plus"></i></button></td>
+                                ?<td className='text-center'><button  className='btn btn-success' onClick={(e) => addProduct(e,product, productsInOrder, setProductsInOrder)}><i class="fas fa-plus"></i></button></td>
                                 : <td className='text-center'><button disabled className='btn btn-danger'>Out of Stock</button></td>
                                 }
                               </tr>
