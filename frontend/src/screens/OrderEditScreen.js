@@ -394,16 +394,15 @@ const OrderEditScreen = ({history, match}) => {
 
                 <form onSubmit={handleSubmit}>
                 {errors.products && <Message message={errors.products} color={'warning'} />}
-                <table id="orderTable" className="table table-bordered table-hover table-responsive p-0">
+                <table id="orderTable" className="table table-bordered table-hover text-center">
                   <thead >
                     <tr>
-                    <th className='d-sm-table-cell'></th>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th></th>
-                    <th></th>
-                    <th>Total</th>
-                    <th></th>
+                      <th className='d-none d-sm-table-cell'></th>
+                      <th>Product</th>
+                      <th>Quantity</th>
+                      <th></th>
+                      <th>Total</th>
+                      <th></th>
 
                     </tr>
                   </thead>
@@ -411,17 +410,15 @@ const OrderEditScreen = ({history, match}) => {
                     {productsInOrder.length > 0? (
                     productsInOrder.map((productIn, i) => (
                       <tr key={i}>
-                        <td className='text-center d-sm-table-cell'><button onClick={(e) => refreshProductsInOrder(e)}><i className="fas fa-sync-alt btn-xs"></i></button></td>
+                        <td className='d-none d-sm-table-cell'><button onClick={(e) => refreshProductsInOrder(e)}><i className="fas fa-sync-alt btn-xs"></i></button></td>
                         <td>{productIn.name}</td>
                         <td>{productIn.quantity}</td>
-                        <td className='text-center'>
-                          <button disabled={productIn.quantity < 2} className='btn btn-danger btn-block' onClick={(e) => removeUnit(e,productIn)} >-</button> 
+                        <td className=' d-flex justify-content-around '>
+                          <button disabled={productIn.quantity < 2} className='btn btn-danger ' onClick={(e) => removeUnit(e,productIn)} >-</button> 
+                          <button disabled={productIn.quantity >= returnProduct(productIn,products).stock + (productIn.oldQuantity ? productIn.oldQuantity : 0)} className='btn btn-primary ' onClick={(e) => addUnit(e,productIn)}>+</button>
                         </td>
-                        <td className='text-center'>
-                          <button disabled={productIn.quantity >= returnProduct(productIn,products).stock + (productIn.oldQuantity ? productIn.oldQuantity : 0)} className='btn btn-primary btn-block' onClick={(e) => addUnit(e,productIn)}>+</button>
-                        </td>
-                        <td className='text-center'><h4>${productIn.price * productIn.quantity}</h4></td>
-                        <td className='text-center'><button className='btn btn-danger' onClick={(e) => removeProduct(e,productIn)}>X</button></td>
+                        <td><h4>${productIn.price * productIn.quantity}</h4></td>
+                        <td><button className='btn btn-danger' onClick={(e) => removeProduct(e,productIn)}>X</button></td>
                       </tr>
                     ))
                     ) : <tr></tr>}

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Switch, Route, BrowserRouter as Router } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Menu from './components/Menu';
 import Footer from './components/Footer';
@@ -35,12 +35,6 @@ const Main = ({history}) => {
     const userLogin = useSelector((state) => state.userLogin)
     const {userInfo} = userLogin
 
-    useEffect(() => {
-        if(!userInfo){
-            history.push('/login')
-        }
-    },[dispatch, userInfo, history])
-    
     return ( 
 <>
         <Header/>
@@ -49,8 +43,8 @@ const Main = ({history}) => {
             <div className='content-wrapper'>
             <Switch>
 
-                <Route path='/active' exact component={ActiveOrdersScreen} />
-                <Route path='/profile' component={ProfileScreen} />
+                <PrivateRoute path='/active' exact component={ActiveOrdersScreen} />
+                <PrivateRoute path='/profile' component={ProfileScreen} />
                  {/* <Route path='/active' exact component={ActiveOrdersScreen} />  */}
                 <AdminRoute path='/user/:id/edit' component={UserEditScreen}/>
                 <AdminRoute path='/user/page/:pageNumber' component={UserScreen} exact/>
@@ -58,57 +52,58 @@ const Main = ({history}) => {
                 <AdminRoute path='/user/search/:keyword/page/:pageNumber' component={UserScreen} exact/>
                 <AdminRoute path='/user' exact component={UserScreen} />
 
-                <Route path='/category/:id/edit' component={CategoryEditScreen}/>
-                <Route path='/category/page/:pageNumber' component={CategoryScreen} exact/>
-                <Route path='/category/search/:keyword' component={CategoryScreen} exact/>
-                <Route path='/category/search/:keyword/page/:pageNumber' component={CategoryScreen} exact/>
-                <Route path='/category' component={CategoryScreen} />
+                <PrivateRoute path='/category/:id/edit' component={CategoryEditScreen}/>
+                <PrivateRoute path='/category/page/:pageNumber' component={CategoryScreen} exact/>
+                <PrivateRoute path='/category/search/:keyword' component={CategoryScreen} exact/>
+                <PrivateRoute path='/category/search/:keyword/page/:pageNumber' component={CategoryScreen} exact/>
+                <PrivateRoute path='/category' component={CategoryScreen} />
 
 
-                <Route path='/delivery/page/:pageNumber' component={DeliveryScreen} exact/>
-                <Route path='/delivery/search/:keyword' component={DeliveryScreen} exact/>
-                <Route path='/delivery/search/:keyword/page/:pageNumber' component={DeliveryScreen} exact/>
-                <Route path='/delivery' component={DeliveryScreen} />
+                <PrivateRoute path='/delivery/page/:pageNumber' component={DeliveryScreen} exact/>
+                <PrivateRoute path='/delivery/search/:keyword' component={DeliveryScreen} exact/>
+                <PrivateRoute path='/delivery/search/:keyword/page/:pageNumber' component={DeliveryScreen} exact/>
+                <PrivateRoute path='/delivery' component={DeliveryScreen} />
 
-                <Route path='/client/:id/edit' component={ClientEditScreen}/>
-                <Route path='/client/page/:pageNumber' component={ClientScreen} exact/>
-                <Route path='/client/search/:keyword' component={ClientScreen} exact/>
-                <Route path='/client/search/:keyword/page/:pageNumber' component={ClientScreen} exact/>
-                <Route path='/client' component={ClientScreen} />
+                <PrivateRoute path='/client/:id/edit' component={ClientEditScreen}/>
+                <PrivateRoute path='/client/page/:pageNumber' component={ClientScreen} exact/>
+                <PrivateRoute path='/client/search/:keyword' component={ClientScreen} exact/>
+                <PrivateRoute path='/client/search/:keyword/page/:pageNumber' component={ClientScreen} exact/>
+                <PrivateRoute path='/client' component={ClientScreen} />
 
-                <Route path='/product/:id/edit' component={ProductEditScreen}/>
-                <Route path='/product/page/:pageNumber' component={ProductScreen} exact/>
-                <Route path='/product/search/:keyword' component={ProductScreen} exact/>
-                <Route path='/product/search/:keyword/page/:pageNumber' component={ProductScreen} exact/>
-                <Route path='/product' component={ProductScreen} />
+                <PrivateRoute path='/product/:id/edit' component={ProductEditScreen}/>
+                <PrivateRoute path='/product/page/:pageNumber' component={ProductScreen} exact/>
+                <PrivateRoute path='/product/search/:keyword' component={ProductScreen} exact/>
+                <PrivateRoute path='/product/search/:keyword/page/:pageNumber' component={ProductScreen} exact/>
+                <PrivateRoute path='/product' component={ProductScreen} />
 
-                <Route path='/table/:id/edit' component={TableEditScreen}/>
-                <Route path='/table/page/:pageNumber' component={TableScreen} exact/>
-                <Route path='/table/search/:keyword' component={TableScreen} exact/>
-                <Route path='/table/search/:keyword/page/:pageNumber' component={TableScreen} exact/>
-                <Route path='/table' component={TableScreen} />
+                <PrivateRoute path='/table/:id/edit' component={TableEditScreen}/>
+                <PrivateRoute path='/table/page/:pageNumber' component={TableScreen} exact/>
+                <PrivateRoute path='/table/search/:keyword' component={TableScreen} exact/>
+                <PrivateRoute path='/table/search/:keyword/page/:pageNumber' component={TableScreen} exact/>
+                <PrivateRoute path='/table' component={TableScreen} />
 
-                <Route path='/order/page/:pageNumber' component={OrderScreen} exact/>
-                <Route path='/order/search/:keyword' component={OrderScreen} exact/>
-                <Route path='/order/search/:keyword/page/:pageNumber' component={OrderScreen} exact/>
+                <PrivateRoute path='/order/page/:pageNumber' component={OrderScreen} exact/>
+                <PrivateRoute path='/order/search/:keyword' component={OrderScreen} exact/>
+                <PrivateRoute path='/order/search/:keyword/page/:pageNumber' component={OrderScreen} exact/>
 
-                <Route path='/order/create/:id/:table/table' component={OrderCreateScreen} />
-                <Route path='/order/create/page/:pageNumber' component={OrderCreateScreen} />
-                <Route path='/order/create/search/:keyword' component={OrderCreateScreen} />
-                <Route path='/order/create/search/:keyword/page/:pageNumber' component={OrderCreateScreen} />
+                <PrivateRoute path='/order/create/:id/:table/table' component={OrderCreateScreen} />
+                <PrivateRoute path='/order/create/page/:pageNumber' component={OrderCreateScreen} />
+                <PrivateRoute path='/order/create/search/:keyword' component={OrderCreateScreen} />
+                <PrivateRoute path='/order/create/search/:keyword/page/:pageNumber' component={OrderCreateScreen} />
 
-                <Route path='/order/:id/edit/page/:pageNumber' component={OrderEditScreen} exact/>
-                <Route path='/order/:id/edit/search/:keyword' component={OrderEditScreen} exact/>
-                <Route path='/order/:id/edit/search/:keyword/page/:pageNumber' component={OrderEditScreen} exact/>
-                <Route path='/order/:id/edit' component={OrderEditScreen} exact/>
+                <PrivateRoute path='/order/:id/edit/page/:pageNumber' component={OrderEditScreen} exact/>
+                <PrivateRoute path='/order/:id/edit/search/:keyword' component={OrderEditScreen} exact/>
+                <PrivateRoute path='/order/:id/edit/search/:keyword/page/:pageNumber' component={OrderEditScreen} exact/>
+                <PrivateRoute path='/order/:id/edit' component={OrderEditScreen} exact/>
 
 
-                <Route path='/order/:id/view' component={OrderViewScreen} exact/>
-                <Route path='/order/create' component={OrderCreateScreen} />
-                <Route path='/order' component={OrderScreen} />
-                <Route path='/not-authorized' component={NotAuthorizedScreen} />
-                <Route path='/' component={DashboardScreen} />
+                <PrivateRoute path='/order/:id/view' component={OrderViewScreen} exact/>
+                <PrivateRoute path='/order/create' component={OrderCreateScreen} />
+                <PrivateRoute path='/order' component={OrderScreen} />
+                <PrivateRoute path='/not-authorized' component={NotAuthorizedScreen} />
+                <PrivateRoute path='/' component={DashboardScreen} />
                 <Route component={NotFoundScreen} />
+                
             </Switch>
 
   

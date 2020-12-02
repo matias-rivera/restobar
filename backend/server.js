@@ -67,7 +67,7 @@ const PORT = process.env.PORT || 5000
 
 sequelize.sync()
     .then(result => {
-    return User.findByPk(2) 
+    return User.findByPk(1) 
     })
     .then(user => {
         if(!user) {

@@ -15,8 +15,6 @@ const DashboardScreen = ({history}) => {
 
     const dispatch = useDispatch()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
-    const [lastSales, setLastSales] = useState([])
-
     //user state
     const userLogin = useSelector((state) => state.userLogin)
     const {userInfo} = userLogin
@@ -37,6 +35,9 @@ const DashboardScreen = ({history}) => {
     useEffect(() => {
         dispatch(allFreeTables())
         dispatch(allActiveOrders())
+        if(!userInfo){
+            history.push('/login')
+        }
         if(userInfo.isAdmin){
             dispatch(allSales())
         }
