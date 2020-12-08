@@ -218,6 +218,11 @@ const ProfileScreen = ({history}) => {
                                 <hr/>
                                 <button type="submit" className="btn btn-primary btn-block">Update</button>
                             </form>
+                           <hr/>
+                            <div className="alert alert-danger alert-dismissible">
+                                <button type="button" className="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                    <p>La demo no permite subir imágenes debido a que esta hosteada en heroku de manera gratuita.</p>
+                            </div>
                         </>
                     ) }
                     

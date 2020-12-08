@@ -92,6 +92,10 @@ const LoginScreen = ({history}) => {
 
       
         </div>
+        <div className="alert alert-danger alert-dismissible">
+            <button type="button" className="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <p>La velocidad para obtener datos puede verse afectada debido a que esta demo utiliza una base de datos remota de manera gratuita.</p>
+        </div>
       </form>
         <div>
             
