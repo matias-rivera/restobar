@@ -4,6 +4,10 @@ _Restaurant Management App made with NodeJS, Express, MySQL, ReactJS y Redux._
 
 _App para la Administración de Restaurante desarrollada con NodeJS, Express, MySQL, ReactJS y Redux._
 
+### Demo :computer:
+
+https://restobar-example.herokuapp.com/login
+
 ### Instalación 🔧
 
 _1- Clonar el proyecto._
@@ -33,5 +37,5 @@ _5- Ejecuta el siguiente comando para probar la aplicación:_
 npm run dev
 ```
 
-### Preview
+### Preview :mag:
 ![alt text](https://www.matiasrivera.com/img/restobar.png)
