@@ -6,6 +6,8 @@ _App para la Administración de Restaurante desarrollada con NodeJS, Express, My
 
 ### Demo :computer:
 
+La demo puede tener problemas con la velocidad al obtener datos debido a que utiliza una base de datos remota de manera gratuita.
+
 https://restobar-example.herokuapp.com/login
 
 ### Instalación 🔧
@@ -38,4 +40,10 @@ npm run dev
 ```
 
 ### Preview :mag:
-![alt text](https://www.matiasrivera.com/img/restobar.png)
+![dashboard](https://www.matiasrivera.com/img/restobar.png)
+![in_place_orders](https://i.ibb.co/HhmMpwP/inplace.png)
+![compra](https://i.ibb.co/0mSLtW4/COMPRA.png)
+![order-view](https://i.ibb.co/8sWPrVM/EDIT-ORDER.png)
+![orders](https://i.ibb.co/XkCXXct/ORDENES.png)
+![users](https://i.ibb.co/cDWsgw7/USERS.png)
+![profile](https://i.ibb.co/CBPjKFg/profile.png)
