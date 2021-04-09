@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler')
-const Table = require('../models/table')
+const Table =  require('../models').Table
 const { Op } = require("sequelize");
 
 
@@ -67,7 +67,6 @@ exports.getTables = asyncHandler(async (req, res) =>{
 
    
 
-   //const users = await User.findAll({attributes: { exclude: ['password'] }})
 
    res.json({tables, page, pages: Math.ceil(count / pageSize)})
 

@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler')
-const Product = require('../models/product')
-const Category = require('../models/category')
+const Product =  require('../models').Product
+const Category =  require('../models').Category
 const { Op } = require("sequelize");
 
 
@@ -22,7 +22,6 @@ exports.createProduct = asyncHandler(async (req, res) =>{
     }
     
 })
-
 
 
 //@desc     Get all products
@@ -76,16 +75,8 @@ exports.getProducts = asyncHandler(async (req, res) =>{
             })
     }
 
-   
-
-   //const users = await User.findAll({attributes: { exclude: ['password'] }})
-
    res.json({products, page, pages: Math.ceil(count / pageSize)})
 
-    
-
-   /*  const products = await Product.findAll({include: [ { model: Category, as: 'category' } ]})
-    res.json(products) */
 })
 
 

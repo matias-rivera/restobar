@@ -8,11 +8,17 @@ frontend/public/pages
 .pnp.js
 
 
+#extra
+/extra
+
+
 # testing
 /coverage
 
 # production
 /frontend/build
+/frontend/node_modules
+uploads/*
 
 
 # misc

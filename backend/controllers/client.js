@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler')
-const Client = require('../models/client')
+const Client =  require('../models').Client
 const { Op } = require("sequelize");
 
 

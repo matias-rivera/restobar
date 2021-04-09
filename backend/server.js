@@ -4,12 +4,8 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan')
 const path = require('path')
 
-const sequelize = require('./database/database')
-
 const {notFound, errorHandler} = require('./middleware/errorMiddleware')
 
-const User = require('./models/user')
-require('./database/associations')
 
 
 const app = express()
@@ -62,23 +58,8 @@ app.use(notFound)
 app.use(errorHandler)
 
 
-
+//port
 const PORT = process.env.PORT || 5000
 
-sequelize.sync()
-    .then(result => {
-    return User.findByPk(1) 
-    })
-    .then(user => {
-        if(!user) {
-            return User.create({name: 'Admin Doe', email: 'admin@example.com', password: '123456'})
-        }
-        return user
-    })
-    .then(user => {
-        app.listen(PORT, console.log(`Server running on port ${PORT}`))
-    })
-    .catch(err => {console.log(err)})
-
- 
+app.listen(PORT, console.log(`Server running on port ${PORT}`))
 

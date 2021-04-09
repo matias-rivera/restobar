@@ -1,11 +1,14 @@
 const asyncHandler = require('express-async-handler')
-const Order = require('../models/order')
-const Product = require('../models/product')
+const Order =  require('../models').Order
+const Product =  require('../models').Product
 const { Op } = require("sequelize");
-const Client = require('../models/client');
-const Table = require('../models/table');
+const Client =  require('../models').Client
+const Table =  require('../models').Table
+const { sequelize } = require('../models')
 
-const sequelize = require('../database/database')
+
+//utils
+const {stock, checkNoStock, inOrder, getProductDifference} = require('../utils/order')
 
 //@desc     Create a Order
 //@route    POST /api/orders
@@ -14,79 +17,73 @@ exports.createOrder = asyncHandler(async (req, res) =>{
      
   //get data from request
   const {total, table, client, products ,delivery, note} = req.body
-
-  //calc stock of each product in order
-  const stock = async (list) => {
-    for (let index = 0; index < list.length; index++) {
-      const productSearched = await Product.findByPk(list[index].id)
-      if(productSearched.stock < list[index].quantity){
-        return productSearched.name
-      }
-      
-    }
-    return false
-  }
   
-  //calc stock
-  stock(products).then(result =>{
-    //if there's one product with not stock available
-    if(result){
-      //return product name
-      return result
-    }else{
-      //return created order
-      return Order.create({
-          total,
-          tableId: !delivery ? table : null,
-          userId: req.user.id,
-          clientId: client,
-          delivery: delivery,
-          note:note
-      }) 
-    }
-  }
-  ).then( async createdOrder => {
-    //return message with product name which one has no stock
-     if(typeof createdOrder === 'string'){
-       const message= `There is not enough stock for ${createdOrder}`
-       //responde ERROR
-       res.status(404).json({message})
-    //add products in orderitems table
-    }else{
-      products.map(product =>{
-        //add product in order
-        createdOrder.addProduct(product.id,{
-          through:{quantity: product.quantity}
-        }).then(async result => {
-          //update product stock
-          const productIn = await Product.findByPk(product.id)
-          productIn.stock = productIn.stock - product.quantity
-          await productIn.save()
+  const transaction = await sequelize.transaction()
+  const productsTransaction = await sequelize.transaction()
+
+  
+  stock(products).then(async stock => {
+    if(stock){
+
+      try {
+ 
+        //create order
+        const createdOrder = await Order.create({
+            total,
+            tableId: !delivery ? table : null,
+            userId: req.user.id,
+            clientId: client,
+            delivery: delivery,
+            note:note
+        }, {transaction: transaction}) 
+
+
+        //create order products
+        products.forEach(async product => {
+          await createdOrder.addProduct(product.id, {through:{quantity: product.quantity, transaction: transaction}})
         })
-      } )
-  
-      //update table to occupied
-      if(!delivery){
-        const tableUpdated = await Table.findByPk(createdOrder.tableId)
-        tableUpdated.occupied = true
-        await tableUpdated.save()
-      }
+        
+        //update table to occupied
+        if(!delivery){
+          const tableUpdated = await Table.findByPk(createdOrder.tableId)
+          tableUpdated.occupied = true
+          await tableUpdated.save( {transaction: transaction})
+        }
+        
+        
+        //update stock
+        products.forEach(async product => {
+          const productToSave = await Product.findByPk(product.id)
+          productToSave.stock = productToSave.stock - product.quantity 
+          await productToSave.save( {transaction: productsTransaction})
+        })
 
-      //response OK
-      res.status(201).json(createdOrder)
-    } 
+        //response OK
+        await transaction.commit()
+        await productsTransaction.commit()
+
+        res.status(201).json(createdOrder)
+ 
+    
+  
+    
+    
+  } catch (e) {
+    await transaction.rollback()
+    await productsTransaction.rollback()
+    res.status(404)
   }
 
-  )
-
+    } else {
+      res.status(400).json({message: "There is no stock available"})
+    }
+  })
   
   
+
   
 
-
-
-
-
+  
 })
 
 //@desc     Get all orders
@@ -143,6 +140,7 @@ exports.getAllSales = asyncHandler(async (req, res) =>{
   ],
     include: [{
       model: Product,
+      as: 'products',
       attributes: [],
       duplicating: false
   }],
@@ -151,37 +149,13 @@ exports.getAllSales = asyncHandler(async (req, res) =>{
   res.json(orders)
 })
 
-/* 
-db.Tag.findAll({
-        group: ["Tag.id"],
-        includeIgnoreAttributes:false,
-        include: [{
-            model: db.Story,
-            where: {
-                isPublic: true
-            }
-        }],
-        attributes: [
-            "id",
-            "TagName",
-            [db.sequelize.fn("COUNT", db.sequelize.col("stories.id")), "num_stories"],
-        ],
-        order: [[db.sequelize.fn("COUNT", db.sequelize.col("stories.id")), "DESC"]]
-    }).then(function(result){
-        return result;
-    });
-*/
-
-
-
-
 //@desc     Get all orders
 //@route    GET /api/orders
 //@access   Private/user
 exports.getOrders = asyncHandler(async (req, res) =>{
   
   const pageSize = 5
-  const page = Number(req.query.pageNumber) || 1
+  const page = Number(req.query.pageNumber) || 1 
   let orders
   let count
 
@@ -327,18 +301,13 @@ exports.getActiveOrders = asyncHandler(async (req, res) =>{
 })
 
 
-
-
-
 //@desc     Get order by ID
 //@route    GET /api/order/:id
 //@access   Private/user
 exports.getOrder = asyncHandler(async (req, res) =>{
   const order = await Order.findByPk(req.params.id,{ include: { all: true, nested:true}})
-  //,{ model: Table, as: 'table' },{ model: Client, as: 'client' }
-  //{attributes: { exclude: ['password'] }}
-  //{include: [ { model: User, as: 'user' }]}
-  //{ include: { all: true }}
+
+  console.log(order)
   if(order){
     res.json(order)
   } else {
@@ -403,45 +372,6 @@ exports.updateOrder = asyncHandler(async (req, res) =>{
   const {total, client, table, delivery, products, note} = req.body;
 
 
-  //check if product is already in order
-  const inOrder = (obj, list) => {
-    for (let index = 0; index < list.length; index++) {
-      if (obj.id === list[index].id){
-        return true
-      }
-    }
-    return false
-  }
-
-  //return product quantity difference
-  const getProductDifference = (obj, list) => {
-    for (let index = 0; index < list.length; index++) {
-      if (obj.id === list[index].id){
-        return obj.orderItem.quantity - list[index].quantity  
-      }
-    }
-    return 0
-  }
-
-  
-  //check for stock
-  const checkNoStock = async (item, products) => {
-
-    const product = await Product.findByPk(item.id)
-
-    //get difference
-    const difference = getProductDifference(item, products)
-
-    if(difference < 0 && product.stock < Math.abs(difference)){
-      return `Not enough stock of ${product.name}`
-    }
-    return false
- 
-    
-  }
-
-
-
   if(order){
 
     let error = false
@@ -488,7 +418,7 @@ exports.updateOrder = asyncHandler(async (req, res) =>{
             //increase stock of each deleted product
             productsToDelete.map(async productToDelete => {
               const productToDeleteUpdated = await Product.findByPk(productToDelete.id)
-              productToDeleteUpdated.stock = productToDeleteUpdated.stock + productToDelete.orderItem.quantity
+              productToDeleteUpdated.stock = productToDeleteUpdated.stock + productToDelete.OrderProduct.quantity
               productToDeleteUpdated.save()
             })
 
@@ -523,12 +453,6 @@ exports.updateOrder = asyncHandler(async (req, res) =>{
       })
             
             
-              
-      
-
-      
-
-    
     }else{
       //save
       order.clientId= client
@@ -593,15 +517,6 @@ exports.updateOrderItems = asyncHandler(async (req, res) =>{
     })
     
   
-    
-    
-    /* for (let index = 0; index < products.length; index++) {
-      const product = await Product.findByPk(products[index])
-      order.addProduct(product,{
-        through:{quantity: quantities[index]}
-      })
-    } */
-    
     //save
     //const updatedOrder =  await order.save()
     const orders = await order.getProducts()
@@ -630,5 +545,6 @@ exports.deleteOrder = asyncHandler(async (req, res) =>{
         throw new Error('Order not found')
     }
 })
+
 
 

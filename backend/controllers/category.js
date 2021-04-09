@@ -1,11 +1,10 @@
 const asyncHandler = require('express-async-handler')
-const Category = require('../models/category')
+const Category = require('../models').Category
 const { Op } = require("sequelize");
 
 //@desc     Create a category
 //@route    POST /api/categories
 //@access   Private/user
-
 exports.createCategory = asyncHandler(async (req, res) =>{
     
     const name = req.body.name;
@@ -13,8 +12,6 @@ exports.createCategory = asyncHandler(async (req, res) =>{
     res.status(201).json(createdCategory)
 
 })
-
-
 
 //@desc     Get all categories with pagination
 //@route    GET /api/categories
@@ -24,10 +21,7 @@ exports.getCategories = asyncHandler(async (req, res) =>{
     const page = Number(req.query.pageNumber) || 1
     let categories
     let count
-
     const keyword =  req.query.keyword ? req.query.keyword : null
-
-
     if(keyword){
         count = await Category.count({ 
             where: {
@@ -60,15 +54,7 @@ exports.getCategories = asyncHandler(async (req, res) =>{
                 offset: (pageSize * (page - 1)), limit: pageSize
             })
     }
-
-   
-
-   //const users = await User.findAll({attributes: { exclude: ['password'] }})
-
-   res.json({categories, page, pages: Math.ceil(count / pageSize)})
-
-    
-    
+   res.json({categories, page, pages: Math.ceil(count / pageSize)})    
 })
 
 
@@ -86,7 +72,7 @@ exports.getAllCategories = asyncHandler(async (req, res) =>{
 //@access   Private/user
 exports.getCategory = asyncHandler(async (req, res) =>{
     const category = await Category.findByPk(req.params.id)
-    
+
     if(category){
         res.json(category)
     } else {

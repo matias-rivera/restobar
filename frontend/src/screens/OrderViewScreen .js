@@ -71,7 +71,7 @@ const OrderViewScreen = ({history, match}) => {
                 name: product.name,
                 price: product.price,
                 stock: product.stock,
-                quantity: product.orderItem.quantity
+                quantity: product.OrderProduct.quantity
               } 
             })
             setProductsInOrder(products)

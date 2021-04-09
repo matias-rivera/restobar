@@ -1,59 +1,53 @@
-const Sequelize = require('sequelize')
+
+'use strict';
+
 const bcrypt = require('bcrypt')
-const sequelize = require('../database/database')
 
-const User = sequelize.define('user',{
-    id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true
-    },
-    name: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    email: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: true
-    },
-    password: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    image: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        defaultValue: '/avatar.png'
-    },
-    isAdmin: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class User extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define association here
+      this.hasMany(models.Order, {foreignKey:'userId', as: 'orders'})
     }
-    
-
-},  {
-        hooks: { 
-            beforeCreate: (user) => {
-              const salt = bcrypt.genSaltSync(10);
-              user.password = bcrypt.hashSync(user.password, salt);
-            }
-          },
-        defaultScope: {
-            attributes: { exclude: ['password'] },
-        },
-        scopes: {
-            withPassword: {
-                attributes: { },
-            }
+  };
+  User.init({
+    name: DataTypes.STRING,
+    email: DataTypes.STRING,
+    password: DataTypes.STRING,
+    image: DataTypes.STRING,
+    isAdmin: DataTypes.BOOLEAN
+  }, {
+    sequelize,
+    modelName: 'User',
+    hooks: { 
+      beforeCreate: (user) => {
+        const salt = bcrypt.genSaltSync(10);
+        user.password = bcrypt.hashSync(user.password, salt);
+      }
+    },
+    defaultScope: {
+        attributes: { exclude: ['password'] },
+    },
+    scopes: {
+        withPassword: {
+            attributes: { },
         }
-    }) 
+    }
+  });
 
-User.prototype.validPassword = function (password) {
+  User.prototype.validPassword = function (password) {
     return bcrypt.compareSync(password, this.password);
-}
+  }
 
 
-module.exports = User
+  return User;
+};
+

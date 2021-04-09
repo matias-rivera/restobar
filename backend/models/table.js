@@ -1,24 +1,26 @@
-const Sequelize = require('sequelize')
-const sequelize = require('../database/database')
-
-const Table = sequelize.define('table',{
-    id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true
-    },
-    name: {
-        type: Sequelize.STRING,
-        allowNull: false,
-    },
-    occupied: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class Table extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define association here
+      //this.belongsToMany(models.Chat, {through: 'ChatUser', foreignKey:'userId'})
+      this.hasMany(models.Order, {foreignKey:'tableId', as:'orders'})
     }
-    }) 
-
-
-
-module.exports = Table
+  };
+  Table.init({
+    name: DataTypes.STRING,
+    occupied: DataTypes.BOOLEAN
+  }, {
+    sequelize,
+    modelName: 'Table',
+  });
+  return Table;
+};

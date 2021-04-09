@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler')
-const User = require('../models/user')
+const User =  require('../models').User
 const generateToken = require('../utils/generateToken')
 const bcrypt = require('bcrypt')
 const { Op } = require("sequelize");
@@ -9,7 +9,6 @@ const { Op } = require("sequelize");
 //@access   Private/admin
 
 exports.registerUser = asyncHandler(async (req, res) =>{
-    console.log(req)
     const {name, email, password, isAdmin} = req.body
 
     //check if email is already in use
@@ -18,8 +17,6 @@ exports.registerUser = asyncHandler(async (req, res) =>{
         res.status(400)
         throw new Error('User already exists')
     } 
-
-    console.log('Is admin:',isAdmin)
 
     const user = await User.scope('withPassword').create({
         name,
@@ -51,6 +48,7 @@ exports.login = asyncHandler(async (req, res) =>{
     const {email, password} = req.body
 
     //check if email is already in use
+
     const user = await User.scope('withPassword').findOne({ where: { email } })
 
     //if user exist and entered password is the same
@@ -133,11 +131,7 @@ exports.getUsers = asyncHandler(async (req, res) =>{
     }
 
     
-
-    //const users = await User.findAll({attributes: { exclude: ['password'] }})
-
     res.json({users, page, pages: Math.ceil(count / pageSize)})
-    //res.json(users)
 })
 
 

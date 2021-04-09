@@ -113,8 +113,8 @@ const OrderEditScreen = ({history, match}) => {
                   name: product.name,
                   price: product.price,
                   stock: product.stock,
-                  quantity: product.orderItem.quantity,
-                  oldQuantity: product.orderItem.quantity
+                  quantity: product.OrderProduct.quantity,
+                  oldQuantity: product.OrderProduct.quantity
                 } 
               })
             if(productsInOrder.length === 0 && productsInOrderOld.length === 0){

@@ -45,11 +45,11 @@
     "mysql2": "^2.2.5",
     "path": "^0.12.7",
     "react-modal": "^3.11.2",
-    "sequelize": "^6.3.5"
+    "sequelize": "^6.3.5",
+    "sequelize-cli": "^6.2.0"
   },
   "devDependencies": {
     "concurrently": "^5.3.0",
-    "nodemon": "^2.0.5",
-    "sequelize-cli": "^6.2.0"
+    "nodemon": "^2.0.5"
   }
 }
