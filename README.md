@@ -32,11 +32,23 @@ cd frontend
 npm install
 ```
 
-_4- Renombrar ".env.example" a ".env", asignar valor a cada constante._
+_4- Renombrar ".env.example" a ".env", asignar valor a cada variable._
 
-_5- Ejecuta el siguiente comando para probar la aplicación:_
+
+_5- Ejecuta los siguientes comandos para iniciar las migraciones y los seeders. Recordar ubicarse en la carpeta backend._
+
 ```
-npm run dev
+cd backend
+npx sequelize-cli db:migrate // ejecuta migraciones
+npx sequelize-cli db:seed:all // ejecuta seeders
+```
+
+_6- Ejecuta los siguientes comandos para inciar el servidor y el cliente. Hacerlo desde la carpeta raíz._
+
+```
+npm run server // inicia el servidor
+npm run client // inicia el cliente
+npm run dev // inicia ambos
 ```
 
 ### Preview :mag:
