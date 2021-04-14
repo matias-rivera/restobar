@@ -6,9 +6,14 @@ const {
 } = require('../controllers/client')
 
 
+// VALIDATORS
+const {runValidation} = require('../validators')
+const { clientCreateValidator } = require('../validators/client')
+
+
 //ROUTES
 router.route('/')
-.post(protect, createClient)
+.post(protect, clientCreateValidator, runValidation, createClient)
 .get(protect, getClients)
 
 router.route('/all')

@@ -16,10 +16,9 @@ const {stock, checkNoStock, inOrder, getProductDifference} = require('../utils/o
 exports.createOrder = asyncHandler(async (req, res) =>{
      
   //get data from request
-  const {total, table, client, products ,delivery, note} = req.body
+  const {total, tableId, clientId, products ,delivery, note} = req.body
   
-  const transaction = await sequelize.transaction()
-  const productsTransaction = await sequelize.transaction()
+
 
   
   stock(products).then(async stock => {
@@ -30,24 +29,24 @@ exports.createOrder = asyncHandler(async (req, res) =>{
         //create order
         const createdOrder = await Order.create({
             total,
-            tableId: !delivery ? table : null,
+            tableId: !delivery ? tableId : null,
             userId: req.user.id,
-            clientId: client,
+            clientId: clientId,
             delivery: delivery,
             note:note
-        }, {transaction: transaction}) 
+        }) 
 
 
         //create order products
         products.forEach(async product => {
-          await createdOrder.addProduct(product.id, {through:{quantity: product.quantity, transaction: transaction}})
+          await createdOrder.addProduct(product.id, {through:{quantity: product.quantity}})
         })
         
         //update table to occupied
         if(!delivery){
           const tableUpdated = await Table.findByPk(createdOrder.tableId)
           tableUpdated.occupied = true
-          await tableUpdated.save( {transaction: transaction})
+          await tableUpdated.save( )
         }
         
         
@@ -55,12 +54,10 @@ exports.createOrder = asyncHandler(async (req, res) =>{
         products.forEach(async product => {
           const productToSave = await Product.findByPk(product.id)
           productToSave.stock = productToSave.stock - product.quantity 
-          await productToSave.save( {transaction: productsTransaction})
+          await productToSave.save()
         })
 
         //response OK
-        await transaction.commit()
-        await productsTransaction.commit()
 
         res.status(201).json(createdOrder)
  
@@ -69,9 +66,7 @@ exports.createOrder = asyncHandler(async (req, res) =>{
     
     
   } catch (e) {
-    await transaction.rollback()
-    await productsTransaction.rollback()
-    res.status(404)
+    res.status(404).json({message: e.message})
   }
 
     } else {

@@ -9,10 +9,14 @@ const {
     deleteProduct
 } = require('../controllers/product')
 
+// VALIDATORS
+const {runValidation} = require('../validators')
+const {productCreateValidator} = require('../validators/product')
 
-//ROUTES
+
+// ROUTES
 router.route('/')
-    .post(protect, createProduct)
+    .post(protect, productCreateValidator, runValidation, createProduct)
     .get(protect, getProducts)
 
 router.route('/:id')

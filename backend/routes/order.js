@@ -19,10 +19,14 @@ const {
     getAllSales
 } = require('../controllers/order')
 
+// VALIDATORS
+const {runValidation} = require('../validators')
+const {orderCreateValidator} = require('../validators/order')
+
 
 //ROUTES
 router.route('/')
-    .post(protect, createOrder)
+    .post(protect, orderCreateValidator, runValidation,createOrder)
     .get(protect, getOrders)
 
 router.route('/all')

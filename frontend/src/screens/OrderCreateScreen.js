@@ -105,8 +105,8 @@ const OrderCreateScreen = ({history, match}) => {
         if(Object.keys(errorsCheck).length === 0){
         const order = {
           total: totalPrice(productsInOrder),
-          table: table ? table.value : null,
-          client: client.value,
+          tableId: table ? table.value : null,
+          clientId: client.value,
           products: productsInOrder, 
           delivery: delivery,
           note:note

@@ -10,7 +10,7 @@ const { Op } = require("sequelize");
 
 exports.createProduct = asyncHandler(async (req, res) =>{
     
-    const {name, price, stock, category:categoryId} = req.body;
+    const {name, price, stock, categoryId} = req.body;
     const category = await Category.findByPk(categoryId)
     
     if(category){

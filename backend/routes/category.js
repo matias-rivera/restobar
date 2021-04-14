@@ -10,11 +10,15 @@ const {
     getAllCategories
 } = require('../controllers/category')
 
+// VALIDATORS
+const {categoryCreateValidator} = require('../validators/category')
+const {runValidation} = require('../validators')
+
 
 //ROUTES
 router.route('/')
     .get(protect, getCategories)
-    .post(protect, createCategory)
+    .post(protect, categoryCreateValidator, runValidation,createCategory)
 
 router.route('/all')
     .get(protect, getAllCategories)

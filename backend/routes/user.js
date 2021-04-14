@@ -3,9 +3,14 @@ const {registerUser, getUsers, login, getUser, deleteUser, updateUser, updatePro
 const router = express.Router()
 const {protect, admin} = require('../middleware/authMiddleware')
 
-// register
+// VALIDATORS
+const {runValidation} = require('../validators')
+const {userRegisterValidator, userSigninValidator} = require('../validators/user')
+
+
+// ROUTES
 router.route('/')
-    .post(protect, admin, registerUser)
+    .post(protect, admin, userRegisterValidator, runValidation, registerUser)
     .get(protect, admin, getUsers)
 
 router.route('/:id')
@@ -13,7 +18,7 @@ router.route('/:id')
     .put(protect, admin, updateUser)
     .delete(protect, admin, deleteUser)
 
-router.post('/login', login)
+router.post('/login', userSigninValidator, runValidation, login)
 
 router.route('/profile/:id')
     .put(protect,updateProfile)

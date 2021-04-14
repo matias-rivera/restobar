@@ -87,7 +87,7 @@ const ProductScreen = ({history, match}) => {
           name: name,
           price: price,
           stock: stock,
-          category: category.value
+          categoryId: category.value
         }
         
         

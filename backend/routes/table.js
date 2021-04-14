@@ -4,10 +4,15 @@ const {protect} = require('../middleware/authMiddleware')
 const { getTables, getAllTables, createTable, getTable, updateTable, deleteTable, getAllAvailableTables, getAllTablesWithOrders } = require('../controllers/table')
 
 
+// VALIDATORS
+const {tableCreateValidator} = require('../validators/table')
+const {runValidation} = require('../validators')
+
+
 //ROUTES
 router.route('/')
     .get(protect, getTables)
-    .post(protect, createTable)
+    .post(protect, tableCreateValidator, runValidation,createTable)
     
 router.route('/all')
     .get(protect, getAllTables)
