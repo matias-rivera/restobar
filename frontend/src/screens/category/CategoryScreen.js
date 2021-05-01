@@ -8,11 +8,11 @@ import { createCategory, listCategories } from "../../actions/categoryActions";
 import { Route, Link } from "react-router-dom";
 import HeaderContent from "../../components/HeaderContent";
 import ModalButton from "../../components/ModalButton";
-import { customStyles } from "../../utils";
 import Modal from "react-modal";
 import Input from "../../components/form/Input";
 import SearchBoxMini from "../../components/SearchBoxMini";
 import DataTableLoader from "../../components/loader/DataTableLoader";
+import { modalStyles } from "../../utils/styles";
 
 const CategoryScreen = ({ history, match }) => {
     const keyword = match.params.keyword || "";
@@ -83,7 +83,7 @@ const CategoryScreen = ({ history, match }) => {
                         classes={"btn-success btn-lg mb-2"}
                     />
                     <Modal
-                        style={customStyles}
+                        style={modalStyles}
                         isOpen={modalIsOpen}
                         onRequestClose={() => setModalIsOpen(false)}
                     >

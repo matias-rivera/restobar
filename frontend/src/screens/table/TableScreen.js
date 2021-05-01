@@ -9,10 +9,10 @@ import Modal from "react-modal";
 import Input from "../../components/form/Input";
 import { listTables } from "../../actions/tableActions";
 import { createTable } from "../../actions/tableActions";
-import { customStyles } from "../../utils";
 import ModalButton from "../../components/ModalButton";
 import SearchBoxMini from "../../components/SearchBoxMini";
 import DataTableLoader from "../../components/loader/DataTableLoader";
+import { modalStyles } from "../../utils/styles";
 
 Modal.setAppElement("#root");
 
@@ -83,7 +83,7 @@ const TableScreen = ({ history, match }) => {
                         classes={"btn-success btn-lg mb-2"}
                     />
                     <Modal
-                        style={customStyles}
+                        style={modalStyles}
                         isOpen={modalIsOpen}
                         onRequestClose={() => setModalIsOpen(false)}
                     >

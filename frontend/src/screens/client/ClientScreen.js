@@ -8,10 +8,10 @@ import HeaderContent from "../../components/HeaderContent";
 import Modal from "react-modal";
 import Input from "../../components/form/Input";
 import { createClient, listClients } from "../../actions/clientActions";
-import { customStyles } from "../../utils";
 import ModalButton from "../../components/ModalButton";
 import SearchBoxMini from "../../components/SearchBoxMini";
 import DataTableLoader from "../../components/loader/DataTableLoader";
+import { modalStyles } from "../../utils/styles";
 
 Modal.setAppElement("#root");
 
@@ -110,7 +110,7 @@ const ClientScreen = ({ history, match }) => {
                         classes={"btn-success btn-lg mb-2"}
                     />
                     <Modal
-                        style={customStyles}
+                        style={modalStyles}
                         isOpen={modalIsOpen}
                         onRequestClose={() => setModalIsOpen(false)}
                     >

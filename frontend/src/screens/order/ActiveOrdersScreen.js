@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Message from "../../components/Message";
-import HeaderContent from "../../components/HeaderContent";
-import Modal from "react-modal";
-import { allTables } from "../../actions/tableActions";
-import Table from "../../components/Table";
 import { Link } from "react-router-dom";
-import { customStyles } from "../../utils";
+
+/* components */
+import LoaderHandler from "../../components/loader/LoaderHandler";
+import HeaderContent from "../../components/HeaderContent";
+import Table from "../../components/Table";
 import {
     OccupiedTableLoader,
     FreeTableLoader,
 } from "../../components/loader/TableLoader";
 
-Modal.setAppElement("#root");
+/* actions */
+import { allTables } from "../../actions/tableActions";
 
 const ActiveOrdersScreen = ({ history }) => {
-    const [modalIsOpen, setModalIsOpen] = useState(false);
-
     const dispatch = useDispatch();
 
     const userLogin = useSelector((state) => state.userLogin);
@@ -46,7 +44,7 @@ const ActiveOrdersScreen = ({ history }) => {
         let tableSkeleton = [];
         for (let i = 0; i < 6; i++) {
             tableSkeleton.push(
-                <div className="col-3" key={i}>
+                <div className="col-12" key={i}>
                     {" "}
                     <FreeTableLoader />{" "}
                 </div>
@@ -62,6 +60,45 @@ const ActiveOrdersScreen = ({ history }) => {
         return mappedTables;
     };
 
+    const renderOccupiedTables = () => (
+        <LoaderHandler
+            loading={loading}
+            error={error}
+            loader={occupiedTableLoader()}
+        >
+            {filterTablesByState(true).map((table) => (
+                <div
+                    key={table.id}
+                    className="col-12 col-md-6 col-lg-4 col-xl-3"
+                >
+                    {/* small box */}
+                    <Table table={table} />
+                </div>
+            ))}
+        </LoaderHandler>
+    );
+
+    const renderFreeTables = () => (
+        <LoaderHandler
+            loading={loading}
+            error={error}
+            loader={freeTableLoader()}
+        >
+            {filterTablesByState(false).map((table) => (
+                <Link
+                    to={`/order/create/${table.id}/table`}
+                    key={table.id}
+                    className="btn btn-block btn-success btn-lg"
+                >
+                    <p className="text-center my-0">
+                        <i className="fas fa-utensils float-left my-1"></i>
+                        {table.name}
+                    </p>
+                </Link>
+            ))}
+        </LoaderHandler>
+    );
+
     return (
         <>
             <HeaderContent name={"Tables"} />
@@ -76,46 +113,12 @@ const ActiveOrdersScreen = ({ history }) => {
                                     <h3 className="card-title">
                                         Occupied Tables
                                     </h3>
-                                    <Modal
-                                        style={customStyles}
-                                        isOpen={modalIsOpen}
-                                        onRequestClose={() =>
-                                            setModalIsOpen(false)
-                                        }
-                                    >
-                                        <h2>Table Info</h2>
-                                    </Modal>
                                 </div>
                                 {/* /.card-header */}
                                 <div className="card-body">
-                                    {loading ? (
-                                        <div className="row">
-                                            {occupiedTableLoader()}
-                                        </div>
-                                    ) : error ? (
-                                        <Message
-                                            message={error}
-                                            color={"danger"}
-                                        />
-                                    ) : (
-                                        <>
-                                            <div className="row">
-                                                {filterTablesByState(true).map(
-                                                    (table) => (
-                                                        <div
-                                                            key={table.id}
-                                                            className="col-12 col-md-6 col-lg-4 col-xl-3"
-                                                        >
-                                                            {/* small box */}
-                                                            <Table
-                                                                table={table}
-                                                            />
-                                                        </div>
-                                                    )
-                                                )}
-                                            </div>
-                                        </>
-                                    )}
+                                    <div className="row">
+                                        {renderOccupiedTables()}
+                                    </div>
                                 </div>
                                 {/* /.card-body */}
                             </div>
@@ -125,31 +128,7 @@ const ActiveOrdersScreen = ({ history }) => {
                             <div className="card">
                                 <div className="card-header">Free Tables</div>
                                 <div className="card-body">
-                                    {loading ? (
-                                        freeTableLoader()
-                                    ) : error ? (
-                                        <Message
-                                            message={error}
-                                            color={"danger"}
-                                        />
-                                    ) : (
-                                        <>
-                                            {filterTablesByState(false).map(
-                                                (table) => (
-                                                    <Link
-                                                        to={`/order/create/${table.id}/table`}
-                                                        key={table.id}
-                                                        className="btn btn-block btn-success btn-lg"
-                                                    >
-                                                        <p className="text-center my-0">
-                                                            <i className="fas fa-utensils float-left my-1"></i>
-                                                            {table.name}
-                                                        </p>
-                                                    </Link>
-                                                )
-                                            )}
-                                        </>
-                                    )}
+                                    {renderFreeTables()}
                                 </div>
                             </div>
                         </div>

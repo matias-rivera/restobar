@@ -9,10 +9,10 @@ import HeaderContent from "../../components/HeaderContent";
 import Input from "../../components/form/Input";
 import ModalButton from "../../components/ModalButton";
 import Modal from "react-modal";
-import { customStyles } from "../../utils";
 import Checkbox from "../../components/form/Checkbox";
 import SearchBoxMini from "../../components/SearchBoxMini";
 import DataTableLoader from "../../components/loader/DataTableLoader";
+import { modalStyles } from "../../utils/styles";
 
 const UserScreen = ({ history, match }) => {
     const keyword = match.params.keyword || "";
@@ -101,7 +101,7 @@ const UserScreen = ({ history, match }) => {
                         classes={"btn-success btn-lg mb-2"}
                     />
                     <Modal
-                        style={customStyles}
+                        style={modalStyles}
                         isOpen={modalIsOpen}
                         onRequestClose={() => setModalIsOpen(false)}
                     >

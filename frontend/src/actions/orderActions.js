@@ -319,7 +319,6 @@ export const updateOrderToPaid = (order) => async (dispatch, getState) => {
         //update order
         const { data } = await axios.post(
             `/api/orders/${order.id}/pay`,
-            order,
             config
         );
         dispatch({
