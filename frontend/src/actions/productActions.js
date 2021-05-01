@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from "axios";
 import {
     PRODUCT_LIST_REQUEST,
     PRODUCT_LIST_SUCCESS,
@@ -14,194 +14,193 @@ import {
     PRODUCT_UPDATE_FAIL,
     PRODUCT_DELETE_REQUEST,
     PRODUCT_DELETE_SUCCESS,
-    PRODUCT_DELETE_FAIL
-} from '../constants/productConstants'
-
-
+    PRODUCT_DELETE_FAIL,
+} from "../constants/productConstants";
 
 //get all products
-export const listProducts = (keyword = '', pageNumber = '') => async(dispatch, getState) =>{
-    try{
+export const listProducts = (keyword = "", pageNumber = "") => async (
+    dispatch,
+    getState
+) => {
+    try {
         dispatch({
-            type: PRODUCT_LIST_REQUEST
-        })
+            type: PRODUCT_LIST_REQUEST,
+        });
 
         //get user from state
-        const {userLogin: {userInfo}} = getState()
+        const {
+            userLogin: { userInfo },
+        } = getState();
 
         //headers
         const config = {
             headers: {
-                Authorization: `Bearer ${userInfo.token}`
-            }
-        }
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
 
-        
         //get all products
-        const {data} = await axios.get(`/api/products?keyword=${keyword}&pageNumber=${pageNumber}`, config)
-     
+        const { data } = await axios.get(
+            `/api/products?keyword=${keyword}&pageNumber=${pageNumber}`,
+            config
+        );
+
         dispatch({
             type: PRODUCT_LIST_SUCCESS,
-            payload: data
-        })
-    } catch(error) {
+            payload: data,
+        });
+    } catch (error) {
         dispatch({
             type: PRODUCT_LIST_FAIL,
-            payload: 
+            payload:
                 error.response && error.response.data.message
                     ? error.response.data.message
-                    : error.message
-        })
+                    : error.message,
+        });
     }
-}
+};
 
 //create a product
-export const createProduct = (product) => async(dispatch, getState) => {
-    
-    
-
-    try{
+export const createProduct = (product) => async (dispatch, getState) => {
+    try {
         dispatch({
-            type: PRODUCT_CREATE_REQUEST
-        })
-
+            type: PRODUCT_CREATE_REQUEST,
+        });
 
         //get product from state
-        const {userLogin: {userInfo}} = getState()
+        const {
+            userLogin: { userInfo },
+        } = getState();
 
         //headers
         const config = {
             headers: {
-                'Content-Type':'application/json',
-                Authorization: `Bearer ${userInfo.token}`
-            }
-        }
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
 
         //create product
-        const {data} = await axios.post(
-            '/api/products',
-            (product),
-            config
-            )
+        const { data } = await axios.post("/api/products", product, config);
         dispatch({
             type: PRODUCT_CREATE_SUCCESS,
-            payload: data
-        })
-
-    }catch(error){
+            payload: data,
+        });
+    } catch (error) {
         dispatch({
             type: PRODUCT_CREATE_FAIL,
-            payload: 
+            payload:
                 error.response && error.response.data.message
-                    ? error.response.data.message 
-                    : error.message
-        })
+                    ? error.response.data.message
+                    : error.message,
+        });
     }
-}
+};
 
 //get product details
-export const listProductDetails = (id) =>  async (dispatch, getState) => { 
-    try{
-        dispatch({type: PRODUCT_DETAILS_REQUEST})
-        
+export const listProductDetails = (id) => async (dispatch, getState) => {
+    try {
+        dispatch({ type: PRODUCT_DETAILS_REQUEST });
 
-         //get user from state
-         const {userLogin: {userInfo}} = getState()
+        //get user from state
+        const {
+            userLogin: { userInfo },
+        } = getState();
 
-         //headers
-         const config = {
-             headers: {
-                 Authorization: `Bearer ${userInfo.token}`
-             }
-         }
+        //headers
+        const config = {
+            headers: {
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
 
-        //api call to get product 
-        const {data} = await axios.get(`/api/products/${id}`, config)
+        //api call to get product
+        const { data } = await axios.get(`/api/products/${id}`, config);
         dispatch({
             type: PRODUCT_DETAILS_SUCCESS,
-            payload: data
-        }) 
-    } catch(error){
+            payload: data,
+        });
+    } catch (error) {
         dispatch({
             type: PRODUCT_DETAILS_FAIL,
-            payload: 
+            payload:
                 error.response && error.response.data.message
-                    ? error.response.data.message 
-                    : error.message
-        })
+                    ? error.response.data.message
+                    : error.message,
+        });
     }
-}
+};
 
 //update a product
-export const updateProduct = (product) => async(dispatch, getState) => {
-    
-    
-    try{
+export const updateProduct = (product) => async (dispatch, getState) => {
+    try {
         dispatch({
-            type: PRODUCT_UPDATE_REQUEST
-        })
+            type: PRODUCT_UPDATE_REQUEST,
+        });
 
         //get user from state
-        const {userLogin: {userInfo}} = getState()
+        const {
+            userLogin: { userInfo },
+        } = getState();
         //headers
         const config = {
             headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${userInfo.token}`
-            }
-        }
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
 
         //update product
-        const {data} = await axios.put(
+        const { data } = await axios.put(
             `/api/products/${product.id}`,
-            (product),
+            product,
             config
-            )
+        );
         dispatch({
             type: PRODUCT_UPDATE_SUCCESS,
-            payload: data
-        })
-
-    }catch(error){
+            payload: data,
+        });
+    } catch (error) {
         dispatch({
             type: PRODUCT_UPDATE_FAIL,
-            payload: 
+            payload:
                 error.response && error.response.data.message
-                    ? error.response.data.message 
-                    : error.message
-        })
+                    ? error.response.data.message
+                    : error.message,
+        });
     }
-}
+};
 
 //delete product
-export const deleteProduct = (id) => async(dispatch, getState) => {
-    try{
+export const deleteProduct = (id) => async (dispatch, getState) => {
+    try {
         dispatch({
-            type: PRODUCT_DELETE_REQUEST
-        })
+            type: PRODUCT_DELETE_REQUEST,
+        });
 
         //get user from state
-        const {userLogin: {userInfo}} = getState()
+        const {
+            userLogin: { userInfo },
+        } = getState();
         //headers
         const config = {
             headers: {
-                Authorization: `Bearer ${userInfo.token}`
-            }
-        }
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
 
         //api call to delete product
-        await axios.delete(`/api/products/${id}`, config)
+        await axios.delete(`/api/products/${id}`, config);
         dispatch({
             type: PRODUCT_DELETE_SUCCESS,
-        })
-
-    }catch(error){
+        });
+    } catch (error) {
         dispatch({
             type: PRODUCT_DELETE_FAIL,
-            payload: 
+            payload:
                 error.response && error.response.data.message
-                    ? error.response.data.message 
-                    : error.message
-        })
+                    ? error.response.data.message
+                    : error.message,
+        });
     }
-}
+};

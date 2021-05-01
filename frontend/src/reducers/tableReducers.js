@@ -22,147 +22,106 @@ import {
     TABLE_ALL_SUCCESS,
     TABLE_ALL_FAIL,
     TABLE_ALL_RESET,
-    TABLE_ALL_ACTIVE_REQUEST,
-    TABLE_ALL_ACTIVE_SUCCESS,
-    TABLE_ALL_ACTIVE_FAIL,
-    TABLE_ALL_ACTIVE_RESET,
-    TABLE_ALL_FREE_REQUEST,
-    TABLE_ALL_FREE_SUCCESS,
-    TABLE_ALL_FREE_FAIL,
-    TABLE_ALL_FREE_RESET
-} from '../constants/tableConstants'
+} from "../constants/tableConstants";
 
-
-export const tableListReducer = (state = { loading: true, tables: [] }, action) => {
-    switch(action.type) {
+export const tableListReducer = (
+    state = { loading: true, tables: [] },
+    action
+) => {
+    switch (action.type) {
         case TABLE_LIST_REQUEST:
-            return { loading: true, tables: [] }
+            return { loading: true, tables: [] };
         case TABLE_LIST_SUCCESS:
-            return { 
-                loading: false, 
+            return {
+                loading: false,
                 tables: action.payload.tables,
-                pages:action.payload.pages, 
-                page: action.payload.page
-             }
+                pages: action.payload.pages,
+                page: action.payload.page,
+            };
         case TABLE_LIST_FAIL:
-            return { loading: false, error: action.payload}
+            return { loading: false, error: action.payload };
         case TABLE_LIST_RESET:
-            return { tables: [] }
+            return { tables: [] };
         default:
-            return state
+            return state;
     }
-}
+};
 
-export const tableAllReducer = (state = { loading: true, tables: [] }, action) => {
-    switch(action.type) {
+export const tableAllReducer = (
+    state = { loading: true, tables: [] },
+    action
+) => {
+    switch (action.type) {
         case TABLE_ALL_REQUEST:
-            return { loading: true, tables: [] }
+            return { loading: true, tables: [] };
         case TABLE_ALL_SUCCESS:
-            return { 
+            return {
                 tables: action.payload,
-                loading: false, 
-             }
+                loading: false,
+            };
         case TABLE_ALL_FAIL:
-            return { loading: false, error: action.payload}
+            return { loading: false, error: action.payload };
         case TABLE_ALL_RESET:
-            return { tables: [] }
+            return { tables: [] };
         default:
-            return state
+            return state;
     }
-}
-
-export const tableAllActiveReducer = (state = { loading: true, tables: [] }, action) => {
-    switch(action.type) {
-        case TABLE_ALL_ACTIVE_REQUEST:
-            return { loading: true, tables: [] }
-        case TABLE_ALL_ACTIVE_SUCCESS:
-            return { 
-                tables: action.payload,
-                loading: false, 
-             }
-        case TABLE_ALL_ACTIVE_FAIL:
-            return { loading: false, error: action.payload}
-        case TABLE_ALL_ACTIVE_RESET:
-            return { tables: [] }
-        default:
-            return state
-    }
-}
-
-export const tableAllFreeReducer = (state = { loading: true, tables: [] }, action) => {
-    switch(action.type) {
-        case TABLE_ALL_FREE_REQUEST:
-            return { loading: true, tables: [] }
-        case TABLE_ALL_FREE_SUCCESS:
-            return { 
-                tables: action.payload,
-                loading: false, 
-             }
-        case TABLE_ALL_FREE_FAIL:
-            return { loading: false, error: action.payload}
-        case TABLE_ALL_FREE_RESET:
-            return { tables: [] }
-        default:
-            return state
-    }
-}
+};
 
 export const tableCreateReducer = (state = {}, action) => {
-    switch(action.type) {
+    switch (action.type) {
         case TABLE_CREATE_REQUEST:
-            return { loading: true }
+            return { loading: true };
         case TABLE_CREATE_SUCCESS:
-            return { loading: false, success: true }
+            return { loading: false, success: true };
         case TABLE_CREATE_FAIL:
-            return { loading: false, error: action.payload}
+            return { loading: false, error: action.payload };
         default:
-            return state
+            return state;
     }
-}
-
+};
 
 export const tableDetailsReducer = (state = { table: {} }, action) => {
-    switch(action.type) {
+    switch (action.type) {
         case TABLE_DETAILS_REQUEST:
-            return { ...state, loading: true }
+            return { ...state, loading: true };
         case TABLE_DETAILS_SUCCESS:
-            return { loading: false, table: action.payload }
+            return { loading: false, table: action.payload };
         case TABLE_DETAILS_FAIL:
-            return { loading: false, error: action.payload}
+            return { loading: false, error: action.payload };
         case TABLE_DETAILS_RESET:
-            return { table: {} }
+            return { table: {} };
         default:
-            return state
+            return state;
     }
-}
+};
 
-export const tableUpdateReducer = (state = {table: {} }, action) => {
-    switch(action.type) {
+export const tableUpdateReducer = (state = { table: {} }, action) => {
+    switch (action.type) {
         case TABLE_UPDATE_REQUEST:
-            return { loading: true}
+            return { loading: true };
         case TABLE_UPDATE_SUCCESS:
-            return { loading: false, success: true, table: action.payload }
+            return { loading: false, success: true, table: action.payload };
         case TABLE_UPDATE_FAIL:
-            return { loading: false, error: action.payload}
+            return { loading: false, error: action.payload };
         case TABLE_UPDATE_RESET:
-            return {table: {}}
+            return { table: {} };
         default:
-            return state
+            return state;
     }
-}
-
+};
 
 export const tableDeleteReducer = (state = {}, action) => {
-    switch(action.type) {
+    switch (action.type) {
         case TABLE_DELETE_REQUEST:
-            return {loading: true }
+            return { loading: true };
         case TABLE_DELETE_SUCCESS:
-            return { loading: false, success: true }
+            return { loading: false, success: true };
         case TABLE_DELETE_FAIL:
-            return { loading: false, error: action.payload}
+            return { loading: false, error: action.payload };
         case TABLE_DELETE_RESET:
-            return {}
+            return {};
         default:
-            return state
+            return state;
     }
-}
+};

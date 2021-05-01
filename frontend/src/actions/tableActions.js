@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from "axios";
 import {
     TABLE_LIST_REQUEST,
     TABLE_LIST_SUCCESS,
@@ -15,280 +15,234 @@ import {
     TABLE_DELETE_REQUEST,
     TABLE_DELETE_SUCCESS,
     TABLE_DELETE_FAIL,
-    TABLE_ALL_ACTIVE_REQUEST,
-    TABLE_ALL_ACTIVE_SUCCESS,
-    TABLE_ALL_ACTIVE_FAIL,
-    TABLE_ALL_FREE_SUCCESS,
-    TABLE_ALL_FREE_REQUEST,
-    TABLE_ALL_FREE_FAIL
-
-} from '../constants/tableConstants'
-
-
-//get all active tables
-export const allActiveTables = () => async(dispatch, getState) =>{
-    try{
-        dispatch({
-            type: TABLE_ALL_ACTIVE_REQUEST
-        })
-
-        //get user from state
-        const {userLogin: {userInfo}} = getState()
-
-        //headers
-        const config = {
-            headers: {
-                Authorization: `Bearer ${userInfo.token}`
-            }
-        }
-        
-       
-
-        //if tables available is needed
-        const {data} = await axios.get(`/api/tables/all/with-orders`, config)
-
- 
-
-        
-        dispatch({
-            type: TABLE_ALL_ACTIVE_SUCCESS,
-            payload: data
-        })
-    } catch(error) {
-        dispatch({
-            type: TABLE_ALL_ACTIVE_FAIL,
-            payload: 
-                error.response && error.response.data.message
-                    ? error.response.data.message
-                    : error.message
-        })
-    }
-}
-
+    TABLE_ALL_REQUEST,
+    TABLE_ALL_SUCCESS,
+    TABLE_ALL_FAIL,
+} from "../constants/tableConstants";
 
 //get all tables
-export const allFreeTables = () => async(dispatch, getState) =>{
-    try{
+export const allTables = () => async (dispatch, getState) => {
+    try {
         dispatch({
-            type: TABLE_ALL_FREE_REQUEST
-        })
+            type: TABLE_ALL_REQUEST,
+        });
 
         //get user from state
-        const {userLogin: {userInfo}} = getState()
+        const {
+            userLogin: { userInfo },
+        } = getState();
 
         //headers
         const config = {
             headers: {
-                Authorization: `Bearer ${userInfo.token}`
-            }
-        }
-        
-       
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
 
         //if tables available is needed
-        const {data} = await axios.get(`/api/tables/all/available`, config)
- 
+        const { data } = await axios.get(`/api/tables/all`, config);
 
-        
         dispatch({
-            type: TABLE_ALL_FREE_SUCCESS,
-            payload: data
-        })
-    } catch(error) {
+            type: TABLE_ALL_SUCCESS,
+            payload: data,
+        });
+    } catch (error) {
         dispatch({
-            type: TABLE_ALL_FREE_FAIL,
-            payload: 
+            type: TABLE_ALL_FAIL,
+            payload:
                 error.response && error.response.data.message
                     ? error.response.data.message
-                    : error.message
-        })
+                    : error.message,
+        });
     }
-}
-
-
-
+};
 
 //get all tables with pagination
-export const listTables = (keyword = '', pageNumber = '') => async(dispatch, getState) =>{
-    try{
+export const listTables = (keyword = "", pageNumber = "") => async (
+    dispatch,
+    getState
+) => {
+    try {
         dispatch({
-            type: TABLE_LIST_REQUEST
-        })
+            type: TABLE_LIST_REQUEST,
+        });
 
         //get user from state
-        const {userLogin: {userInfo}} = getState()
+        const {
+            userLogin: { userInfo },
+        } = getState();
 
         //headers
         const config = {
             headers: {
-                Authorization: `Bearer ${userInfo.token}`
-            }
-        }
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
 
         //get all tables
-        const {data} = await axios.get(`/api/tables?keyword=${keyword}&pageNumber=${pageNumber}`, config)
-     
+        const { data } = await axios.get(
+            `/api/tables?keyword=${keyword}&pageNumber=${pageNumber}`,
+            config
+        );
+
         dispatch({
             type: TABLE_LIST_SUCCESS,
-            payload: data
-        })
-    } catch(error) {
+            payload: data,
+        });
+    } catch (error) {
         dispatch({
             type: TABLE_LIST_FAIL,
-            payload: 
+            payload:
                 error.response && error.response.data.message
                     ? error.response.data.message
-                    : error.message
-        })
+                    : error.message,
+        });
     }
-}
+};
 
 //create a table
-export const createTable = (table) => async(dispatch, getState) => {
-    
-    const {name} = table
+export const createTable = (table) => async (dispatch, getState) => {
+    const { name } = table;
 
-    try{
+    try {
         dispatch({
-            type: TABLE_CREATE_REQUEST
-        })
-
+            type: TABLE_CREATE_REQUEST,
+        });
 
         //get table from state
-        const {userLogin: {userInfo}} = getState()
+        const {
+            userLogin: { userInfo },
+        } = getState();
 
         //headers
         const config = {
             headers: {
-                'Content-Type':'application/json',
-                Authorization: `Bearer ${userInfo.token}`
-            }
-        }
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
 
         //create table
-        const {data} = await axios.post(
-            '/api/tables',
-            {name},
-            config
-            )
+        const { data } = await axios.post("/api/tables", { name }, config);
         dispatch({
             type: TABLE_CREATE_SUCCESS,
-            payload: data
-        })
-
-    }catch(error){
+            payload: data,
+        });
+    } catch (error) {
         dispatch({
             type: TABLE_CREATE_FAIL,
-            payload: 
+            payload:
                 error.response && error.response.data.message
-                    ? error.response.data.message 
-                    : error.message
-        })
+                    ? error.response.data.message
+                    : error.message,
+        });
     }
-}
+};
 
 //get table details
-export const listTableDetails = (id) =>  async (dispatch, getState) => { 
-    try{
-        dispatch({type: TABLE_DETAILS_REQUEST})
-        
-
-         //get user from state
-         const {userLogin: {userInfo}} = getState()
-
-         //headers
-         const config = {
-             headers: {
-                 Authorization: `Bearer ${userInfo.token}`
-             }
-         }
-
-        //api call to get table 
-        const {data} = await axios.get(`/api/tables/${id}`, config)
-        dispatch({
-            type: TABLE_DETAILS_SUCCESS,
-            payload: data
-        }) 
-    } catch(error){
-        dispatch({
-            type: TABLE_DETAILS_FAIL,
-            payload: 
-                error.response && error.response.data.message
-                    ? error.response.data.message 
-                    : error.message
-        })
-    }
-}
-
-
-//update a table
-export const updateTable = (table) => async(dispatch, getState) => {
-    try{
-        dispatch({
-            type: TABLE_UPDATE_REQUEST
-        })
+export const listTableDetails = (id) => async (dispatch, getState) => {
+    try {
+        dispatch({ type: TABLE_DETAILS_REQUEST });
 
         //get user from state
-        const {userLogin: {userInfo}} = getState()
+        const {
+            userLogin: { userInfo },
+        } = getState();
+
         //headers
         const config = {
             headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${userInfo.token}`
-            }
-        }
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
+
+        //api call to get table
+        const { data } = await axios.get(`/api/tables/${id}`, config);
+        dispatch({
+            type: TABLE_DETAILS_SUCCESS,
+            payload: data,
+        });
+    } catch (error) {
+        dispatch({
+            type: TABLE_DETAILS_FAIL,
+            payload:
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message,
+        });
+    }
+};
+
+//update a table
+export const updateTable = (table) => async (dispatch, getState) => {
+    try {
+        dispatch({
+            type: TABLE_UPDATE_REQUEST,
+        });
+
+        //get user from state
+        const {
+            userLogin: { userInfo },
+        } = getState();
+        //headers
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
 
         //update table
-        const {data} = await axios.put(
+        const { data } = await axios.put(
             `/api/tables/${table.id}`,
             table,
             config
-            )
+        );
         dispatch({
             type: TABLE_UPDATE_SUCCESS,
-            payload: data
-        })
-
-    }catch(error){
+            payload: data,
+        });
+    } catch (error) {
         dispatch({
             type: TABLE_UPDATE_FAIL,
-            payload: 
+            payload:
                 error.response && error.response.data.message
-                    ? error.response.data.message 
-                    : error.message
-        })
+                    ? error.response.data.message
+                    : error.message,
+        });
     }
-}
+};
 
 //delete table
-export const deleteTable = (id) => async(dispatch, getState) => {
-    try{
+export const deleteTable = (id) => async (dispatch, getState) => {
+    try {
         dispatch({
-            type: TABLE_DELETE_REQUEST
-        })
+            type: TABLE_DELETE_REQUEST,
+        });
 
         //get user from state
-        const {userLogin: {userInfo}} = getState()
+        const {
+            userLogin: { userInfo },
+        } = getState();
         //headers
         const config = {
             headers: {
-                Authorization: `Bearer ${userInfo.token}`
-            }
-        }
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
 
         //api call to delete table
-        await axios.delete(`/api/tables/${id}`, config)
+        await axios.delete(`/api/tables/${id}`, config);
         dispatch({
             type: TABLE_DELETE_SUCCESS,
-        })
-
-    }catch(error){
+        });
+    } catch (error) {
         dispatch({
             type: TABLE_DELETE_FAIL,
-            payload: 
+            payload:
                 error.response && error.response.data.message
-                    ? error.response.data.message 
-                    : error.message
-        })
+                    ? error.response.data.message
+                    : error.message,
+        });
     }
-}
+};

@@ -1,12 +1,15 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
 
-const ButtonGoBack = ({link}) => {
-    return ( 
-        <Link to={`/${link}`} className='btn btn-info btn-lg mb-2'>
-                Go Back
-        </Link>
-     );
-}
- 
+const ButtonGoBack = ({ history }) => {
+    const handleClick = () => {
+        history.goBack();
+    };
+
+    return (
+        <button onClick={handleClick} className="btn btn-info btn-lg mb-2">
+            Go Back
+        </button>
+    );
+};
+
 export default ButtonGoBack;

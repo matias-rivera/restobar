@@ -1,34 +1,31 @@
-import {createStore, combineReducers, applyMiddleware} from 'redux'
-import thunk from 'redux-thunk'
-import {composeWithDevTools} from 'redux-devtools-extension'
-import { 
+import { createStore, combineReducers, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import { composeWithDevTools } from "redux-devtools-extension";
+import {
     userLoginReducer,
     userListReducer,
     userRegisterReducer,
     userDetailsReducer,
     userUpdateReducer,
-    userDeleteReducer
-} from './reducers/userReducers'
-
+    userDeleteReducer,
+} from "./reducers/userReducers";
 import {
     categoryAllReducer,
     categoryListReducer,
     categoryCreateReducer,
     categoryDetailsReducer,
     categoryUpdateReducer,
-    categoryDeleteReducer
-} from './reducers/categoryReducers'
+    categoryDeleteReducer,
+} from "./reducers/categoryReducers";
 
 import {
     tableAllReducer,
-    tableAllActiveReducer,
-    tableAllFreeReducer,
     tableListReducer,
     tableCreateReducer,
     tableDetailsReducer,
     tableUpdateReducer,
-    tableDeleteReducer
-} from './reducers/tableReducers'
+    tableDeleteReducer,
+} from "./reducers/tableReducers";
 
 import {
     clientAllReducer,
@@ -36,16 +33,16 @@ import {
     clientCreateReducer,
     clientDetailsReducer,
     clientUpdateReducer,
-    clientDeleteReducer
-} from './reducers/clientReducers'
+    clientDeleteReducer,
+} from "./reducers/clientReducers";
 
 import {
     productListReducer,
     productCreateReducer,
     productDetailsReducer,
     productUpdateReducer,
-    productDeleteReducer
-} from './reducers/productReducers'
+    productDeleteReducer,
+} from "./reducers/productReducers";
 
 import {
     orderAllReducer,
@@ -56,22 +53,20 @@ import {
     orderDetailsReducer,
     orderUpdateReducer,
     orderDeleteReducer,
-    orderDeliveryListReducer
-} from './reducers/orderReducers'
-
+    orderDeliveryListReducer,
+} from "./reducers/orderReducers";
 
 const reducer = combineReducers({
-    
     userLogin: userLoginReducer,
     userList: userListReducer,
-    userRegister : userRegisterReducer,
+    userRegister: userRegisterReducer,
     userDetails: userDetailsReducer,
     userUpdate: userUpdateReducer,
     userDelete: userDeleteReducer,
-    
+
     categoryAll: categoryAllReducer,
     categoryList: categoryListReducer,
-    categoryCreate:categoryCreateReducer,
+    categoryCreate: categoryCreateReducer,
     categoryDetails: categoryDetailsReducer,
     categoryUpdate: categoryUpdateReducer,
     categoryDelete: categoryDeleteReducer,
@@ -83,8 +78,6 @@ const reducer = combineReducers({
     productDelete: productDeleteReducer,
 
     tableAll: tableAllReducer,
-    tableAllActive: tableAllActiveReducer,
-    tableAllFree: tableAllFreeReducer,
     tableList: tableListReducer,
     tableCreate: tableCreateReducer,
     tableDetails: tableDetailsReducer,
@@ -106,24 +99,22 @@ const reducer = combineReducers({
     orderDetails: orderDetailsReducer,
     orderUpdate: orderUpdateReducer,
     orderDelete: orderDeleteReducer,
-    orderDeliveryList: orderDeliveryListReducer
+    orderDeliveryList: orderDeliveryListReducer,
+});
 
-})
-
-const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(
-    localStorage.getItem('userInfo')
-) : null
+const userInfoFromStorage = localStorage.getItem("userInfo")
+    ? JSON.parse(localStorage.getItem("userInfo"))
+    : null;
 
 const initialState = {
-    userLogin: {userInfo: userInfoFromStorage}
-}
+    userLogin: { userInfo: userInfoFromStorage },
+};
 
-
-const middleware = [thunk]
+const middleware = [thunk];
 const store = createStore(
     reducer,
     initialState,
     composeWithDevTools(applyMiddleware(...middleware))
-)
+);
 
-export default store
+export default store;

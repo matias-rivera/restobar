@@ -1,68 +1,51 @@
-const Product =  require('../models').Product
+const Product = require("../models").Product;
+const Table = require("../models").Table;
+const Order = require("../models").Order;
 
-
-//calc stock of each product in order
-const stock = async (list) => {
+/* check stock of each product */
+exports.stock = async (list) => {
     for (let index = 0; index < list.length; index++) {
-      const productSearched = await Product.findByPk(list[index].id)
-      if(productSearched.stock < list[index].quantity){
-        return false
-      }
-      
+        const productSearched = await Product.findByPk(list[index].id);
+        if (productSearched.stock < list[index].quantity) {
+            return false;
+        }
     }
-    return true
-  }
-  
-  //get products
-const getProducts = async (list) => {
-    const products = list.map(async item => {
-      const product = await Product.findByPk(item.id)
-      return product
-    })
-    return products
-  }
-  
+    return true;
+};
 
+/* update table */
+exports.updateTable = async (id, occupied) => {
+    const table = await Table.findByPk(id);
+    table.occupied = occupied;
+    await table.save();
+};
 
-//check if product is already in order
-const inOrder = (obj, list) => {
-    for (let index = 0; index < list.length; index++) {
-      if (obj.id === list[index].id){
-        return true
-      }
-    }
-    return false
-  }
+/* Add products  */
+exports.addProductsInOrder = async (order, products) => {
+    products.forEach(async (product) => {
+        await order.addProduct(product.id, {
+            through: { quantity: product.quantity },
+        });
+    });
+};
 
-  //return product quantity difference
-const getProductDifference = (obj, list) => {
-    for (let index = 0; index < list.length; index++) {
-      if (obj.id === list[index].id){
-        return obj.OrderProduct.quantity - list[index].quantity  
-      }
-    }
-    return 0
-  }
+/* 
+Update stock from products
+condition
+    +1 INCREASE STOCK 
+    -1 DECREASE STOCK
+*/
+exports.updateProductsStock = async (products, condition) => {
+    await products.forEach(async (product) => {
+        const productToUpdate = await Product.findByPk(product.id);
 
-  
-//check for stock
-const checkNoStock = async (item, products) => {
-
-    const product = await Product.findByPk(item.id)
-
-    //get difference
-    const difference = getProductDifference(item, products)
-
-    if(difference < 0 && product.stock < Math.abs(difference)){
-        return `Not enough stock of ${product.name}`
-    }
-    return false
-
-
-}
-
-exports.getProductDifference = getProductDifference
-exports.checkNoStock = checkNoStock
-exports.inOrder = inOrder
-exports.stock = stock
-exports.getProducts = getProducts
+        if (productToUpdate) {
+            if (condition >= 1) {
+                productToUpdate.stock += product.quantity;
+            } else {
+                productToUpdate.stock -= product.quantity;
+            }
+            await productToUpdate.save();
+        }
+    });
+};
