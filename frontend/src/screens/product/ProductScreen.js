@@ -1,32 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Paginate from "../../components/Paginate";
-import TableCrud from "../../components/TableCrud";
-import Loader from "../../components/Loader";
-import Message from "../../components/Message";
-import { Route, Link } from "react-router-dom";
-import { listProducts, createProduct } from "../../actions/productActions";
+import { Link } from "react-router-dom";
+
+/* Components */
 import HeaderContent from "../../components/HeaderContent";
 import Modal from "react-modal";
 import Input from "../../components/form/Input";
-import { allCategories } from "../../actions/categoryActions";
 import ModalButton from "../../components/ModalButton";
-import SearchBoxMini from "../../components/SearchBoxMini";
-import Select from "react-select";
 import DataTableLoader from "../../components/loader/DataTableLoader";
+import Select from "../../components/Select";
+
+/* Actions */
+import { listProducts, createProduct } from "../../actions/productActions";
+import { allCategories } from "../../actions/categoryActions";
+
+/* Styles */
 import { modalStyles } from "../../utils/styles";
+import Search from "../../components/Search";
+import LoaderHandler from "../../components/loader/LoaderHandler";
+import Pagination from "../../components/Pagination";
+import Message from "../../components/Message";
 
 Modal.setAppElement("#root");
 
-const ProductScreen = ({ history, match }) => {
-    const keyword = match.params.keyword || "";
-    const pageNumber = match.params.pageNumber || 1;
-
+const ProductScreen = ({ history }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [name, setName] = useState("");
     const [price, setPrice] = useState(0);
     const [stock, setStock] = useState(0);
-    const [category, setCategory] = useState({});
+    const [category, setCategory] = useState(null);
+    const [keyword, setKeyword] = useState("");
+    const [pageNumber, setPageNumber] = useState(1);
 
     const [errors, setErrors] = useState({});
 
@@ -73,7 +77,7 @@ const ProductScreen = ({ history, match }) => {
         if (!stock) {
             errorsCheck.stock = "Stock is required";
         }
-        if (!category || Object.keys(category).length === 0) {
+        if (!category) {
             errorsCheck.category = "Category is required";
         }
 
@@ -88,7 +92,7 @@ const ProductScreen = ({ history, match }) => {
                 name: name,
                 price: price,
                 stock: stock,
-                categoryId: category.value,
+                categoryId: category,
             };
 
             dispatch(createProduct(product));
@@ -96,19 +100,121 @@ const ProductScreen = ({ history, match }) => {
             setName("");
             setPrice(0);
             setStock(0);
-            setCategory(1);
+            setCategory(null);
 
             setModalIsOpen(false);
         }
     };
 
-    const mapSelect = (data) => {
-        const mapped = data.map((table) => ({
-            label: table.name,
-            value: table.id,
-        }));
-        return mapped;
-    };
+    const renderModalCreateProduct = () => (
+        <>
+            <ModalButton
+                modal={modalIsOpen}
+                setModal={setModalIsOpen}
+                classes={"btn-success btn-lg mb-2"}
+            />
+            <Modal
+                style={modalStyles}
+                isOpen={modalIsOpen}
+                onRequestClose={() => setModalIsOpen(false)}
+            >
+                <h2>Create Form</h2>
+                <form onSubmit={handleSubmit}>
+                    <Input
+                        name={"name"}
+                        type={"text"}
+                        data={name}
+                        setData={setName}
+                        errors={errors}
+                    />
+                    <Input
+                        name={"price"}
+                        type={"number"}
+                        data={price}
+                        setData={setPrice}
+                        errors={errors}
+                    />
+                    <Input
+                        name={"stock"}
+                        type={"number"}
+                        data={stock}
+                        setData={setStock}
+                        errors={errors}
+                    />
+
+                    <LoaderHandler
+                        loading={loadingCategories}
+                        error={errorCategories}
+                    >
+                        <Select
+                            data={category}
+                            setData={setCategory}
+                            items={categories}
+                        />
+                    </LoaderHandler>
+
+                    {errors.category && (
+                        <Message message={errors.category} color={"warning"} />
+                    )}
+                    <hr />
+                    <button type="submit" className="btn btn-primary">
+                        Submit
+                    </button>
+                    <ModalButton
+                        modal={modalIsOpen}
+                        setModal={setModalIsOpen}
+                        classes={"btn-danger float-right"}
+                    />
+                </form>
+            </Modal>
+        </>
+    );
+
+    const renderProductsTable = () => (
+        <LoaderHandler
+            loading={loading}
+            error={error}
+            loader={<DataTableLoader />}
+        >
+            <table className="table table-hover text-nowrap">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th className="d-none d-sm-table-cell">Created At</th>
+                        <th className="d-none d-sm-table-cell">Category</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {products.map((product) => (
+                        <tr key={product.id}>
+                            <td>{product.id}</td>
+                            <td>{product.name}</td>
+                            <td>{product.price}</td>
+                            <td>{product.stock}</td>
+                            <td className="d-none d-sm-table-cell">
+                                {product.createdAt.slice(0, 10)}
+                            </td>
+                            <td className="d-none d-sm-table-cell">
+                                {product.category.name}
+                            </td>
+                            <td>
+                                <Link
+                                    to={`/product/${product.id}/edit`}
+                                    className="btn btn-warning btn-lg"
+                                >
+                                    Edit
+                                </Link>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </LoaderHandler>
+    );
 
     return (
         <>
@@ -117,72 +223,14 @@ const ProductScreen = ({ history, match }) => {
 
             <section className="content">
                 <div className="container-fluid">
-                    <ModalButton
-                        modal={modalIsOpen}
-                        setModal={setModalIsOpen}
-                        classes={"btn-success btn-lg mb-2"}
-                    />
-                    <Modal
-                        style={modalStyles}
-                        isOpen={modalIsOpen}
-                        onRequestClose={() => setModalIsOpen(false)}
-                    >
-                        <h2>Create Form</h2>
-                        <form onSubmit={handleSubmit}>
-                            <Input
-                                name={"name"}
-                                type={"text"}
-                                data={name}
-                                setData={setName}
-                                errors={errors}
-                            />
-                            <Input
-                                name={"price"}
-                                type={"number"}
-                                data={price}
-                                setData={setPrice}
-                                errors={errors}
-                            />
-                            <Input
-                                name={"stock"}
-                                type={"number"}
-                                data={stock}
-                                setData={setStock}
-                                errors={errors}
-                            />
-                            {/*                   <Select setData={setCategory} items={categories} loading={loadingCategories} error={errorCategories} />
-                             */}{" "}
-                            <Select
-                                id="category"
-                                options={
-                                    categories ? mapSelect(categories) : ""
-                                }
-                                onChange={setCategory}
-                                value={category}
-                                placeholder="Select Category"
-                                isSearchable
-                            />
-                            {errors.category && (
-                                <label className="text-danger">
-                                    {errors.category}{" "}
-                                </label>
-                            )}
-                            <hr />
-                            <button type="submit" className="btn btn-primary">
-                                Submit
-                            </button>
-                            <ModalButton
-                                modal={modalIsOpen}
-                                setModal={setModalIsOpen}
-                                classes={"btn-danger float-right"}
-                            />
-                        </form>
-                    </Modal>
+                    {renderModalCreateProduct()}
 
                     <div className="row">
                         <div className="col-12">
-                            <Loader variable={createLoading} />
-                            <Message message={createError} color={"danger"} />
+                            <LoaderHandler
+                                loading={createLoading}
+                                error={createError}
+                            />
 
                             <div className="card">
                                 <div className="card-header">
@@ -190,93 +238,23 @@ const ProductScreen = ({ history, match }) => {
                                         Products table
                                     </h3>
                                     <div className="card-tools">
-                                        <Route
-                                            render={({ history }) => (
-                                                <SearchBoxMini
-                                                    history={history}
-                                                    item={"product"}
-                                                />
-                                            )}
+                                        <Search
+                                            keyword={keyword}
+                                            setKeyword={setKeyword}
+                                            setPage={setPageNumber}
                                         />
                                     </div>
                                 </div>
                                 {/* /.card-header */}
                                 <div className="card-body table-responsive p-0">
-                                    {loading ? (
-                                        <DataTableLoader />
-                                    ) : error ? (
-                                        <Message
-                                            message={error}
-                                            color={"danger"}
-                                        />
-                                    ) : (
-                                        <>
-                                            <table className="table table-hover text-nowrap">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Name</th>
-                                                        <th>Price</th>
-                                                        <th>Stock</th>
-                                                        <th className="d-none d-sm-table-cell">
-                                                            Created At
-                                                        </th>
-                                                        <th className="d-none d-sm-table-cell">
-                                                            Category
-                                                        </th>
-                                                        <th></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {products.map((product) => (
-                                                        <tr key={product.id}>
-                                                            <td>
-                                                                {product.id}
-                                                            </td>
-                                                            <td>
-                                                                {product.name}
-                                                            </td>
-                                                            <td>
-                                                                {product.price}
-                                                            </td>
-                                                            <td>
-                                                                {product.stock}
-                                                            </td>
-                                                            <td className="d-none d-sm-table-cell">
-                                                                {product.createdAt.slice(
-                                                                    0,
-                                                                    10
-                                                                )}
-                                                            </td>
-                                                            <td className="d-none d-sm-table-cell">
-                                                                {
-                                                                    product
-                                                                        .category
-                                                                        .name
-                                                                }
-                                                            </td>
-                                                            <td>
-                                                                <Link
-                                                                    to={`/product/${product.id}/edit`}
-                                                                    className="btn btn-warning btn-lg"
-                                                                >
-                                                                    Edit
-                                                                </Link>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </>
-                                    )}
+                                    {renderProductsTable()}
                                 </div>
                                 {/* /.card-body */}
                             </div>
-                            <Paginate
-                                item={"product"}
-                                pages={pages}
+                            <Pagination
                                 page={page}
-                                keyword={keyword ? keyword : null}
+                                pages={pages}
+                                setPage={setPageNumber}
                             />
                         </div>
                         {/* /.col */}

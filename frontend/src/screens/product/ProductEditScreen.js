@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+
+/* Components */
 import Message from "../../components/Message";
-import Loader from "../../components/Loader";
+import Select from "../../components/Select";
+import Input from "../../components/form/Input";
+import HeaderContent from "../../components/HeaderContent";
+import ButtonGoBack from "../../components/ButtonGoBack";
+import LoaderHandler from "../../components/loader/LoaderHandler";
+
+/* Constants */
+import {
+    PRODUCT_UPDATE_RESET,
+    PRODUCT_DETAILS_RESET,
+} from "../../constants/productConstants";
+
+/* Actions */
 import { allCategories } from "../../actions/categoryActions";
 import { CATEGORY_ALL_RESET } from "../../constants/categoryConstants";
 import {
     updateProduct,
     listProductDetails,
-    deleteProduct,
 } from "../../actions/productActions";
-import {
-    PRODUCT_UPDATE_RESET,
-    PRODUCT_DETAILS_RESET,
-    PRODUCT_DELETE_RESET,
-} from "../../constants/productConstants";
-import Select from "../../components/form/Select";
-import Input from "../../components/form/Input";
-import HeaderContent from "../../components/HeaderContent";
-import ButtonGoBack from "../../components/ButtonGoBack";
 
 const ProductEditScreen = ({ history, match }) => {
     const productId = parseInt(match.params.id);
@@ -55,16 +58,11 @@ const ProductEditScreen = ({ history, match }) => {
         success: successUpdate,
     } = productUpdate;
 
-    //product delete state
-    const productDelete = useSelector((state) => state.productDelete);
-    const { success: successDelete } = productDelete;
-
     useEffect(() => {
         //after update redirect to users
-        if (successUpdate || successDelete) {
+        if (successUpdate) {
             dispatch({ type: PRODUCT_UPDATE_RESET });
             dispatch({ type: PRODUCT_DETAILS_RESET });
-            dispatch({ type: PRODUCT_DELETE_RESET });
             dispatch({ type: CATEGORY_ALL_RESET });
             history.push("/product");
         }
@@ -80,7 +78,7 @@ const ProductEditScreen = ({ history, match }) => {
             setStock(product.stock);
             setCategory(product.categoryId);
         }
-    }, [dispatch, history, productId, product, successUpdate, successDelete]);
+    }, [dispatch, history, productId, product, successUpdate]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -120,13 +118,54 @@ const ProductEditScreen = ({ history, match }) => {
         }
     };
 
-    //delete function
-    /* const handleDelete = (e) => {
-        e.preventDefault()
-        if(window.confirm('Are you sure?')){
-            dispatch(deleteProduct(productId))
-        }
-    } */
+    const renderForm = () => (
+        <LoaderHandler loading={loading} error={error}>
+            <form onSubmit={handleSubmit}>
+                <Input
+                    name={"name"}
+                    type={"text"}
+                    data={name}
+                    setData={setName}
+                    errors={errors}
+                />
+
+                <Input
+                    name={"price"}
+                    type={"number"}
+                    data={price}
+                    setData={setPrice}
+                    errors={errors}
+                />
+
+                <Input
+                    name={"stock"}
+                    type={"number"}
+                    data={stock}
+                    setData={setStock}
+                    errors={errors}
+                />
+
+                <LoaderHandler
+                    loading={loadingCategories}
+                    error={errorCategories}
+                >
+                    <Select
+                        data={category}
+                        setData={setCategory}
+                        items={categories}
+                    />
+                </LoaderHandler>
+                {errors.category && (
+                    <Message message={errors.category} color={"warning"} />
+                )}
+
+                <hr />
+                <button type="submit" className="btn btn-success">
+                    Submit
+                </button>
+            </form>
+        </LoaderHandler>
+    );
 
     return (
         <>
@@ -134,7 +173,6 @@ const ProductEditScreen = ({ history, match }) => {
             <HeaderContent name={"Products"} />
 
             {/* Main content */}
-
             <section className="content">
                 <div className="container-fluid">
                     <ButtonGoBack history={history} />
@@ -143,66 +181,13 @@ const ProductEditScreen = ({ history, match }) => {
                             <div className="card">
                                 <div className="card-header">
                                     <h3 className="card-title">Edit Product</h3>
-                                    <Loader variable={loadingUpdate} />
-                                    <Message
-                                        message={errorUpdate}
-                                        color={"danger"}
+                                    <LoaderHandler
+                                        loading={loadingUpdate}
+                                        error={errorUpdate}
                                     />
                                 </div>
                                 {/* /.card-header */}
-                                <div className="card-body">
-                                    {loading ? (
-                                        <Loader variable={loading} />
-                                    ) : error ? (
-                                        <Message
-                                            message={error}
-                                            color={"danger"}
-                                        />
-                                    ) : (
-                                        <form onSubmit={handleSubmit}>
-                                            <Input
-                                                name={"name"}
-                                                type={"text"}
-                                                data={name}
-                                                setData={setName}
-                                                errors={errors}
-                                            />
-
-                                            <Input
-                                                name={"price"}
-                                                type={"number"}
-                                                data={price}
-                                                setData={setPrice}
-                                                errors={errors}
-                                            />
-
-                                            <Input
-                                                name={"stock"}
-                                                type={"number"}
-                                                data={stock}
-                                                setData={setStock}
-                                                errors={errors}
-                                            />
-
-                                            <Select
-                                                id={product.categoryId}
-                                                setData={setCategory}
-                                                items={categories}
-                                                loading={loadingCategories}
-                                                error={errorCategories}
-                                            />
-
-                                            <hr />
-                                            {/* <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button> */}
-                                            <button
-                                                type="submit"
-                                                className="btn btn-success"
-                                            >
-                                                Submit
-                                            </button>
-                                        </form>
-                                    )}
-                                </div>
+                                <div className="card-body">{renderForm()}</div>
                                 {/* /.card-body */}
                             </div>
                         </div>

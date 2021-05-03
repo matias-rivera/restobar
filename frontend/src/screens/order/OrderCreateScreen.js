@@ -14,7 +14,7 @@ import Checkbox from "../../components/form/Checkbox";
 /* Order components */
 import ProductsTable from "../../components/order/ProductsTable";
 import OrderInfo from "../../components/order/OrderInfo";
-import OrderSelect from "../../components/order/OrderSelect";
+import Select from "../../components/Select";
 import OrderCart from "../../components/order/OrderCart";
 import LoaderHandler from "../../components/loader/LoaderHandler";
 
@@ -31,9 +31,9 @@ import { createOrder } from "../../actions/orderActions";
 
 const OrderCreateScreen = ({ history, match }) => {
     /* Get table from url */
-    const tableFromUrl = window.location.href.indexOf("table") != -1;
+    const tableFromUrl = window.location.href.indexOf("table") !== -1;
     /* Get delivery from url */
-    const deliveryFromUrl = window.location.href.indexOf("delivery") != -1;
+    const deliveryFromUrl = window.location.href.indexOf("delivery") !== -1;
 
     const [table, setTable] = useState(
         tableFromUrl ? parseInt(match.params.id) : null
@@ -159,7 +159,7 @@ const OrderCreateScreen = ({ history, match }) => {
 
     const renderTablesSelect = () => (
         <LoaderHandler loading={loadingAllTables} error={errorAllTables}>
-            <OrderSelect
+            <Select
                 data={table}
                 setData={setTable}
                 items={filterFreeTables(tables)}
@@ -173,7 +173,7 @@ const OrderCreateScreen = ({ history, match }) => {
 
     const renderClientsSelect = () => (
         <LoaderHandler loading={loadingAllClients} error={errorAllClients}>
-            <OrderSelect data={client} setData={setClient} items={clients} />
+            <Select data={client} setData={setClient} items={clients} />
             {errors.client && (
                 <Message message={errors.client} color={"warning"} />
             )}

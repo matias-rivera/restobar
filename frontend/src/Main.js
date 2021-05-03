@@ -122,21 +122,7 @@ const Main = () => {
                         path="/product/:id/edit"
                         component={ProductEditScreen}
                     />
-                    <PrivateRoute
-                        path="/product/page/:pageNumber"
-                        component={ProductScreen}
-                        exact
-                    />
-                    <PrivateRoute
-                        path="/product/search/:keyword"
-                        component={ProductScreen}
-                        exact
-                    />
-                    <PrivateRoute
-                        path="/product/search/:keyword/page/:pageNumber"
-                        component={ProductScreen}
-                        exact
-                    />
+
                     <PrivateRoute path="/product" component={ProductScreen} />
 
                     <PrivateRoute
