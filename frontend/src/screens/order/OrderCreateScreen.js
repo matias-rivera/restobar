@@ -1,17 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-/* Constants */
-import { TABLE_ALL_RESET } from "../../constants/tableConstants";
-import { PRODUCT_LIST_RESET } from "../../constants/productConstants";
-import { CLIENT_ALL_RESET } from "../../constants/clientConstants";
-import { ORDER_CREATE_RESET } from "../../constants/orderConstants";
-
-/* Actions */
-import { allTables } from "../../actions/tableActions";
-import { allClients } from "../../actions/clientActions";
-import { createOrder } from "../../actions/orderActions";
-
 /* Components */
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
@@ -24,10 +13,21 @@ import Checkbox from "../../components/form/Checkbox";
 
 /* Order components */
 import ProductsTable from "../../components/order/ProductsTable";
-import OrderCart from "../../components/order/OrderCart";
+import OrderInfo from "../../components/order/OrderInfo";
 import OrderSelect from "../../components/order/OrderSelect";
-import OrderTable from "../../components/order/OrderTable";
+import OrderCart from "../../components/order/OrderCart";
 import LoaderHandler from "../../components/loader/LoaderHandler";
+
+/* Constants */
+import { TABLE_ALL_RESET } from "../../constants/tableConstants";
+import { PRODUCT_LIST_RESET } from "../../constants/productConstants";
+import { CLIENT_ALL_RESET } from "../../constants/clientConstants";
+import { ORDER_CREATE_RESET } from "../../constants/orderConstants";
+
+/* Actions */
+import { allTables } from "../../actions/tableActions";
+import { allClients } from "../../actions/clientActions";
+import { createOrder } from "../../actions/orderActions";
 
 const OrderCreateScreen = ({ history, match }) => {
     /* Get table from url */
@@ -145,12 +145,12 @@ const OrderCreateScreen = ({ history, match }) => {
             {errors.products && (
                 <Message message={errors.products} color={"warning"} />
             )}
-            <OrderCart
+            <OrderInfo
                 total={total}
                 setTotal={setTotal}
                 productsInOrder={productsInOrder}
             />
-            <OrderTable
+            <OrderCart
                 productsInOrder={productsInOrder}
                 setProductsInOrder={setProductsInOrder}
             />

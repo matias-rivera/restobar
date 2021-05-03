@@ -1,20 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Message from "../../components/Message";
-import Loader from "../../components/Loader";
+
+/* Components */
 import HeaderContent from "../../components/HeaderContent";
-import {
-    listOrderDetails,
-    updateOrderToPaid,
-} from "../../actions/orderActions";
-import { ORDER_UPDATE_RESET } from "../../constants/orderConstants";
 import ButtonGoBack from "../../components/ButtonGoBack";
 import ViewBox from "../../components/ViewBox";
 import LoaderHandler from "../../components/loader/LoaderHandler";
 
+/* constants */
+import { ORDER_UPDATE_RESET } from "../../constants/orderConstants";
+
+/* actions */
+import {
+    listOrderDetails,
+    updateOrderToPaid,
+} from "../../actions/orderActions";
+
 const OrderViewScreen = ({ history, match }) => {
     const orderId = parseInt(match.params.id);
-    const [productsInOrder, setProductsInOrder] = useState([]);
 
     const dispatch = useDispatch();
 
@@ -42,13 +45,10 @@ const OrderViewScreen = ({ history, match }) => {
                 history.push("/active");
             }
         }
-    }, [successUpdate]);
-
-    useEffect(() => {
         if (!order.id || order.id !== orderId) {
             dispatch(listOrderDetails(orderId));
         }
-    }, [dispatch, history, order, orderId]);
+    }, [dispatch, history, order, orderId, successUpdate]);
 
     const handlePay = (e) => {
         e.preventDefault();
@@ -67,17 +67,20 @@ const OrderViewScreen = ({ history, match }) => {
 
     //get all order items
     const totalItems = (productsIn) => {
-        return productsIn.reduce((acc, item) => acc + item.quantity, 0);
+        return productsIn.reduce(
+            (acc, item) => acc + item.OrderProduct.quantity,
+            0
+        );
     };
 
     const renderCartInfo = () =>
-        order && (
+        order.products && (
             <div className="small-box bg-info">
                 <div className="inner">
                     <h3>TOTAL ${order.total}</h3>
                     <p>
-                        {productsInOrder.length > 0
-                            ? totalItems(productsInOrder)
+                        {order.products.length > 0
+                            ? totalItems(order.products)
                             : 0}{" "}
                         Items in Order
                     </p>
@@ -243,7 +246,10 @@ const OrderViewScreen = ({ history, match }) => {
         <>
             {/* Content Header (Page header) */}
             <HeaderContent name={"Orders"} />
-
+            <LoaderHandler
+                loading={loadingUpdate}
+                error={errorUpdate}
+            ></LoaderHandler>
             {/* Main content */}
             <section className="content">
                 <div className="container-fluid">

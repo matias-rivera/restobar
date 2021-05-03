@@ -1,17 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-/* Constants */
-import {
-    ORDER_DETAILS_RESET,
-    ORDER_UPDATE_RESET,
-} from "../../constants/orderConstants";
-
-/* Actions */
-import { listOrderDetails, updateOrder } from "../../actions/orderActions";
-import { allClients } from "../../actions/clientActions";
-import { allTables } from "../../actions/tableActions";
-
 /* Components */
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
@@ -24,10 +13,21 @@ import Checkbox from "../../components/form/Checkbox";
 
 /* Order Components */
 import ProductsTable from "../../components/order/ProductsTable";
-import OrderCart from "../../components/order/OrderCart";
+import OrderInfo from "../../components/order/OrderInfo";
 import OrderSelect from "../../components/order/OrderSelect";
-import OrderTable from "../../components/order/OrderTable";
+import OrderCart from "../../components/order/OrderCart";
 import LoaderHandler from "../../components/loader/LoaderHandler";
+
+/* Constants */
+import {
+    ORDER_DETAILS_RESET,
+    ORDER_UPDATE_RESET,
+} from "../../constants/orderConstants";
+
+/* Actions */
+import { listOrderDetails, updateOrder } from "../../actions/orderActions";
+import { allClients } from "../../actions/clientActions";
+import { allTables } from "../../actions/tableActions";
 
 const OrderEditScreen = ({ history, match }) => {
     const orderId = parseInt(match.params.id);
@@ -179,12 +179,12 @@ const OrderEditScreen = ({ history, match }) => {
             {errors.products && (
                 <Message message={errors.products} color={"warning"} />
             )}
-            <OrderCart
+            <OrderInfo
                 total={total}
                 setTotal={setTotal}
                 productsInOrder={productsInOrder}
             />
-            <OrderTable
+            <OrderCart
                 productsInOrder={productsInOrder}
                 setProductsInOrder={setProductsInOrder}
             />

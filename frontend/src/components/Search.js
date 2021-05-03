@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 
-const ProductsSearch = ({ keyword, setKeyword }) => {
+const Search = ({ keyword, setKeyword, setPage }) => {
     const [searchTerm, setSearchTerm] = useState(keyword);
 
     const handleKeyPress = (event) => {
         if (event.key === "Enter") {
-            setKeyword(searchTerm);
+            handleClickButton();
         }
+    };
+    const handleClickButton = () => {
+        setKeyword(searchTerm);
+        setPage(1);
     };
     return (
         <div className="input-group input-group-sm" style={{ width: 160 }}>
@@ -21,7 +25,7 @@ const ProductsSearch = ({ keyword, setKeyword }) => {
             />
             <div className="input-group-append">
                 <button
-                    onClick={() => setKeyword(searchTerm)}
+                    onClick={handleClickButton}
                     type="submit"
                     className="btn btn-default bg-primary"
                 >
@@ -32,4 +36,4 @@ const ProductsSearch = ({ keyword, setKeyword }) => {
     );
 };
 
-export default ProductsSearch;
+export default Search;

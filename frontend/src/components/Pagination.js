@@ -1,6 +1,6 @@
 import React from "react";
 
-const ProductsPagination = ({ pages, page, setPage }) => {
+const Pagination = ({ pages, page, setPage }) => {
     return (
         pages > 1 && (
             <nav>
@@ -45,4 +45,4 @@ const ProductsPagination = ({ pages, page, setPage }) => {
     );
 };
 
-export default ProductsPagination;
+export default Pagination;

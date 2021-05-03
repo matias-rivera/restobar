@@ -95,21 +95,6 @@ const Main = () => {
                     />
                     <PrivateRoute path="/category" component={CategoryScreen} />
 
-                    <PrivateRoute
-                        path="/delivery/page/:pageNumber"
-                        component={DeliveryScreen}
-                        exact
-                    />
-                    <PrivateRoute
-                        path="/delivery/search/:keyword"
-                        component={DeliveryScreen}
-                        exact
-                    />
-                    <PrivateRoute
-                        path="/delivery/search/:keyword/page/:pageNumber"
-                        component={DeliveryScreen}
-                        exact
-                    />
                     <PrivateRoute path="/delivery" component={DeliveryScreen} />
 
                     <PrivateRoute
@@ -174,22 +159,6 @@ const Main = () => {
                         exact
                     />
                     <PrivateRoute path="/table" component={TableScreen} />
-
-                    <PrivateRoute
-                        path="/order/page/:pageNumber"
-                        component={OrderScreen}
-                        exact
-                    />
-                    <PrivateRoute
-                        path="/order/search/:keyword"
-                        component={OrderScreen}
-                        exact
-                    />
-                    <PrivateRoute
-                        path="/order/search/:keyword/page/:pageNumber"
-                        component={OrderScreen}
-                        exact
-                    />
 
                     <PrivateRoute
                         path="/order/create/:id/table"

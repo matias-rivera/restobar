@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import ProductsSearch from "../../components/order/ProductsSearch";
-import ProductsPagination from "./ProductsPagination";
+/* components */
 import LoaderHandler from "../loader/LoaderHandler";
+import Pagination from "../Pagination";
+import Search from "../Search";
 
+/* actions */
 import { listProducts } from "../../actions/productActions";
 
 const ProductsTable = ({
@@ -53,7 +55,6 @@ const ProductsTable = ({
 
     useEffect(() => {
         if (productsFromState) {
-            console.log(productsFromState);
             setProducts(mapProducts(productsFromState));
         }
     }, [productsFromState]);
@@ -89,9 +90,7 @@ const ProductsTable = ({
         const mappedProducts = productsToMap.map((item) => {
             productsAlreadyOrdered.map((item2) => {
                 if (item.id === item2.id) {
-                    //console.log(`stock:${item.stock} + ${item2.quantity}`);
                     item.stock = item.stock + item2.quantity;
-                    //return { ...item, stock: item.stock + item2.quantity };
                 }
             });
             return item;
@@ -99,92 +98,82 @@ const ProductsTable = ({
         return mappedProducts;
     };
 
+    const renderRefreshButton = () => (
+        <button className="btn btn-info float-right" onClick={refreshProducts}>
+            <i className="fas fa-sync-alt"></i>
+        </button>
+    );
+
+    const renderProducts = () => (
+        <LoaderHandler loading={loadingProductList} error={errorProductList}>
+            <table
+                id="productsTable"
+                className="table table-bordered table-hover "
+            >
+                <thead
+                    style={{
+                        color: "#fff",
+                    }}
+                    className="bg-info"
+                >
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {products.map((product) => (
+                        <tr key={product.id}>
+                            <td>{product.id}</td>
+                            <td>{product.name}</td>
+                            <td>${product.price}</td>
+                            <td>{showStock(product)}</td>
+                            {inOrder(product, productsInOrder) ? (
+                                <td className="text-center">
+                                    <button
+                                        disabled
+                                        className="btn btn-primary"
+                                    >
+                                        In Order
+                                    </button>
+                                </td>
+                            ) : product.stock > 0 ? (
+                                <td className="text-center">
+                                    <button
+                                        className="btn btn-success"
+                                        onClick={(e) => addProduct(e, product)}
+                                    >
+                                        <i className="fas fa-plus"></i>
+                                    </button>
+                                </td>
+                            ) : (
+                                <td className="text-center">
+                                    <button disabled className="btn btn-danger">
+                                        Out of Stock
+                                    </button>
+                                </td>
+                            )}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </LoaderHandler>
+    );
+
     return (
         <>
-            <button
-                className="btn btn-info float-right"
-                onClick={refreshProducts}
-            >
-                <i className="fas fa-sync-alt"></i>
-            </button>
+            {renderRefreshButton()}
+            <Search
+                keyword={keyword}
+                setKeyword={setKeyword}
+                setPage={setPageNumber}
+            />
+            {renderProducts()}
 
-            <ProductsSearch keyword={keyword} setKeyword={setKeyword} />
-
-            {
-                <LoaderHandler
-                    loading={loadingProductList}
-                    error={errorProductList}
-                >
-                    <>
-                        <table
-                            id="productsTable"
-                            className="table table-bordered table-hover "
-                        >
-                            <thead
-                                style={{
-                                    color: "#fff",
-                                }}
-                                className="bg-info"
-                            >
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Price</th>
-                                    <th>Stock</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {products.map((product) => (
-                                    <tr key={product.id}>
-                                        <td>{product.id}</td>
-                                        <td>{product.name}</td>
-                                        <td>${product.price}</td>
-                                        <td>{showStock(product)}</td>
-                                        {inOrder(product, productsInOrder) ? (
-                                            <td className="text-center">
-                                                <button
-                                                    disabled
-                                                    className="btn btn-primary"
-                                                >
-                                                    In Order
-                                                </button>
-                                            </td>
-                                        ) : product.stock > 0 ? (
-                                            <td className="text-center">
-                                                <button
-                                                    className="btn btn-success"
-                                                    onClick={(e) =>
-                                                        addProduct(e, product)
-                                                    }
-                                                >
-                                                    <i className="fas fa-plus"></i>
-                                                </button>
-                                            </td>
-                                        ) : (
-                                            <td className="text-center">
-                                                <button
-                                                    disabled
-                                                    className="btn btn-danger"
-                                                >
-                                                    Out of Stock
-                                                </button>
-                                            </td>
-                                        )}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-
-                        <ProductsPagination
-                            pages={pages}
-                            page={page}
-                            setPage={setPageNumber}
-                            keyword={keyword ? keyword : null}
-                        />
-                    </>
-                </LoaderHandler>
-            }
+            <Pagination pages={pages} page={page} setPage={setPageNumber} />
         </>
     );
 };
