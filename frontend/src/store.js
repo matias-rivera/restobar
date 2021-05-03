@@ -24,7 +24,6 @@ import {
     tableCreateReducer,
     tableDetailsReducer,
     tableUpdateReducer,
-    tableDeleteReducer,
 } from "./reducers/tableReducers";
 
 import {
@@ -78,7 +77,6 @@ const reducer = combineReducers({
     tableCreate: tableCreateReducer,
     tableDetails: tableDetailsReducer,
     tableUpdate: tableUpdateReducer,
-    tableDelete: tableDeleteReducer,
 
     clientAll: clientAllReducer,
     clientList: clientListReducer,

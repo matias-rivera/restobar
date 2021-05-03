@@ -3,7 +3,13 @@ import { Link } from "react-router-dom";
 
 const Table = ({ table }) => {
     return (
-        <Link to={`/order/${table.orders[0].id}/view`}>
+        <Link
+            to={
+                table.orders[0]
+                    ? `/order/${table.orders[0].id}/view`
+                    : "/active"
+            }
+        >
             <div className="small-box bg-danger">
                 <div className="inner">
                     <h3>{table.name}</h3>

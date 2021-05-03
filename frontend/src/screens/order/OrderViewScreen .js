@@ -45,8 +45,10 @@ const OrderViewScreen = ({ history, match }) => {
                 history.push("/active");
             }
         }
-        if (!order.id || order.id !== orderId) {
-            dispatch(listOrderDetails(orderId));
+        if (order) {
+            if (!order.id || order.id !== orderId) {
+                dispatch(listOrderDetails(orderId));
+            }
         }
     }, [dispatch, history, order, orderId, successUpdate]);
 
@@ -74,6 +76,7 @@ const OrderViewScreen = ({ history, match }) => {
     };
 
     const renderCartInfo = () =>
+        order &&
         order.products && (
             <div className="small-box bg-info">
                 <div className="inner">
@@ -105,7 +108,8 @@ const OrderViewScreen = ({ history, match }) => {
                 </tr>
             </thead>
             <tbody>
-                {order.products &&
+                {order &&
+                    order.products &&
                     order.products.length > 0 &&
                     order.products.map((product) => (
                         <tr key={product.id}>
@@ -133,82 +137,83 @@ const OrderViewScreen = ({ history, match }) => {
         </table>
     );
 
-    const renderOrderInfo = () => (
-        <>
-            <div className="row">
-                <div className="col-12 col-md-6">
-                    <ViewBox
-                        title={order.id}
-                        paragraph={"ORDER ID"}
-                        icon={"far fa-clipboard"}
-                        color={"bg-info"}
-                    />
-                </div>
-
-                {order.isPaid ? (
+    const renderOrderInfo = () =>
+        order && (
+            <>
+                <div className="row">
                     <div className="col-12 col-md-6">
                         <ViewBox
-                            title={"Paid"}
-                            paragraph={"Order is already paid"}
-                            icon={"fas fa-check"}
-                            color={"bg-success"}
-                        />
-                    </div>
-                ) : (
-                    <div className="col-12 col-md-6">
-                        <ViewBox
-                            title={"Not Paid"}
-                            paragraph={"Order is still not paid"}
-                            icon={"far fa-times-circle"}
-                            color={"bg-danger"}
-                        />
-                    </div>
-                )}
-
-                <div className="col-12 col-md-6">
-                    {order.client && (
-                        <ViewBox
-                            title={order.client.name}
-                            paragraph={`ID: ${order.client.id}`}
-                            icon={"fas fa-user"}
+                            title={order.id}
+                            paragraph={"ORDER ID"}
+                            icon={"far fa-clipboard"}
                             color={"bg-info"}
                         />
+                    </div>
+
+                    {order.isPaid ? (
+                        <div className="col-12 col-md-6">
+                            <ViewBox
+                                title={"Paid"}
+                                paragraph={"Order is already paid"}
+                                icon={"fas fa-check"}
+                                color={"bg-success"}
+                            />
+                        </div>
+                    ) : (
+                        <div className="col-12 col-md-6">
+                            <ViewBox
+                                title={"Not Paid"}
+                                paragraph={"Order is still not paid"}
+                                icon={"far fa-times-circle"}
+                                color={"bg-danger"}
+                            />
+                        </div>
                     )}
-                </div>
 
-                {order.table ? (
-                    <div className="col-12 col-md-6">
-                        <ViewBox
-                            title={order.table.name}
-                            paragraph={`ID: ${order.table.id}`}
-                            icon={"fas fa-utensils"}
-                            color={"bg-info"}
-                        />
-                    </div>
-                ) : (
                     <div className="col-12 col-md-6">
                         {order.client && (
                             <ViewBox
-                                title={"Delivery"}
-                                paragraph={order.client.address}
-                                icon={"fas fa-truck"}
-                                color={"bg-primary"}
+                                title={order.client.name}
+                                paragraph={`ID: ${order.client.id}`}
+                                icon={"fas fa-user"}
+                                color={"bg-info"}
                             />
                         )}
                     </div>
-                )}
-            </div>
 
-            <div className="col-12">
-                <ViewBox
-                    title={"Note:"}
-                    paragraph={order.note}
-                    icon={"far fa-sticky-note"}
-                    color={"bg-silver"}
-                />
-            </div>
-        </>
-    );
+                    {order.table ? (
+                        <div className="col-12 col-md-6">
+                            <ViewBox
+                                title={order.table.name}
+                                paragraph={`ID: ${order.table.id}`}
+                                icon={"fas fa-utensils"}
+                                color={"bg-info"}
+                            />
+                        </div>
+                    ) : (
+                        <div className="col-12 col-md-6">
+                            {order.client && (
+                                <ViewBox
+                                    title={"Delivery"}
+                                    paragraph={order.client.address}
+                                    icon={"fas fa-truck"}
+                                    color={"bg-primary"}
+                                />
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                <div className="col-12">
+                    <ViewBox
+                        title={"Note:"}
+                        paragraph={order.note}
+                        icon={"far fa-sticky-note"}
+                        color={"bg-silver"}
+                    />
+                </div>
+            </>
+        );
 
     const renderOrderEdit = () => (
         <div className="card">
@@ -288,10 +293,10 @@ const OrderViewScreen = ({ history, match }) => {
                     <div className="row justify-content-between">
                         <LoaderHandler loading={loading} error={error}>
                             <div className="col-12 col-md-3">
-                                {!order.isPaid ? renderOrderEdit() : ""}
+                                {order && !order.isPaid && renderOrderEdit()}
                             </div>
                             <div className="col-12 col-md-3">
-                                {!order.isPaid ? renderOrderPay() : ""}
+                                {order && !order.isPaid && renderOrderPay()}
                             </div>
                         </LoaderHandler>
                     </div>

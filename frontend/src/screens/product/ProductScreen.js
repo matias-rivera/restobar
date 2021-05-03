@@ -24,15 +24,16 @@ import Message from "../../components/Message";
 Modal.setAppElement("#root");
 
 const ProductScreen = ({ history }) => {
-    const [modalIsOpen, setModalIsOpen] = useState(false);
     const [name, setName] = useState("");
     const [price, setPrice] = useState(0);
     const [stock, setStock] = useState(0);
     const [category, setCategory] = useState(null);
-    const [keyword, setKeyword] = useState("");
-    const [pageNumber, setPageNumber] = useState(1);
 
     const [errors, setErrors] = useState({});
+
+    const [keyword, setKeyword] = useState("");
+    const [pageNumber, setPageNumber] = useState(1);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
 
     const dispatch = useDispatch();
 

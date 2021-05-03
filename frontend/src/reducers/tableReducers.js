@@ -39,7 +39,11 @@ export const tableListReducer = (
                 page: action.payload.page,
             };
         case TABLE_LIST_FAIL:
-            return { loading: false, error: action.payload };
+            return {
+                loading: false,
+                error: action.payload,
+                tables: [],
+            };
         case TABLE_LIST_RESET:
             return { tables: [] };
         default:
@@ -60,7 +64,7 @@ export const tableAllReducer = (
                 loading: false,
             };
         case TABLE_ALL_FAIL:
-            return { loading: false, error: action.payload };
+            return { loading: false, error: action.payload, tables: [] };
         case TABLE_ALL_RESET:
             return { tables: [] };
         default:

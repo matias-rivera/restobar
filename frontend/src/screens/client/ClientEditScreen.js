@@ -55,16 +55,18 @@ const ClientEditScreen = ({ history, match }) => {
             history.push("/client");
         }
 
-        //load client data
-        if (!client.name || client.id !== clientId) {
-            dispatch(listClientDetails(clientId));
-        } else {
-            //set states
-            setName(client.name);
-            setAddress(client.address);
-            setPhone(client.phone);
-            setEmail(client.email);
-            setDni(client.dni);
+        if (client) {
+            //load client data
+            if (!client.name || client.id !== clientId) {
+                dispatch(listClientDetails(clientId));
+            } else {
+                //set states
+                setName(client.name);
+                setAddress(client.address);
+                setPhone(client.phone);
+                setEmail(client.email);
+                setDni(client.dni);
+            }
         }
     }, [dispatch, history, clientId, client, successUpdate]);
 

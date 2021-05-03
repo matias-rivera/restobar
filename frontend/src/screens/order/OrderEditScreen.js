@@ -86,40 +86,40 @@ const OrderEditScreen = ({ history, match }) => {
         }
     }, [successUpdate]);
 
+    /* Load Tables and Clients */
     useEffect(() => {
-        //load client data
-        if (!order || order.id !== orderId) {
-            dispatch(listOrderDetails(orderId));
-        } else {
-            //set states
-            if (!table) {
+        dispatch(allTables());
+        dispatch(allClients());
+    }, [dispatch, history]);
+
+    useEffect(() => {
+        //load order
+        if (order) {
+            if (!order.id || order.id !== orderId) {
+                dispatch(listOrderDetails(orderId));
+            } else {
+                //set states
                 setTable(order.table ? order.table.id : null);
-            }
-
-            if (!client) {
                 setClient(order.client ? order.client.id : null);
-            }
-            setNote(note ? note : order.note);
-            setDelivery(delivery ? delivery : order.delivery);
+                setNote(order.note ? order.note : note);
+                setDelivery(order.delivery ? order.delivery : delivery);
 
-            /* Format products */
-            const products = order.products.map((product) => {
-                return {
-                    ...product,
-                    quantity: product.OrderProduct.quantity,
-                };
-            });
-            /* Set products state */
-            if (productsInOrder.length === 0) {
-                setProductsInOrder(products);
-                setProductsAlreadyOrdered(products);
-            }
+                if (order.products) {
+                    /* Format products */
+                    const products = order.products.map((product) => {
+                        return {
+                            ...product,
+                            quantity: product.OrderProduct.quantity,
+                        };
+                    });
 
-            /* Get all tables and clients */
-            dispatch(allTables());
-            dispatch(allClients());
+                    /* Set products state */
+                    setProductsInOrder(products);
+                    setProductsAlreadyOrdered(products);
+                }
+            }
         }
-    }, [history, error, orderId, order]);
+    }, [dispatch, history, order, orderId]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -153,7 +153,6 @@ const OrderEditScreen = ({ history, match }) => {
                 note: note,
             };
 
-            console.log(order);
             dispatch(updateOrder(order));
         }
     };

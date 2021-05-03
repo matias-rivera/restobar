@@ -97,6 +97,11 @@ const Main = () => {
 
                     <PrivateRoute path="/delivery" component={DeliveryScreen} />
 
+                    <PrivateRoute
+                        path="/client/:id/edit"
+                        component={ClientEditScreen}
+                    />
+
                     <PrivateRoute path="/client" component={ClientScreen} />
 
                     <PrivateRoute
@@ -109,21 +114,6 @@ const Main = () => {
                     <PrivateRoute
                         path="/table/:id/edit"
                         component={TableEditScreen}
-                    />
-                    <PrivateRoute
-                        path="/table/page/:pageNumber"
-                        component={TableScreen}
-                        exact
-                    />
-                    <PrivateRoute
-                        path="/table/search/:keyword"
-                        component={TableScreen}
-                        exact
-                    />
-                    <PrivateRoute
-                        path="/table/search/:keyword/page/:pageNumber"
-                        component={TableScreen}
-                        exact
                     />
                     <PrivateRoute path="/table" component={TableScreen} />
 

@@ -67,16 +67,18 @@ const ProductEditScreen = ({ history, match }) => {
             history.push("/product");
         }
 
-        //load product data
-        if (!product.name || product.id !== productId) {
-            dispatch(allCategories());
-            dispatch(listProductDetails(productId));
-        } else {
-            //set states
-            setName(product.name);
-            setPrice(product.price);
-            setStock(product.stock);
-            setCategory(product.categoryId);
+        if (product) {
+            //load product data
+            if (!product.name || product.id !== productId) {
+                dispatch(allCategories());
+                dispatch(listProductDetails(productId));
+            } else {
+                //set states
+                setName(product.name);
+                setPrice(product.price);
+                setStock(product.stock);
+                setCategory(product.categoryId);
+            }
         }
     }, [dispatch, history, productId, product, successUpdate]);
 
