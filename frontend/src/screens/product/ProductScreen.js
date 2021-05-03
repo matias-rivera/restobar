@@ -58,6 +58,14 @@ const ProductScreen = ({ history }) => {
     } = productCreate;
 
     useEffect(() => {
+        if (createSuccess) {
+            setName("");
+            setPrice(0);
+            setStock(0);
+            setCategory(null);
+
+            setModalIsOpen(false);
+        }
         dispatch(listProducts(keyword, pageNumber));
         dispatch(allCategories());
     }, [dispatch, history, userInfo, pageNumber, keyword, createSuccess]);
@@ -96,13 +104,6 @@ const ProductScreen = ({ history }) => {
             };
 
             dispatch(createProduct(product));
-
-            setName("");
-            setPrice(0);
-            setStock(0);
-            setCategory(null);
-
-            setModalIsOpen(false);
         }
     };
 
@@ -118,6 +119,7 @@ const ProductScreen = ({ history }) => {
                 isOpen={modalIsOpen}
                 onRequestClose={() => setModalIsOpen(false)}
             >
+                <LoaderHandler loading={createLoading} error={createError} />
                 <h2>Create Form</h2>
                 <form onSubmit={handleSubmit}>
                     <Input
@@ -227,11 +229,6 @@ const ProductScreen = ({ history }) => {
 
                     <div className="row">
                         <div className="col-12">
-                            <LoaderHandler
-                                loading={createLoading}
-                                error={createError}
-                            />
-
                             <div className="card">
                                 <div className="card-header">
                                     <h3 className="card-title">

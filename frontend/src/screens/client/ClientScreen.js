@@ -1,25 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Paginate from "../../components/Paginate";
-import Loader from "../../components/Loader";
-import Message from "../../components/Message";
-import { Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+
+/* Components */
 import HeaderContent from "../../components/HeaderContent";
 import Modal from "react-modal";
 import Input from "../../components/form/Input";
-import { createClient, listClients } from "../../actions/clientActions";
 import ModalButton from "../../components/ModalButton";
-import SearchBoxMini from "../../components/SearchBoxMini";
 import DataTableLoader from "../../components/loader/DataTableLoader";
+import LoaderHandler from "../../components/loader/LoaderHandler";
+import Search from "../../components/Search";
+import Pagination from "../../components/Pagination";
+
+/* Actions */
+import { createClient, listClients } from "../../actions/clientActions";
+
+/* Styles */
 import { modalStyles } from "../../utils/styles";
 
 Modal.setAppElement("#root");
 
-const ClientScreen = ({ history, match }) => {
-    const keyword = match.params.keyword || "";
-    const pageNumber = match.params.pageNumber || 1;
-
+const ClientScreen = ({ history }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [pageNumber, setPageNumber] = useState(1);
+    const [keyword, setKeyword] = useState("");
 
     const [name, setName] = useState("");
     const [address, setAddress] = useState("");
@@ -46,6 +50,14 @@ const ClientScreen = ({ history, match }) => {
 
     useEffect(() => {
         dispatch(listClients(keyword, pageNumber));
+        if (createSuccess) {
+            setName("");
+            setAddress("");
+            setPhone("");
+            setEmail("");
+            setDni("");
+            setModalIsOpen(false);
+        }
     }, [dispatch, history, userInfo, pageNumber, keyword, createSuccess]);
 
     const handleSubmit = (e) => {
@@ -87,16 +99,126 @@ const ClientScreen = ({ history, match }) => {
             };
 
             dispatch(createClient(client));
-
-            setName("");
-            setAddress("");
-            setPhone("");
-            setEmail("");
-            setDni("");
-
-            setModalIsOpen(false);
         }
     };
+
+    const renderModalCreateClient = () => (
+        <>
+            <ModalButton
+                modal={modalIsOpen}
+                setModal={setModalIsOpen}
+                classes={"btn-success btn-lg mb-2"}
+            />
+            <Modal
+                style={modalStyles}
+                isOpen={modalIsOpen}
+                onRequestClose={() => setModalIsOpen(false)}
+            >
+                <LoaderHandler loading={createLoading} error={createError} />
+                <h2>Create Form</h2>
+                <form onSubmit={handleSubmit}>
+                    <Input
+                        name={"name"}
+                        type={"text"}
+                        data={name}
+                        setData={setName}
+                        errors={errors}
+                    />
+                    <Input
+                        name={"address"}
+                        type={"text"}
+                        data={address}
+                        setData={setAddress}
+                        errors={errors}
+                    />
+                    <Input
+                        name={"phone"}
+                        type={"text"}
+                        data={phone}
+                        setData={setPhone}
+                        errors={errors}
+                    />
+                    <Input
+                        name={"email"}
+                        type={"email"}
+                        data={email}
+                        setData={setEmail}
+                        errors={errors}
+                    />
+                    <Input
+                        name={"dni"}
+                        type={"text"}
+                        data={dni}
+                        setData={setDni}
+                        errors={errors}
+                    />
+                    <hr />
+                    <button type="submit" className="btn btn-primary">
+                        Submit
+                    </button>
+                    <ModalButton
+                        modal={modalIsOpen}
+                        setModal={setModalIsOpen}
+                        classes={"btn-danger float-right"}
+                    />
+                </form>
+            </Modal>
+        </>
+    );
+
+    const renderClientsTable = () => (
+        <LoaderHandler
+            loading={loading}
+            error={error}
+            loader={<DataTableLoader />}
+        >
+            <table className="table table-hover text-nowrap">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th className="d-none d-sm-table-cell">Address</th>
+                        <th className="d-none d-sm-table-cell">Phone</th>
+                        <th className="d-none d-sm-table-cell">Email</th>
+                        <th className="d-none d-sm-table-cell">DNI</th>
+                        <th className="d-none d-sm-table-cell">Created At</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {clients.map((client) => (
+                        <tr key={client.id}>
+                            <td>{client.id}</td>
+                            <td>{client.name}</td>
+                            <td className="d-none d-sm-table-cell">
+                                {client.address}
+                            </td>
+                            <td className="d-none d-sm-table-cell">
+                                {client.phone}
+                            </td>
+                            <td className="d-none d-sm-table-cell">
+                                {client.email}
+                            </td>
+                            <td className="d-none d-sm-table-cell">
+                                {client.dni}
+                            </td>
+                            <td className="d-none d-sm-table-cell">
+                                {client.createdAt.slice(0, 10)}
+                            </td>
+                            <td>
+                                <Link
+                                    to={`/client/${client.id}/edit`}
+                                    className="btn btn-warning btn-lg"
+                                >
+                                    Edit
+                                </Link>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </LoaderHandler>
+    );
 
     return (
         <>
@@ -104,165 +226,31 @@ const ClientScreen = ({ history, match }) => {
 
             <section className="content">
                 <div className="container-fluid">
-                    <ModalButton
-                        modal={modalIsOpen}
-                        setModal={setModalIsOpen}
-                        classes={"btn-success btn-lg mb-2"}
-                    />
-                    <Modal
-                        style={modalStyles}
-                        isOpen={modalIsOpen}
-                        onRequestClose={() => setModalIsOpen(false)}
-                    >
-                        <h2>Create Form</h2>
-                        <form onSubmit={handleSubmit}>
-                            <Input
-                                name={"name"}
-                                type={"text"}
-                                data={name}
-                                setData={setName}
-                                errors={errors}
-                            />
-                            <Input
-                                name={"address"}
-                                type={"text"}
-                                data={address}
-                                setData={setAddress}
-                                errors={errors}
-                            />
-                            <Input
-                                name={"phone"}
-                                type={"text"}
-                                data={phone}
-                                setData={setPhone}
-                                errors={errors}
-                            />
-                            <Input
-                                name={"email"}
-                                type={"email"}
-                                data={email}
-                                setData={setEmail}
-                                errors={errors}
-                            />
-                            <Input
-                                name={"dni"}
-                                type={"text"}
-                                data={dni}
-                                setData={setDni}
-                                errors={errors}
-                            />
-                            <hr />
-                            <button type="submit" className="btn btn-primary">
-                                Submit
-                            </button>
-                            <ModalButton
-                                modal={modalIsOpen}
-                                setModal={setModalIsOpen}
-                                classes={"btn-danger float-right"}
-                            />
-                        </form>
-                    </Modal>
+                    {renderModalCreateClient()}
                     <div className="row">
                         <div className="col-12">
-                            <Loader variable={createLoading} />
-                            <Message message={createError} color={"danger"} />
-
                             <div className="card">
                                 <div className="card-header">
                                     <h3 className="card-title">Clients</h3>
                                     <div className="card-tools">
-                                        <Route
-                                            render={({ history }) => (
-                                                <SearchBoxMini
-                                                    history={history}
-                                                    item={"client"}
-                                                />
-                                            )}
+                                        <Search
+                                            keyword={keyword}
+                                            setKeyword={setKeyword}
+                                            setPage={setPageNumber}
                                         />
                                     </div>
                                 </div>
                                 {/* /.card-header */}
                                 <div className="card-body table-responsive p-0">
-                                    {loading ? (
-                                        <DataTableLoader />
-                                    ) : error ? (
-                                        <Message
-                                            message={error}
-                                            color={"danger"}
-                                        />
-                                    ) : (
-                                        <>
-                                            <table className="table table-hover text-nowrap">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Name</th>
-                                                        <th className="d-none d-sm-table-cell">
-                                                            Address
-                                                        </th>
-                                                        <th className="d-none d-sm-table-cell">
-                                                            Phone
-                                                        </th>
-                                                        <th className="d-none d-sm-table-cell">
-                                                            Email
-                                                        </th>
-                                                        <th className="d-none d-sm-table-cell">
-                                                            DNI
-                                                        </th>
-                                                        <th className="d-none d-sm-table-cell">
-                                                            Created At
-                                                        </th>
-                                                        <th></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {clients.map((client) => (
-                                                        <tr key={client.id}>
-                                                            <td>{client.id}</td>
-                                                            <td>
-                                                                {client.name}
-                                                            </td>
-                                                            <td className="d-none d-sm-table-cell">
-                                                                {client.address}
-                                                            </td>
-                                                            <td className="d-none d-sm-table-cell">
-                                                                {client.phone}
-                                                            </td>
-                                                            <td className="d-none d-sm-table-cell">
-                                                                {client.email}
-                                                            </td>
-                                                            <td className="d-none d-sm-table-cell">
-                                                                {client.dni}
-                                                            </td>
-                                                            <td className="d-none d-sm-table-cell">
-                                                                {client.createdAt.slice(
-                                                                    0,
-                                                                    10
-                                                                )}
-                                                            </td>
-                                                            <td>
-                                                                <Link
-                                                                    to={`/client/${client.id}/edit`}
-                                                                    className="btn btn-warning btn-lg"
-                                                                >
-                                                                    Edit
-                                                                </Link>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </>
-                                    )}
+                                    {renderClientsTable()}
                                 </div>
                                 {/* /.card-body */}
                             </div>
 
-                            <Paginate
-                                item={"client"}
-                                pages={pages}
+                            <Pagination
                                 page={page}
-                                keyword={keyword ? keyword : null}
+                                pages={pages}
+                                setPage={setPageNumber}
                             />
                         </div>
                         {/* /.col */}

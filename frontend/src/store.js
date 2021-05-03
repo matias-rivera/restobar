@@ -33,7 +33,6 @@ import {
     clientCreateReducer,
     clientDetailsReducer,
     clientUpdateReducer,
-    clientDeleteReducer,
 } from "./reducers/clientReducers";
 
 import {
@@ -86,7 +85,6 @@ const reducer = combineReducers({
     clientCreate: clientCreateReducer,
     clientDetails: clientDetailsReducer,
     clientUpdate: clientUpdateReducer,
-    clientDelete: clientDeleteReducer,
 
     orderAll: orderAllReducer,
     orderAllActive: orderAllActiveReducer,

@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import Message from "../../components/Message";
-import Loader from "../../components/Loader";
+
+/* Components */
 import Input from "../../components/form/Input";
 import HeaderContent from "../../components/HeaderContent";
+import ButtonGoBack from "../../components/ButtonGoBack";
+import LoaderHandler from "../../components/loader/LoaderHandler";
+
+/* Constants */
 import {
     CLIENT_DELETE_RESET,
     CLIENT_DETAILS_RESET,
     CLIENT_UPDATE_RESET,
 } from "../../constants/clientConstants";
-import {
-    deleteClient,
-    listClientDetails,
-    updateClient,
-} from "../../actions/clientActions";
-import ButtonGoBack from "../../components/ButtonGoBack";
+
+/* Actions */
+import { listClientDetails, updateClient } from "../../actions/clientActions";
 
 const ClientEditScreen = ({ history, match }) => {
     const clientId = parseInt(match.params.id);
@@ -45,13 +45,9 @@ const ClientEditScreen = ({ history, match }) => {
         success: successUpdate,
     } = clientUpdate;
 
-    //client delete state
-    const clientDelete = useSelector((state) => state.clientDelete);
-    const { success: successDelete } = clientDelete;
-
     useEffect(() => {
         //after update redirect to users
-        if (successUpdate || successDelete) {
+        if (successUpdate) {
             dispatch({ type: CLIENT_UPDATE_RESET });
             dispatch({ type: CLIENT_DETAILS_RESET });
             dispatch({ type: CLIENT_DELETE_RESET });
@@ -70,7 +66,7 @@ const ClientEditScreen = ({ history, match }) => {
             setEmail(client.email);
             setDni(client.dni);
         }
-    }, [dispatch, history, clientId, client, successUpdate, successDelete]);
+    }, [dispatch, history, clientId, client, successUpdate]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -115,13 +111,52 @@ const ClientEditScreen = ({ history, match }) => {
         }
     };
 
-    //delete function
-    /* const handleDelete = (e) => {
-        e.preventDefault()
-        if(window.confirm('Are you sure?')){
-            dispatch(deleteClient(clientId))
-        }
-    } */
+    const renderForm = () => (
+        <LoaderHandler loading={loading} error={error}>
+            <form onSubmit={handleSubmit}>
+                <Input
+                    name={"Name"}
+                    type={"text"}
+                    data={name}
+                    setData={setName}
+                    errors={errors}
+                />
+                <Input
+                    name={"Address"}
+                    type={"text"}
+                    data={address}
+                    setData={setAddress}
+                    errors={errors}
+                />
+                <Input
+                    name={"Phone"}
+                    type={"text"}
+                    data={phone}
+                    setData={setPhone}
+                    errors={errors}
+                />
+                <Input
+                    name={"Email"}
+                    type={"email"}
+                    data={email}
+                    setData={setEmail}
+                    errors={errors}
+                />
+                <Input
+                    name={"DNI"}
+                    type={"text"}
+                    data={dni}
+                    setData={setDni}
+                    errors={errors}
+                />
+
+                <hr />
+                <button type="submit" className="btn btn-success">
+                    Submit
+                </button>
+            </form>
+        </LoaderHandler>
+    );
 
     return (
         <>
@@ -138,70 +173,13 @@ const ClientEditScreen = ({ history, match }) => {
                             <div className="card">
                                 <div className="card-header">
                                     <h3 className="card-title">Edit Client</h3>
-                                    <Loader variable={loadingUpdate} />
-                                    <Message
-                                        message={errorUpdate}
-                                        color={"danger"}
+                                    <LoaderHandler
+                                        loading={loadingUpdate}
+                                        error={errorUpdate}
                                     />
                                 </div>
                                 {/* /.card-header */}
-                                <div className="card-body">
-                                    {loading ? (
-                                        <Loader variable={loading} />
-                                    ) : error ? (
-                                        <Message
-                                            message={error}
-                                            color={"danger"}
-                                        />
-                                    ) : (
-                                        <form onSubmit={handleSubmit}>
-                                            <Input
-                                                name={"Name"}
-                                                type={"text"}
-                                                data={name}
-                                                setData={setName}
-                                                errors={errors}
-                                            />
-                                            <Input
-                                                name={"Address"}
-                                                type={"text"}
-                                                data={address}
-                                                setData={setAddress}
-                                                errors={errors}
-                                            />
-                                            <Input
-                                                name={"Phone"}
-                                                type={"text"}
-                                                data={phone}
-                                                setData={setPhone}
-                                                errors={errors}
-                                            />
-                                            <Input
-                                                name={"Email"}
-                                                type={"email"}
-                                                data={email}
-                                                setData={setEmail}
-                                                errors={errors}
-                                            />
-                                            <Input
-                                                name={"DNI"}
-                                                type={"text"}
-                                                data={dni}
-                                                setData={setDni}
-                                                errors={errors}
-                                            />
-
-                                            <hr />
-                                            {/* <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button> */}
-                                            <button
-                                                type="submit"
-                                                className="btn btn-success"
-                                            >
-                                                Submit
-                                            </button>
-                                        </form>
-                                    )}
-                                </div>
+                                <div className="card-body">{renderForm()}</div>
                                 {/* /.card-body */}
                             </div>
                         </div>
