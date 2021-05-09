@@ -1,26 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Paginate from "../../components/Paginate";
-import TableCrud from "../../components/TableCrud";
-import Loader from "../../components/Loader";
-import Message from "../../components/Message";
-import { createCategory, listCategories } from "../../actions/categoryActions";
-import { Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+
+/* Components */
 import HeaderContent from "../../components/HeaderContent";
 import ModalButton from "../../components/ModalButton";
 import Modal from "react-modal";
 import Input from "../../components/form/Input";
-import SearchBoxMini from "../../components/SearchBoxMini";
 import DataTableLoader from "../../components/loader/DataTableLoader";
+import LoaderHandler from "../../components/loader/LoaderHandler";
+import Search from "../../components/Search";
+import Pagination from "../../components/Pagination";
+
+/* Actions */
+import { createCategory, listCategories } from "../../actions/categoryActions";
+
+/* Styles */
 import { modalStyles } from "../../utils/styles";
 
 const CategoryScreen = ({ history, match }) => {
-    const keyword = match.params.keyword || "";
-    const pageNumber = match.params.pageNumber || 1;
-
     const [modalIsOpen, setModalIsOpen] = useState(false);
+
     const [name, setName] = useState("");
+
     const [errors, setErrors] = useState({});
+    const [keyword, setKeyword] = useState("");
+    const [pageNumber, setPageNumber] = useState(1);
 
     const dispatch = useDispatch();
 
@@ -39,6 +44,10 @@ const CategoryScreen = ({ history, match }) => {
 
     useEffect(() => {
         dispatch(listCategories(keyword, pageNumber));
+        if (createSuccess) {
+            setName("");
+            setModalIsOpen(false);
+        }
     }, [dispatch, history, userInfo, pageNumber, keyword, createSuccess]);
 
     const handleSubmit = (e) => {
@@ -62,12 +71,78 @@ const CategoryScreen = ({ history, match }) => {
             };
 
             dispatch(createCategory(category));
-
-            setName("");
-
-            setModalIsOpen(false);
         }
     };
+
+    const renderModalCreateCategory = () => (
+        <>
+            <ModalButton
+                modal={modalIsOpen}
+                setModal={setModalIsOpen}
+                classes={"btn-success btn-lg mb-2"}
+            />
+            <Modal
+                style={modalStyles}
+                isOpen={modalIsOpen}
+                onRequestClose={() => setModalIsOpen(false)}
+            >
+                <h2>Create Form</h2>
+                <LoaderHandler loading={createLoading} error={createError} />
+                <form onSubmit={handleSubmit}>
+                    <Input
+                        name={"name"}
+                        type={"text"}
+                        data={name}
+                        setData={setName}
+                        errors={errors}
+                    />
+
+                    <hr />
+                    <button type="submit" className="btn btn-primary">
+                        Submit
+                    </button>
+
+                    <ModalButton
+                        modal={modalIsOpen}
+                        setModal={setModalIsOpen}
+                        classes={"btn-danger float-right"}
+                    />
+                </form>
+            </Modal>
+        </>
+    );
+
+    const renderTable = () => (
+        <table className="table table-hover text-nowrap">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th className="d-none d-sm-table-cell">Created At</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {categories.map((category) => (
+                    <tr key={category.id}>
+                        <td>{category.id}</td>
+                        <td>{category.name}</td>
+                        <td className="d-none d-sm-table-cell">
+                            {category.createdAt.slice(0, 10)}
+                        </td>
+                        <td>
+                            <Link
+                                to={`/category/${category.id}/edit`}
+                                className="btn btn-warning btn-lg"
+                            >
+                                Edit
+                            </Link>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
 
     return (
         <>
@@ -77,130 +152,37 @@ const CategoryScreen = ({ history, match }) => {
 
             <section className="content">
                 <div className="container-fluid">
-                    <ModalButton
-                        modal={modalIsOpen}
-                        setModal={setModalIsOpen}
-                        classes={"btn-success btn-lg mb-2"}
-                    />
-                    <Modal
-                        style={modalStyles}
-                        isOpen={modalIsOpen}
-                        onRequestClose={() => setModalIsOpen(false)}
-                    >
-                        <h2>Create Form</h2>
-                        <form onSubmit={handleSubmit}>
-                            <Input
-                                name={"name"}
-                                type={"text"}
-                                data={name}
-                                setData={setName}
-                                errors={errors}
-                            />
-
-                            <hr />
-                            <button type="submit" className="btn btn-primary">
-                                Submit
-                            </button>
-
-                            <ModalButton
-                                modal={modalIsOpen}
-                                setModal={setModalIsOpen}
-                                classes={"btn-danger float-right"}
-                            />
-                        </form>
-                    </Modal>
+                    {renderModalCreateCategory()}
 
                     <div className="row">
                         <div className="col-12">
-                            <Loader variable={createLoading} />
-                            <Message message={createError} color={"danger"} />
-
                             <div className="card">
                                 <div className="card-header">
-                                    <h3 className="card-title">
-                                        Categories table
-                                    </h3>
+                                    <h3 className="card-title">Categories</h3>
                                     <div className="card-tools">
-                                        <Route
-                                            render={({ history }) => (
-                                                <SearchBoxMini
-                                                    history={history}
-                                                    item={"category"}
-                                                />
-                                            )}
+                                        <Search
+                                            keyword={keyword}
+                                            setKeyword={setKeyword}
+                                            setPage={setPageNumber}
                                         />
                                     </div>
                                 </div>
                                 {/* /.card-header */}
                                 <div className="card-body table-responsive p-0">
-                                    {loading ? (
-                                        <DataTableLoader />
-                                    ) : error ? (
-                                        <Message
-                                            message={error}
-                                            color={"danger"}
-                                        />
-                                    ) : (
-                                        <>
-                                            <table className="table table-hover text-nowrap">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Name</th>
-                                                        <th className="d-none d-sm-table-cell">
-                                                            Created At
-                                                        </th>
-                                                        <th></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {categories.map(
-                                                        (category) => (
-                                                            <tr
-                                                                key={
-                                                                    category.id
-                                                                }
-                                                            >
-                                                                <td>
-                                                                    {
-                                                                        category.id
-                                                                    }
-                                                                </td>
-                                                                <td>
-                                                                    {
-                                                                        category.name
-                                                                    }
-                                                                </td>
-                                                                <td className="d-none d-sm-table-cell">
-                                                                    {category.createdAt.slice(
-                                                                        0,
-                                                                        10
-                                                                    )}
-                                                                </td>
-                                                                <td>
-                                                                    <Link
-                                                                        to={`/category/${category.id}/edit`}
-                                                                        className="btn btn-warning btn-lg"
-                                                                    >
-                                                                        Edit
-                                                                    </Link>
-                                                                </td>
-                                                            </tr>
-                                                        )
-                                                    )}
-                                                </tbody>
-                                            </table>
-                                        </>
-                                    )}
+                                    <LoaderHandler
+                                        loading={loading}
+                                        error={error}
+                                        loader={<DataTableLoader />}
+                                        render={renderTable}
+                                    />
                                 </div>
                                 {/* /.card-body */}
                             </div>
 
-                            <Paginate
-                                item={"category"}
-                                pages={pages}
+                            <Pagination
                                 page={page}
-                                keyword={keyword ? keyword : null}
+                                pages={pages}
+                                setPage={setPageNumber}
                             />
                         </div>
                         {/* /.col */}

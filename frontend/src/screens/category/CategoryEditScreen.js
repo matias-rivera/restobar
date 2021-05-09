@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+
+/* Components */
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
+import HeaderContent from "../../components/HeaderContent";
+import Input from "../../components/form/Input";
+import ButtonGoBack from "../../components/ButtonGoBack";
+
+/* Constants */
 import {
     CATEGORY_UPDATE_RESET,
     CATEGORY_DETAILS_RESET,
     CATEGORY_DELETE_RESET,
 } from "../../constants/categoryConstants";
+
+/* Actions */
 import {
     updateCategory,
-    deleteCategory,
     listCategoryDetails,
 } from "../../actions/categoryActions";
-import HeaderContent from "../../components/HeaderContent";
-import Input from "../../components/form/Input";
-import ButtonGoBack from "../../components/ButtonGoBack";
+import LoaderHandler from "../../components/loader/LoaderHandler";
 
 const CategoryEditScreen = ({ history, match }) => {
     const categoryId = parseInt(match.params.id);
@@ -41,13 +46,9 @@ const CategoryEditScreen = ({ history, match }) => {
         success: successUpdate,
     } = categoryUpdate;
 
-    //category delete state
-    const categoryDelete = useSelector((state) => state.categoryDelete);
-    const { success: successDelete } = categoryDelete;
-
     useEffect(() => {
         //after update redirect to users
-        if (successUpdate || successDelete) {
+        if (successUpdate) {
             dispatch({ type: CATEGORY_UPDATE_RESET });
             dispatch({ type: CATEGORY_DETAILS_RESET });
             dispatch({ type: CATEGORY_DELETE_RESET });
@@ -55,13 +56,15 @@ const CategoryEditScreen = ({ history, match }) => {
         }
 
         //load product data
-        if (!category.name || category.id !== categoryId) {
-            dispatch(listCategoryDetails(categoryId));
-        } else {
-            //set states
-            setName(category.name);
+        if (category) {
+            if (!category.name || category.id !== categoryId) {
+                dispatch(listCategoryDetails(categoryId));
+            } else {
+                //set states
+                setName(category.name);
+            }
         }
-    }, [dispatch, history, categoryId, category, successUpdate, successDelete]);
+    }, [dispatch, history, categoryId, category, successUpdate]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -87,13 +90,21 @@ const CategoryEditScreen = ({ history, match }) => {
         }
     };
 
-    //delete function
-    /* const handleDelete = (e) => {
-        e.preventDefault()
-        if(window.confirm('Are you sure?')){
-            dispatch(deleteCategory(categoryId))
-        }
-    } */
+    const renderForm = () => (
+        <form onSubmit={handleSubmit}>
+            <Input
+                name={"name"}
+                type={"text"}
+                data={name}
+                setData={setName}
+                errors={errors}
+            />
+            <hr />
+            <button type="submit" className="btn btn-success">
+                Submit
+            </button>
+        </form>
+    );
 
     return (
         <>
@@ -111,33 +122,18 @@ const CategoryEditScreen = ({ history, match }) => {
                                     <h3 className="card-title">
                                         Edit Category
                                     </h3>
-                                    <Loader variable={loadingUpdate} />
-                                    <Message
-                                        message={errorUpdate}
-                                        color={"danger"}
+                                    <LoaderHandler
+                                        loading={loadingUpdate}
+                                        error={errorUpdate}
                                     />
-                                    <Loader variable={loading} />
-                                    <Message message={error} color={"danger"} />
                                 </div>
                                 {/* /.card-header */}
                                 <div className="card-body">
-                                    <form onSubmit={handleSubmit}>
-                                        <Input
-                                            name={"name"}
-                                            type={"text"}
-                                            data={name}
-                                            setData={setName}
-                                            errors={errors}
-                                        />
-                                        <hr />
-                                        {/* <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button> */}
-                                        <button
-                                            type="submit"
-                                            className="btn btn-success"
-                                        >
-                                            Submit
-                                        </button>
-                                    </form>
+                                    <LoaderHandler
+                                        loading={loading}
+                                        error={error}
+                                        render={renderForm}
+                                    />
                                 </div>
                                 {/* /.card-body */}
                             </div>

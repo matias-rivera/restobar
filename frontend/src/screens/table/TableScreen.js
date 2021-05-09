@@ -8,6 +8,9 @@ import Modal from "react-modal";
 import Input from "../../components/form/Input";
 import ModalButton from "../../components/ModalButton";
 import DataTableLoader from "../../components/loader/DataTableLoader";
+import Search from "../../components/Search";
+import Pagination from "../../components/Pagination";
+import LoaderHandler from "../../components/loader/LoaderHandler";
 
 /* Actions */
 import { listTables } from "../../actions/tableActions";
@@ -15,9 +18,6 @@ import { createTable } from "../../actions/tableActions";
 
 /* Styles */
 import { modalStyles } from "../../utils/styles";
-import Search from "../../components/Search";
-import Pagination from "../../components/Pagination";
-import LoaderHandler from "../../components/loader/LoaderHandler";
 
 Modal.setAppElement("#root");
 
@@ -135,8 +135,8 @@ const TableScreen = ({ history }) => {
                 isOpen={modalIsOpen}
                 onRequestClose={() => setModalIsOpen(false)}
             >
-                <LoaderHandler loading={createLoading} error={createError} />
                 <h2>Create Form</h2>
+                <LoaderHandler loading={createLoading} error={createError} />
                 <form onSubmit={handleSubmit}>
                     <Input
                         name={"name"}
