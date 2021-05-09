@@ -114,50 +114,48 @@ const ClientEditScreen = ({ history, match }) => {
     };
 
     const renderForm = () => (
-        <LoaderHandler loading={loading} error={error}>
-            <form onSubmit={handleSubmit}>
-                <Input
-                    name={"Name"}
-                    type={"text"}
-                    data={name}
-                    setData={setName}
-                    errors={errors}
-                />
-                <Input
-                    name={"Address"}
-                    type={"text"}
-                    data={address}
-                    setData={setAddress}
-                    errors={errors}
-                />
-                <Input
-                    name={"Phone"}
-                    type={"text"}
-                    data={phone}
-                    setData={setPhone}
-                    errors={errors}
-                />
-                <Input
-                    name={"Email"}
-                    type={"email"}
-                    data={email}
-                    setData={setEmail}
-                    errors={errors}
-                />
-                <Input
-                    name={"DNI"}
-                    type={"text"}
-                    data={dni}
-                    setData={setDni}
-                    errors={errors}
-                />
+        <form onSubmit={handleSubmit}>
+            <Input
+                name={"Name"}
+                type={"text"}
+                data={name}
+                setData={setName}
+                errors={errors}
+            />
+            <Input
+                name={"Address"}
+                type={"text"}
+                data={address}
+                setData={setAddress}
+                errors={errors}
+            />
+            <Input
+                name={"Phone"}
+                type={"text"}
+                data={phone}
+                setData={setPhone}
+                errors={errors}
+            />
+            <Input
+                name={"Email"}
+                type={"email"}
+                data={email}
+                setData={setEmail}
+                errors={errors}
+            />
+            <Input
+                name={"DNI"}
+                type={"text"}
+                data={dni}
+                setData={setDni}
+                errors={errors}
+            />
 
-                <hr />
-                <button type="submit" className="btn btn-success">
-                    Submit
-                </button>
-            </form>
-        </LoaderHandler>
+            <hr />
+            <button type="submit" className="btn btn-success">
+                Submit
+            </button>
+        </form>
     );
 
     return (
@@ -181,7 +179,14 @@ const ClientEditScreen = ({ history, match }) => {
                                     />
                                 </div>
                                 {/* /.card-header */}
-                                <div className="card-body">{renderForm()}</div>
+                                <div className="card-body">
+                                    {" "}
+                                    <LoaderHandler
+                                        loading={loading}
+                                        error={error}
+                                        render={renderForm}
+                                    />
+                                </div>
                                 {/* /.card-body */}
                             </div>
                         </div>

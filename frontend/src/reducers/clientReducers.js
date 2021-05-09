@@ -39,7 +39,7 @@ export const clientListReducer = (
                 page: action.payload.page,
             };
         case CLIENT_LIST_FAIL:
-            return { loading: false, error: action.payload, clients: [] };
+            return { loading: false, error: action.payload };
         case CLIENT_LIST_RESET:
             return { clients: [] };
         default:
@@ -60,7 +60,7 @@ export const clientAllReducer = (
                 clients: action.payload,
             };
         case CLIENT_ALL_FAIL:
-            return { loading: false, error: action.payload, clients: [] };
+            return { loading: false, error: action.payload };
         case CLIENT_ALL_RESET:
             return { clients: [] };
         default:

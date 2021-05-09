@@ -3,7 +3,7 @@ import React from "react";
 import Loader from "../Loader";
 import Message from "../Message";
 
-const LoaderHandler = ({ loading, error, loader, children }) => {
+const LoaderHandler = ({ loading, error, loader, render }) => {
     return (
         <>
             {loading ? (
@@ -14,8 +14,10 @@ const LoaderHandler = ({ loading, error, loader, children }) => {
                 )
             ) : error ? (
                 <Message message={error} color={"danger"} />
+            ) : render ? (
+                render()
             ) : (
-                children
+                <></>
             )}
         </>
     );

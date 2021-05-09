@@ -37,67 +37,61 @@ const OrderScreen = ({ history }) => {
     );
 
     const renderTable = () => (
-        <LoaderHandler
-            loading={loading}
-            error={error}
-            loader={DataTableLoader()}
-        >
-            <table className="table table-hover text-nowrap">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Client</th>
-                        <th className="d-none d-sm-table-cell">Table</th>
-                        <th>Paid</th>
-                        <th>Total</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {orders.map((order) => (
-                        <tr key={order.id}>
-                            <td>{order.id}</td>
-                            <td>{order.client.name}</td>
-                            <td className="d-none d-sm-table-cell h4">
-                                {order.table ? (
-                                    <span className={"badge bg-primary"}>
-                                        {order.table.name}
-                                    </span>
-                                ) : (
-                                    <span className={"badge bg-info"}>
-                                        DELIVERY
-                                    </span>
-                                )}
-                            </td>
-                            <td>
-                                {order.isPaid ? (
-                                    <h4 className="text-success">
-                                        <i className="fas fa-check"></i>
-                                    </h4>
-                                ) : (
-                                    <h4 className="text-danger">
-                                        <i className="far fa-times-circle"></i>
-                                    </h4>
-                                )}
-                            </td>
-                            <td className="d-none d-sm-table-cell h4">
-                                <span className={"badge bg-success"}>
-                                    ${order.total}
+        <table className="table table-hover text-nowrap">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Client</th>
+                    <th className="d-none d-sm-table-cell">Table</th>
+                    <th>Paid</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {orders.map((order) => (
+                    <tr key={order.id}>
+                        <td>{order.id}</td>
+                        <td>{order.client.name}</td>
+                        <td className="d-none d-sm-table-cell h4">
+                            {order.table ? (
+                                <span className={"badge bg-primary"}>
+                                    {order.table.name}
                                 </span>
-                            </td>
-                            <td>
-                                <Link
-                                    to={`/order/${order.id}/view`}
-                                    className="btn btn-info btn-lg"
-                                >
-                                    View
-                                </Link>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </LoaderHandler>
+                            ) : (
+                                <span className={"badge bg-info"}>
+                                    DELIVERY
+                                </span>
+                            )}
+                        </td>
+                        <td>
+                            {order.isPaid ? (
+                                <h4 className="text-success">
+                                    <i className="fas fa-check"></i>
+                                </h4>
+                            ) : (
+                                <h4 className="text-danger">
+                                    <i className="far fa-times-circle"></i>
+                                </h4>
+                            )}
+                        </td>
+                        <td className="d-none d-sm-table-cell h4">
+                            <span className={"badge bg-success"}>
+                                ${order.total}
+                            </span>
+                        </td>
+                        <td>
+                            <Link
+                                to={`/order/${order.id}/view`}
+                                className="btn btn-info btn-lg"
+                            >
+                                View
+                            </Link>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
     );
 
     const renderOrders = () => (
@@ -115,7 +109,12 @@ const OrderScreen = ({ history }) => {
                 </div>
                 {/* /.card-header */}
                 <div className="card-body table-responsive p-0">
-                    {renderTable()}
+                    <LoaderHandler
+                        loading={loading}
+                        error={error}
+                        loader={DataTableLoader()}
+                        render={renderTable}
+                    />
                 </div>
                 {/* /.card-body */}
             </div>

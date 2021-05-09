@@ -91,27 +91,21 @@ const TableEditScreen = ({ history, match }) => {
     };
 
     const renderForm = () => (
-        <LoaderHandler loading={loading} error={error}>
-            <form onSubmit={handleSubmit}>
-                <Input
-                    name={"name"}
-                    type={"text"}
-                    data={name}
-                    setData={setName}
-                    errors={errors}
-                />
-                <Checkbox
-                    name={"occupied"}
-                    data={occupied}
-                    setData={setOccupied}
-                />
+        <form onSubmit={handleSubmit}>
+            <Input
+                name={"name"}
+                type={"text"}
+                data={name}
+                setData={setName}
+                errors={errors}
+            />
+            <Checkbox name={"occupied"} data={occupied} setData={setOccupied} />
 
-                <hr />
-                <button type="submit" className="btn btn-success">
-                    Submit
-                </button>
-            </form>
-        </LoaderHandler>
+            <hr />
+            <button type="submit" className="btn btn-success">
+                Submit
+            </button>
+        </form>
     );
 
     return (
@@ -135,7 +129,13 @@ const TableEditScreen = ({ history, match }) => {
                                     />
                                 </div>
                                 {/* /.card-header */}
-                                <div className="card-body">{renderForm()}</div>
+                                <div className="card-body">
+                                    <LoaderHandler
+                                        loading={loading}
+                                        error={error}
+                                        render={renderForm}
+                                    />
+                                </div>
                                 {/* /.card-body */}
                             </div>
                         </div>

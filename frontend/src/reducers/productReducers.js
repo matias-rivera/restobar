@@ -35,7 +35,7 @@ export const productListReducer = (
                 page: action.payload.page,
             };
         case PRODUCT_LIST_FAIL:
-            return { loading: false, error: action.payload, products: [] };
+            return { loading: false, error: action.payload };
         case PRODUCT_LIST_RESET:
             return { products: [] };
         default:

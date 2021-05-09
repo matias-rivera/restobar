@@ -167,57 +167,49 @@ const ClientScreen = ({ history }) => {
     );
 
     const renderClientsTable = () => (
-        <LoaderHandler
-            loading={loading}
-            error={error}
-            loader={<DataTableLoader />}
-        >
-            <table className="table table-hover text-nowrap">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th className="d-none d-sm-table-cell">Address</th>
-                        <th className="d-none d-sm-table-cell">Phone</th>
-                        <th className="d-none d-sm-table-cell">Email</th>
-                        <th className="d-none d-sm-table-cell">DNI</th>
-                        <th className="d-none d-sm-table-cell">Created At</th>
-                        <th></th>
+        <table className="table table-hover text-nowrap">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th className="d-none d-sm-table-cell">Address</th>
+                    <th className="d-none d-sm-table-cell">Phone</th>
+                    <th className="d-none d-sm-table-cell">Email</th>
+                    <th className="d-none d-sm-table-cell">DNI</th>
+                    <th className="d-none d-sm-table-cell">Created At</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {clients.map((client) => (
+                    <tr key={client.id}>
+                        <td>{client.id}</td>
+                        <td>{client.name}</td>
+                        <td className="d-none d-sm-table-cell">
+                            {client.address}
+                        </td>
+                        <td className="d-none d-sm-table-cell">
+                            {client.phone}
+                        </td>
+                        <td className="d-none d-sm-table-cell">
+                            {client.email}
+                        </td>
+                        <td className="d-none d-sm-table-cell">{client.dni}</td>
+                        <td className="d-none d-sm-table-cell">
+                            {client.createdAt.slice(0, 10)}
+                        </td>
+                        <td>
+                            <Link
+                                to={`/client/${client.id}/edit`}
+                                className="btn btn-warning btn-lg"
+                            >
+                                Edit
+                            </Link>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    {clients.map((client) => (
-                        <tr key={client.id}>
-                            <td>{client.id}</td>
-                            <td>{client.name}</td>
-                            <td className="d-none d-sm-table-cell">
-                                {client.address}
-                            </td>
-                            <td className="d-none d-sm-table-cell">
-                                {client.phone}
-                            </td>
-                            <td className="d-none d-sm-table-cell">
-                                {client.email}
-                            </td>
-                            <td className="d-none d-sm-table-cell">
-                                {client.dni}
-                            </td>
-                            <td className="d-none d-sm-table-cell">
-                                {client.createdAt.slice(0, 10)}
-                            </td>
-                            <td>
-                                <Link
-                                    to={`/client/${client.id}/edit`}
-                                    className="btn btn-warning btn-lg"
-                                >
-                                    Edit
-                                </Link>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </LoaderHandler>
+                ))}
+            </tbody>
+        </table>
     );
 
     return (
@@ -242,7 +234,12 @@ const ClientScreen = ({ history }) => {
                                 </div>
                                 {/* /.card-header */}
                                 <div className="card-body table-responsive p-0">
-                                    {renderClientsTable()}
+                                    <LoaderHandler
+                                        loading={loading}
+                                        error={error}
+                                        loader={<DataTableLoader />}
+                                        render={renderClientsTable}
+                                    />
                                 </div>
                                 {/* /.card-body */}
                             </div>

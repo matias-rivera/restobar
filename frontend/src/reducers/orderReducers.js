@@ -52,7 +52,7 @@ export const orderListReducer = (
                 page: action.payload.page,
             };
         case ORDER_LIST_FAIL:
-            return { loading: false, error: action.payload, orders: [] };
+            return { loading: false, error: action.payload };
         case ORDER_LIST_RESET:
             return { orders: [] };
         default:

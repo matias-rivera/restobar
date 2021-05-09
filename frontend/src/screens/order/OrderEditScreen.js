@@ -191,7 +191,7 @@ const OrderEditScreen = ({ history, match }) => {
     );
 
     const renderTablesSelect = () => (
-        <LoaderHandler loading={loadingAllTables} error={errorAllTables}>
+        <>
             <Select
                 data={table}
                 setData={setTable}
@@ -201,16 +201,16 @@ const OrderEditScreen = ({ history, match }) => {
             {errors.table && (
                 <Message message={errors.table} color={"warning"} />
             )}
-        </LoaderHandler>
+        </>
     );
 
     const renderClientsSelect = () => (
-        <LoaderHandler loading={loadingAllClients} error={errorAllClients}>
+        <>
             <Select data={client} setData={setClient} items={clients} />
             {errors.client && (
                 <Message message={errors.client} color={"warning"} />
             )}
-        </LoaderHandler>
+        </>
     );
 
     const renderDeliveryCheckbox = () => (
@@ -267,10 +267,26 @@ const OrderEditScreen = ({ history, match }) => {
                                             {renderCart()}
                                             <div className="row">
                                                 <div className="col-12 col-md-6">
-                                                    {renderTablesSelect()}
+                                                    <LoaderHandler
+                                                        loading={
+                                                            loadingAllTables
+                                                        }
+                                                        error={errorAllTables}
+                                                        render={
+                                                            renderTablesSelect
+                                                        }
+                                                    />
                                                 </div>
                                                 <div className="col-12 col-md-6">
-                                                    {renderClientsSelect()}
+                                                    <LoaderHandler
+                                                        loading={
+                                                            loadingAllClients
+                                                        }
+                                                        error={errorAllClients}
+                                                        render={
+                                                            renderClientsSelect
+                                                        }
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="mt-4">

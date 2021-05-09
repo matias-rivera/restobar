@@ -36,45 +36,39 @@ const DeliveryScreen = ({ history, match }) => {
     );
 
     const renderTable = () => (
-        <LoaderHandler
-            loading={loading}
-            error={error}
-            loader={DataTableLoader()}
-        >
-            <table className="table table-hover text-nowrap">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Client</th>
-                        <th className="d-none d-sm-table-cell">Address</th>
-                        <th className="d-none d-sm-table-cell">Phone</th>
-                        <th>Check</th>
+        <table className="table table-hover text-nowrap">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Client</th>
+                    <th className="d-none d-sm-table-cell">Address</th>
+                    <th className="d-none d-sm-table-cell">Phone</th>
+                    <th>Check</th>
+                </tr>
+            </thead>
+            <tbody>
+                {orders.map((order) => (
+                    <tr key={order.id}>
+                        <td>{order.id}</td>
+                        <td>{order.client.name}</td>
+                        <td className="d-none d-sm-table-cell">
+                            {order.client.address}
+                        </td>
+                        <td className="d-none d-sm-table-cell">
+                            {order.client.phone}
+                        </td>
+                        <td>
+                            <Link
+                                to={`/order/${order.id}/view`}
+                                className="btn btn-info btn-lg"
+                            >
+                                View
+                            </Link>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    {orders.map((order) => (
-                        <tr key={order.id}>
-                            <td>{order.id}</td>
-                            <td>{order.client.name}</td>
-                            <td className="d-none d-sm-table-cell">
-                                {order.client.address}
-                            </td>
-                            <td className="d-none d-sm-table-cell">
-                                {order.client.phone}
-                            </td>
-                            <td>
-                                <Link
-                                    to={`/order/${order.id}/view`}
-                                    className="btn btn-info btn-lg"
-                                >
-                                    View
-                                </Link>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </LoaderHandler>
+                ))}
+            </tbody>
+        </table>
     );
 
     const renderDeliveries = () => (
@@ -92,7 +86,12 @@ const DeliveryScreen = ({ history, match }) => {
                 </div>
                 {/* /.card-header */}
                 <div className="card-body table-responsive p-0">
-                    {renderTable()}
+                    <LoaderHandler
+                        loading={loading}
+                        error={error}
+                        loader={DataTableLoader()}
+                        render={renderTable}
+                    />
                 </div>
                 {/* /.card-body */}
             </div>

@@ -108,6 +108,10 @@ const ProductScreen = ({ history }) => {
         }
     };
 
+    const renderCategoriesSelect = () => (
+        <Select data={category} setData={setCategory} items={categories} />
+    );
+
     const renderModalCreateProduct = () => (
         <>
             <ModalButton
@@ -148,13 +152,8 @@ const ProductScreen = ({ history }) => {
                     <LoaderHandler
                         loading={loadingCategories}
                         error={errorCategories}
-                    >
-                        <Select
-                            data={category}
-                            setData={setCategory}
-                            items={categories}
-                        />
-                    </LoaderHandler>
+                        render={renderCategoriesSelect}
+                    />
 
                     {errors.category && (
                         <Message message={errors.category} color={"warning"} />
@@ -174,49 +173,43 @@ const ProductScreen = ({ history }) => {
     );
 
     const renderProductsTable = () => (
-        <LoaderHandler
-            loading={loading}
-            error={error}
-            loader={<DataTableLoader />}
-        >
-            <table className="table table-hover text-nowrap">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Stock</th>
-                        <th className="d-none d-sm-table-cell">Created At</th>
-                        <th className="d-none d-sm-table-cell">Category</th>
-                        <th></th>
+        <table className="table table-hover text-nowrap">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th className="d-none d-sm-table-cell">Created At</th>
+                    <th className="d-none d-sm-table-cell">Category</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {products.map((product) => (
+                    <tr key={product.id}>
+                        <td>{product.id}</td>
+                        <td>{product.name}</td>
+                        <td>{product.price}</td>
+                        <td>{product.stock}</td>
+                        <td className="d-none d-sm-table-cell">
+                            {product.createdAt.slice(0, 10)}
+                        </td>
+                        <td className="d-none d-sm-table-cell">
+                            {product.category.name}
+                        </td>
+                        <td>
+                            <Link
+                                to={`/product/${product.id}/edit`}
+                                className="btn btn-warning btn-lg"
+                            >
+                                Edit
+                            </Link>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    {products.map((product) => (
-                        <tr key={product.id}>
-                            <td>{product.id}</td>
-                            <td>{product.name}</td>
-                            <td>{product.price}</td>
-                            <td>{product.stock}</td>
-                            <td className="d-none d-sm-table-cell">
-                                {product.createdAt.slice(0, 10)}
-                            </td>
-                            <td className="d-none d-sm-table-cell">
-                                {product.category.name}
-                            </td>
-                            <td>
-                                <Link
-                                    to={`/product/${product.id}/edit`}
-                                    className="btn btn-warning btn-lg"
-                                >
-                                    Edit
-                                </Link>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </LoaderHandler>
+                ))}
+            </tbody>
+        </table>
     );
 
     return (
@@ -245,7 +238,12 @@ const ProductScreen = ({ history }) => {
                                 </div>
                                 {/* /.card-header */}
                                 <div className="card-body table-responsive p-0">
-                                    {renderProductsTable()}
+                                    <LoaderHandler
+                                        loading={loading}
+                                        error={error}
+                                        loader={<DataTableLoader />}
+                                        render={renderProductsTable}
+                                    />
                                 </div>
                                 {/* /.card-body */}
                             </div>

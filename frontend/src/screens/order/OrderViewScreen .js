@@ -247,14 +247,33 @@ const OrderViewScreen = ({ history, match }) => {
         </div>
     );
 
+    const renderInfo = () => (
+        <>
+            <div className="col-12 col-md-6">
+                {renderCartInfo()}
+                {renderOrderProducts()}
+            </div>
+
+            <div className="col-12 col-md-6">{renderOrderInfo()}</div>
+        </>
+    );
+
+    const renderButtons = () => (
+        <>
+            <div className="col-12 col-md-3">
+                {order && !order.isPaid && renderOrderEdit()}
+            </div>
+            <div className="col-12 col-md-3">
+                {order && !order.isPaid && renderOrderPay()}
+            </div>
+        </>
+    );
+
     return (
         <>
             {/* Content Header (Page header) */}
             <HeaderContent name={"Orders"} />
-            <LoaderHandler
-                loading={loadingUpdate}
-                error={errorUpdate}
-            ></LoaderHandler>
+            <LoaderHandler loading={loadingUpdate} error={errorUpdate} />
             {/* Main content */}
             <section className="content">
                 <div className="container-fluid">
@@ -272,16 +291,8 @@ const OrderViewScreen = ({ history, match }) => {
                                         <LoaderHandler
                                             loading={loading}
                                             error={error}
-                                        >
-                                            <div className="col-12 col-md-6">
-                                                {renderCartInfo()}
-                                                {renderOrderProducts()}
-                                            </div>
-
-                                            <div className="col-12 col-md-6">
-                                                {renderOrderInfo()}
-                                            </div>
-                                        </LoaderHandler>
+                                            render={renderInfo}
+                                        />
                                     </div>
                                 </div>
                                 {/* /.card-body */}
@@ -291,14 +302,11 @@ const OrderViewScreen = ({ history, match }) => {
                     </div>
                     {/* /.row */}
                     <div className="row justify-content-between">
-                        <LoaderHandler loading={loading} error={error}>
-                            <div className="col-12 col-md-3">
-                                {order && !order.isPaid && renderOrderEdit()}
-                            </div>
-                            <div className="col-12 col-md-3">
-                                {order && !order.isPaid && renderOrderPay()}
-                            </div>
-                        </LoaderHandler>
+                        <LoaderHandler
+                            loading={loading}
+                            error={error}
+                            render={renderButtons}
+                        />
                     </div>
                 </div>
                 {/* /.container-fluid */}

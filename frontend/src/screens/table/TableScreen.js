@@ -77,12 +77,8 @@ const TableScreen = ({ history }) => {
         }
     };
 
-    const renderTables = () => (
-        <LoaderHandler
-            loading={loading}
-            error={error}
-            loader={<DataTableLoader />}
-        >
+    const renderTable = () => {
+        return (
             <table className="table table-hover text-nowrap">
                 <thead>
                     <tr>
@@ -124,8 +120,8 @@ const TableScreen = ({ history }) => {
                     ))}
                 </tbody>
             </table>
-        </LoaderHandler>
-    );
+        );
+    };
 
     const renderModalCreateTable = () => (
         <>
@@ -188,7 +184,12 @@ const TableScreen = ({ history }) => {
                                 </div>
                                 {/* /.card-header */}
                                 <div className="card-body table-responsive p-0">
-                                    {renderTables()}
+                                    <LoaderHandler
+                                        loading={loading}
+                                        error={error}
+                                        loader={<DataTableLoader />}
+                                        render={renderTable}
+                                    />
                                 </div>
                                 {/* /.card-body */}
                             </div>

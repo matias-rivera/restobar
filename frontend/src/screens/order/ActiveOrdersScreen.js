@@ -60,44 +60,26 @@ const ActiveOrdersScreen = ({ history }) => {
         return mappedTables;
     };
 
-    const renderOccupiedTables = () => (
-        <LoaderHandler
-            loading={loading}
-            error={error}
-            loader={occupiedTableLoader()}
-        >
-            {filterTablesByState(true).map((table) => (
-                <div
-                    key={table.id}
-                    className="col-12 col-md-6 col-lg-4 col-xl-3"
-                >
-                    {/* small box */}
-                    <Table table={table} />
-                </div>
-            ))}
-        </LoaderHandler>
-    );
+    const renderOccupiedTables = () =>
+        filterTablesByState(true).map((table) => (
+            <div key={table.id} className="col-12 col-md-6 col-lg-4 col-xl-3">
+                <Table table={table} />
+            </div>
+        ));
 
-    const renderFreeTables = () => (
-        <LoaderHandler
-            loading={loading}
-            error={error}
-            loader={freeTableLoader()}
-        >
-            {filterTablesByState(false).map((table) => (
-                <Link
-                    to={`/order/create/${table.id}/table`}
-                    key={table.id}
-                    className="btn btn-block btn-success btn-lg"
-                >
-                    <p className="text-center my-0">
-                        <i className="fas fa-utensils float-left my-1"></i>
-                        {table.name}
-                    </p>
-                </Link>
-            ))}
-        </LoaderHandler>
-    );
+    const renderFreeTables = () =>
+        filterTablesByState(false).map((table) => (
+            <Link
+                to={`/order/create/${table.id}/table`}
+                key={table.id}
+                className="btn btn-block btn-success btn-lg"
+            >
+                <p className="text-center my-0">
+                    <i className="fas fa-utensils float-left my-1"></i>
+                    {table.name}
+                </p>
+            </Link>
+        ));
 
     return (
         <>
@@ -117,7 +99,12 @@ const ActiveOrdersScreen = ({ history }) => {
                                 {/* /.card-header */}
                                 <div className="card-body">
                                     <div className="row">
-                                        {renderOccupiedTables()}
+                                        <LoaderHandler
+                                            loading={loading}
+                                            error={error}
+                                            loader={occupiedTableLoader()}
+                                            render={renderOccupiedTables}
+                                        />
                                     </div>
                                 </div>
                                 {/* /.card-body */}
@@ -128,7 +115,12 @@ const ActiveOrdersScreen = ({ history }) => {
                             <div className="card">
                                 <div className="card-header">Free Tables</div>
                                 <div className="card-body">
-                                    {renderFreeTables()}
+                                    <LoaderHandler
+                                        loading={loading}
+                                        error={error}
+                                        loader={freeTableLoader()}
+                                        render={renderFreeTables}
+                                    />
                                 </div>
                             </div>
                         </div>

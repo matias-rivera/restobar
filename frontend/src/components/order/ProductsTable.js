@@ -105,62 +105,54 @@ const ProductsTable = ({
     );
 
     const renderProducts = () => (
-        <LoaderHandler loading={loadingProductList} error={errorProductList}>
-            <table
-                id="productsTable"
-                className="table table-bordered table-hover "
+        <table id="productsTable" className="table table-bordered table-hover ">
+            <thead
+                style={{
+                    color: "#fff",
+                }}
+                className="bg-info"
             >
-                <thead
-                    style={{
-                        color: "#fff",
-                    }}
-                    className="bg-info"
-                >
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Stock</th>
-                        <th></th>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {products.map((product) => (
+                    <tr key={product.id}>
+                        <td>{product.id}</td>
+                        <td>{product.name}</td>
+                        <td>${product.price}</td>
+                        <td>{showStock(product)}</td>
+                        {inOrder(product, productsInOrder) ? (
+                            <td className="text-center">
+                                <button disabled className="btn btn-primary">
+                                    In Order
+                                </button>
+                            </td>
+                        ) : product.stock > 0 ? (
+                            <td className="text-center">
+                                <button
+                                    className="btn btn-success"
+                                    onClick={(e) => addProduct(e, product)}
+                                >
+                                    <i className="fas fa-plus"></i>
+                                </button>
+                            </td>
+                        ) : (
+                            <td className="text-center">
+                                <button disabled className="btn btn-danger">
+                                    Out of Stock
+                                </button>
+                            </td>
+                        )}
                     </tr>
-                </thead>
-                <tbody>
-                    {products.map((product) => (
-                        <tr key={product.id}>
-                            <td>{product.id}</td>
-                            <td>{product.name}</td>
-                            <td>${product.price}</td>
-                            <td>{showStock(product)}</td>
-                            {inOrder(product, productsInOrder) ? (
-                                <td className="text-center">
-                                    <button
-                                        disabled
-                                        className="btn btn-primary"
-                                    >
-                                        In Order
-                                    </button>
-                                </td>
-                            ) : product.stock > 0 ? (
-                                <td className="text-center">
-                                    <button
-                                        className="btn btn-success"
-                                        onClick={(e) => addProduct(e, product)}
-                                    >
-                                        <i className="fas fa-plus"></i>
-                                    </button>
-                                </td>
-                            ) : (
-                                <td className="text-center">
-                                    <button disabled className="btn btn-danger">
-                                        Out of Stock
-                                    </button>
-                                </td>
-                            )}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </LoaderHandler>
+                ))}
+            </tbody>
+        </table>
     );
 
     return (
@@ -171,7 +163,11 @@ const ProductsTable = ({
                 setKeyword={setKeyword}
                 setPage={setPageNumber}
             />
-            {renderProducts()}
+            <LoaderHandler
+                loading={loadingProductList}
+                error={errorProductList}
+                render={renderProducts}
+            />
 
             <Pagination pages={pages} page={page} setPage={setPageNumber} />
         </>

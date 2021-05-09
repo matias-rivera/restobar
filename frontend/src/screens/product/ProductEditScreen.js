@@ -120,53 +120,50 @@ const ProductEditScreen = ({ history, match }) => {
         }
     };
 
+    const renderCategoriesSelect = () => (
+        <Select data={category} setData={setCategory} items={categories} />
+    );
+
     const renderForm = () => (
-        <LoaderHandler loading={loading} error={error}>
-            <form onSubmit={handleSubmit}>
-                <Input
-                    name={"name"}
-                    type={"text"}
-                    data={name}
-                    setData={setName}
-                    errors={errors}
-                />
+        <form onSubmit={handleSubmit}>
+            <Input
+                name={"name"}
+                type={"text"}
+                data={name}
+                setData={setName}
+                errors={errors}
+            />
 
-                <Input
-                    name={"price"}
-                    type={"number"}
-                    data={price}
-                    setData={setPrice}
-                    errors={errors}
-                />
+            <Input
+                name={"price"}
+                type={"number"}
+                data={price}
+                setData={setPrice}
+                errors={errors}
+            />
 
-                <Input
-                    name={"stock"}
-                    type={"number"}
-                    data={stock}
-                    setData={setStock}
-                    errors={errors}
-                />
+            <Input
+                name={"stock"}
+                type={"number"}
+                data={stock}
+                setData={setStock}
+                errors={errors}
+            />
 
-                <LoaderHandler
-                    loading={loadingCategories}
-                    error={errorCategories}
-                >
-                    <Select
-                        data={category}
-                        setData={setCategory}
-                        items={categories}
-                    />
-                </LoaderHandler>
-                {errors.category && (
-                    <Message message={errors.category} color={"warning"} />
-                )}
+            <LoaderHandler
+                loading={loadingCategories}
+                error={errorCategories}
+                render={renderCategoriesSelect}
+            />
+            {errors.category && (
+                <Message message={errors.category} color={"warning"} />
+            )}
 
-                <hr />
-                <button type="submit" className="btn btn-success">
-                    Submit
-                </button>
-            </form>
-        </LoaderHandler>
+            <hr />
+            <button type="submit" className="btn btn-success">
+                Submit
+            </button>
+        </form>
     );
 
     return (
@@ -189,7 +186,13 @@ const ProductEditScreen = ({ history, match }) => {
                                     />
                                 </div>
                                 {/* /.card-header */}
-                                <div className="card-body">{renderForm()}</div>
+                                <div className="card-body">
+                                    <LoaderHandler
+                                        loading={loading}
+                                        error={error}
+                                        render={renderForm}
+                                    />
+                                </div>
                                 {/* /.card-body */}
                             </div>
                         </div>
