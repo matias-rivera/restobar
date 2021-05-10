@@ -44,6 +44,7 @@ const CategoryScreen = ({ history, match }) => {
 
     useEffect(() => {
         dispatch(listCategories(keyword, pageNumber));
+
         if (createSuccess) {
             setName("");
             setModalIsOpen(false);

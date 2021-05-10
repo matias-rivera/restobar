@@ -57,41 +57,11 @@ const Main = () => {
                         path="/user/:id/edit"
                         component={UserEditScreen}
                     />
-                    <AdminRoute
-                        path="/user/page/:pageNumber"
-                        component={UserScreen}
-                        exact
-                    />
-                    <AdminRoute
-                        path="/user/search/:keyword"
-                        component={UserScreen}
-                        exact
-                    />
-                    <AdminRoute
-                        path="/user/search/:keyword/page/:pageNumber"
-                        component={UserScreen}
-                        exact
-                    />
                     <AdminRoute path="/user" exact component={UserScreen} />
 
                     <PrivateRoute
                         path="/category/:id/edit"
                         component={CategoryEditScreen}
-                    />
-                    <PrivateRoute
-                        path="/category/page/:pageNumber"
-                        component={CategoryScreen}
-                        exact
-                    />
-                    <PrivateRoute
-                        path="/category/search/:keyword"
-                        component={CategoryScreen}
-                        exact
-                    />
-                    <PrivateRoute
-                        path="/category/search/:keyword/page/:pageNumber"
-                        component={CategoryScreen}
-                        exact
                     />
                     <PrivateRoute path="/category" component={CategoryScreen} />
 

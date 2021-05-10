@@ -146,7 +146,7 @@ const OrderEditScreen = ({ history, match }) => {
             const order = {
                 id: orderId,
                 total: total,
-                tableId: !delivery ? table : 0,
+                tableId: !delivery ? table : null,
                 clientId: client,
                 products: productsInOrder,
                 delivery: delivery,

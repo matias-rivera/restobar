@@ -1,24 +1,31 @@
 import React, { useState, useEffect } from "react";
-import HeaderContent from "../../components/HeaderContent";
 import { useDispatch, useSelector } from "react-redux";
-import Loader from "../../components/Loader";
-import Message from "../../components/Message";
+
+/* Components */
+import HeaderContent from "../../components/HeaderContent";
 import Input from "../../components/form/Input";
-import {
-    USER_DETAILS_RESET,
-    USER_LOGOUT,
-    USER_UPDATE_RESET,
-} from "../../constants/userConstants";
-import {
-    listUserDetails,
-    login,
-    updateProfile,
-} from "../../actions/userActions";
 import Modal from "react-modal";
 import ModalButton from "../../components/ModalButton";
 import axios from "axios";
 import FileInput from "../../components/form/FileInput";
 import DataTableLoader from "../../components/loader/DataTableLoader";
+import LoaderHandler from "../../components/loader/LoaderHandler";
+
+/* Constants */
+import {
+    USER_DETAILS_RESET,
+    USER_LOGOUT,
+    USER_UPDATE_RESET,
+} from "../../constants/userConstants";
+
+/* Actions */
+import {
+    listUserDetails,
+    login,
+    updateProfile,
+} from "../../actions/userActions";
+
+/* Styles */
 import { modalStyles } from "../../utils/styles";
 
 const ProfileScreen = ({ history }) => {
@@ -179,6 +186,108 @@ const ProfileScreen = ({ history }) => {
         return imageArray[1];
     };
 
+    const renderForm = () => (
+        <form onSubmit={handleSubmit}>
+            <Input
+                name={"name"}
+                type={"text"}
+                data={name}
+                setData={setName}
+                errors={errors}
+            />
+            <Input
+                name={"email"}
+                type={"email"}
+                data={email}
+                setData={setEmail}
+                errors={errors}
+            />
+            <Input
+                name={"password"}
+                type={"password"}
+                data={password}
+                setData={setPassword}
+                errors={errors}
+            />
+            <Input
+                name={"confirmPassword"}
+                type={"password"}
+                data={confirmPassword}
+                setData={setConfirmPassword}
+                errors={errors}
+            />
+            <FileInput
+                fileHandler={uploadingFileHandler}
+                name={"photo"}
+                image={imageName(image)}
+                uploading={uploading}
+            />
+            <hr />
+            <button type="submit" className="btn btn-primary btn-block">
+                Update
+            </button>
+        </form>
+    );
+
+    const renderInfo = () => (
+        <>
+            {" "}
+            <div className="text-center">
+                <img
+                    className="profile-user-img img-fluid img-circle"
+                    src={image}
+                    alt="User profile picture"
+                />
+            </div>
+            <h3 className="profile-username text-center">
+                {userInfo && userInfo.name}
+            </h3>
+            <p className="text-muted text-center">
+                {userInfo && userInfo.isAdmin ? "Administrator" : "Employee"}
+            </p>
+        </>
+    );
+
+    const renderProfile = () => (
+        <>
+            <LoaderHandler loading={loadingUpdate} error={errorUpdate} />
+            {renderInfo()}
+            {renderForm()}
+        </>
+    );
+
+    const renderModalCheckPassword = () => (
+        <Modal
+            style={modalStyles}
+            isOpen={modal}
+            onRequestClose={() => setModal(false)}
+        >
+            <h2>Password check</h2>
+            <p>
+                For security reasons, please insert your actual password to
+                confirm changes.
+            </p>
+            <form onSubmit={handleModalSubmit}>
+                <Input
+                    name={"passwordCheck"}
+                    type={"password"}
+                    data={passwordCheck}
+                    setData={setPasswordCheck}
+                    errors={errors}
+                />
+                <hr />
+                <button type="submit" className="btn btn-primary">
+                    Submit
+                </button>
+
+                <ModalButton
+                    modal={modal}
+                    setModal={setModal}
+                    classes={"btn-danger float-right"}
+                />
+            </form>
+        </Modal>
+    );
     return (
         <>
             {/* Content Header (Page header) */}
@@ -187,142 +296,17 @@ const ProfileScreen = ({ history }) => {
             <section className="content">
                 <div className="container-fluid">
                     <div className="row justify-content-center">
-                        <Modal
-                            style={modalStyles}
-                            isOpen={modal}
-                            onRequestClose={() => setModal(false)}
-                        >
-                            <h2>Password check</h2>
-                            <p>
-                                For security reasons, please insert your actual
-                                password to confirm changes.
-                            </p>
-                            <form onSubmit={handleModalSubmit}>
-                                <Input
-                                    name={"passwordCheck"}
-                                    type={"password"}
-                                    data={passwordCheck}
-                                    setData={setPasswordCheck}
-                                    errors={errors}
-                                />
-                                <hr />
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary"
-                                >
-                                    Submit
-                                </button>
-
-                                <ModalButton
-                                    modal={modal}
-                                    setModal={setModal}
-                                    classes={"btn-danger float-right"}
-                                />
-                            </form>
-                        </Modal>
+                        {renderModalCheckPassword()}
                         <div className="col-12 col-md-6">
                             {/* Profile Image */}
                             <div className="card card-primary card-outline">
                                 <div className="card-body box-profile">
-                                    {loading ? (
-                                        <DataTableLoader />
-                                    ) : error ? (
-                                        <Message
-                                            message={error}
-                                            color={"danger"}
-                                        />
-                                    ) : (
-                                        <>
-                                            <div className="text-center">
-                                                <img
-                                                    className="profile-user-img img-fluid img-circle"
-                                                    src={image}
-                                                    alt="User profile picture"
-                                                />
-                                            </div>
-                                            <h3 className="profile-username text-center">
-                                                {userInfo && userInfo.name}
-                                            </h3>
-                                            <p className="text-muted text-center">
-                                                {userInfo && userInfo.isAdmin
-                                                    ? "Administrator"
-                                                    : "Employee"}
-                                            </p>
-                                            {loadingUpdate && (
-                                                <Loader
-                                                    variable={loadingUpdate}
-                                                />
-                                            )}
-                                            {errorUpdate && (
-                                                <Message
-                                                    message={errorUpdate}
-                                                    color={"danger"}
-                                                />
-                                            )}
-                                            <form onSubmit={handleSubmit}>
-                                                <Input
-                                                    name={"name"}
-                                                    type={"text"}
-                                                    data={name}
-                                                    setData={setName}
-                                                    errors={errors}
-                                                />
-                                                <Input
-                                                    name={"email"}
-                                                    type={"email"}
-                                                    data={email}
-                                                    setData={setEmail}
-                                                    errors={errors}
-                                                />
-                                                <Input
-                                                    name={"password"}
-                                                    type={"password"}
-                                                    data={password}
-                                                    setData={setPassword}
-                                                    errors={errors}
-                                                />
-                                                <Input
-                                                    name={"confirmPassword"}
-                                                    type={"password"}
-                                                    data={confirmPassword}
-                                                    setData={setConfirmPassword}
-                                                    errors={errors}
-                                                />
-                                                <FileInput
-                                                    fileHandler={
-                                                        uploadingFileHandler
-                                                    }
-                                                    name={"photo"}
-                                                    image={imageName(image)}
-                                                    uploading={uploading}
-                                                />
-                                                <hr />
-                                                <button
-                                                    type="submit"
-                                                    className="btn btn-primary btn-block"
-                                                >
-                                                    Update
-                                                </button>
-                                            </form>
-                                            <hr />
-                                            <div className="alert alert-danger alert-dismissible">
-                                                <button
-                                                    type="button"
-                                                    className="close"
-                                                    data-dismiss="alert"
-                                                    aria-hidden="true"
-                                                >
-                                                    ×
-                                                </button>
-                                                <p>
-                                                    La demo no permite subir
-                                                    imágenes debido a que esta
-                                                    hosteada en heroku de manera
-                                                    gratuita.
-                                                </p>
-                                            </div>
-                                        </>
-                                    )}
+                                    <LoaderHandler
+                                        loading={loading}
+                                        error={error}
+                                        loader={<DataTableLoader />}
+                                        render={renderProfile}
+                                    />
                                 </div>
                                 {/* /.card-body */}
                             </div>

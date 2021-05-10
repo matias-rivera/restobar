@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    listUserDetails,
-    deleteUser,
-    updateUser,
-} from "../../actions/userActions";
+
+/* Components */
+import HeaderContent from "../../components/HeaderContent";
+import Input from "../../components/form/Input";
+import Checkbox from "../../components/form/Checkbox";
+import ButtonGoBack from "../../components/ButtonGoBack";
+import LoaderHandler from "../../components/loader/LoaderHandler";
+
+/* Constants */
 import {
     USER_UPDATE_RESET,
     USER_DETAILS_RESET,
     USER_DELETE_RESET,
 } from "../../constants/userConstants";
-import { Link } from "react-router-dom";
-import Message from "../../components/Message";
-import Loader from "../../components/Loader";
-import HeaderContent from "../../components/HeaderContent";
-import Input from "../../components/form/Input";
-import Checkbox from "../../components/form/Checkbox";
-import ButtonGoBack from "../../components/ButtonGoBack";
+
+/* Actions */
+import { listUserDetails, updateUser } from "../../actions/userActions";
 
 const UserEditScreen = ({ history, match }) => {
     const userId = parseInt(match.params.id);
@@ -46,10 +46,6 @@ const UserEditScreen = ({ history, match }) => {
         success: successUpdate,
     } = userUpdate;
 
-    //user delete state
-    const userDelete = useSelector((state) => state.userDelete);
-    const { success: successDelete } = userDelete;
-
     useEffect(() => {
         if (user) {
             if (user.isAdmin) {
@@ -60,7 +56,7 @@ const UserEditScreen = ({ history, match }) => {
             }
         }
         //after update redirect to users
-        if (successUpdate || successDelete) {
+        if (successUpdate) {
             dispatch({ type: USER_UPDATE_RESET });
             dispatch({ type: USER_DETAILS_RESET });
             dispatch({ type: USER_DELETE_RESET });
@@ -75,7 +71,7 @@ const UserEditScreen = ({ history, match }) => {
             setEmail(user.email);
             setIsAdmin(user.isAdmin);
         }
-    }, [dispatch, history, userId, user, successUpdate, successDelete]);
+    }, [dispatch, history, userId, user, successUpdate]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -113,13 +109,38 @@ const UserEditScreen = ({ history, match }) => {
         }
     };
 
-    //handle delete
-    /* const handleDelete = (e) => {
-        e.preventDefault()
-        if(window.confirm('Are you sure?')){
-            dispatch(deleteUser(userId))
-        }
-    } */
+    const renderForm = () => (
+        <form onSubmit={handleSubmit}>
+            <Input
+                name={"name"}
+                type={"text"}
+                data={name}
+                setData={setName}
+                errors={errors}
+            />
+            <Input
+                name={"email"}
+                type={"email"}
+                data={email}
+                setData={setEmail}
+                errors={errors}
+            />
+            <Input
+                name={"password"}
+                type={"password"}
+                data={password}
+                setData={setPassword}
+                errors={errors}
+            />
+            <Checkbox name={"Reset Avatar"} data={avatar} setData={setAvatar} />
+            <hr />
+            <Checkbox name={"Admin"} data={isAdmin} setData={setIsAdmin} />
+            <hr />
+            <button type="submit" className="btn btn-success">
+                Submit
+            </button>
+        </form>
+    );
 
     return (
         <>
@@ -136,58 +157,18 @@ const UserEditScreen = ({ history, match }) => {
                             <div className="card">
                                 <div className="card-header">
                                     <h3 className="card-title">Edit User</h3>
-                                    <Loader variable={loadingUpdate} />
-                                    <Message
-                                        message={errorUpdate}
-                                        color={"danger"}
+                                    <LoaderHandler
+                                        loading={loadingUpdate}
+                                        error={errorUpdate}
                                     />
-                                    <Loader variable={loading} />
-                                    <Message message={error} color={"danger"} />
                                 </div>
                                 {/* /.card-header */}
                                 <div className="card-body">
-                                    <form onSubmit={handleSubmit}>
-                                        <Input
-                                            name={"name"}
-                                            type={"text"}
-                                            data={name}
-                                            setData={setName}
-                                            errors={errors}
-                                        />
-                                        <Input
-                                            name={"email"}
-                                            type={"email"}
-                                            data={email}
-                                            setData={setEmail}
-                                            errors={errors}
-                                        />
-                                        <Input
-                                            name={"password"}
-                                            type={"password"}
-                                            data={password}
-                                            setData={setPassword}
-                                            errors={errors}
-                                        />
-                                        <Checkbox
-                                            name={"Reset Avatar"}
-                                            data={avatar}
-                                            setData={setAvatar}
-                                        />
-                                        <hr />
-                                        <Checkbox
-                                            name={"Admin"}
-                                            data={isAdmin}
-                                            setData={setIsAdmin}
-                                        />
-                                        <hr />
-                                        {/* <button className='btn btn-danger float-right' onClick={handleDelete}>Delete</button> */}
-                                        <button
-                                            type="submit"
-                                            className="btn btn-success"
-                                        >
-                                            Submit
-                                        </button>
-                                    </form>
+                                    <LoaderHandler
+                                        loading={loading}
+                                        error={error}
+                                        render={renderForm}
+                                    />
                                 </div>
                                 {/* /.card-body */}
                             </div>

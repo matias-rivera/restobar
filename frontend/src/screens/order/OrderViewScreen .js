@@ -52,9 +52,8 @@ const OrderViewScreen = ({ history, match }) => {
         }
     }, [dispatch, history, order, orderId, successUpdate]);
 
-    const handlePay = (e) => {
+    const handlePay = async (e) => {
         e.preventDefault();
-
         const updatedOrder = {
             id: orderId,
         };

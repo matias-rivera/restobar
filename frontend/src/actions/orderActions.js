@@ -315,10 +315,10 @@ export const updateOrderToPaid = (order) => async (dispatch, getState) => {
                 Authorization: `Bearer ${userInfo.token}`,
             },
         };
-
         //update order
         const { data } = await axios.post(
             `/api/orders/${order.id}/pay`,
+            order,
             config
         );
         dispatch({
