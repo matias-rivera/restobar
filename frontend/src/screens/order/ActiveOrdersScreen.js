@@ -9,7 +9,7 @@ import Table from "../../components/Table";
 import {
     OccupiedTableLoader,
     FreeTableLoader,
-} from "../../components/loader/TableLoader";
+} from "../../components/loader/SkeletonLoaders";
 
 /* actions */
 import { allTables } from "../../actions/tableActions";

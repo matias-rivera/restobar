@@ -180,13 +180,13 @@ const ProductEditScreen = ({ history, match }) => {
                             <div className="card">
                                 <div className="card-header">
                                     <h3 className="card-title">Edit Product</h3>
+                                </div>
+                                {/* /.card-header */}
+                                <div className="card-body">
                                     <LoaderHandler
                                         loading={loadingUpdate}
                                         error={errorUpdate}
                                     />
-                                </div>
-                                {/* /.card-header */}
-                                <div className="card-body">
                                     <LoaderHandler
                                         loading={loading}
                                         error={error}

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Modal from "react-modal";
+import axios from "axios";
 
 /* Components */
 import HeaderContent from "../../components/HeaderContent";
 import Input from "../../components/form/Input";
-import Modal from "react-modal";
 import ModalButton from "../../components/ModalButton";
-import axios from "axios";
 import FileInput from "../../components/form/FileInput";
 import DataTableLoader from "../../components/loader/DataTableLoader";
 import LoaderHandler from "../../components/loader/LoaderHandler";
@@ -231,7 +231,6 @@ const ProfileScreen = ({ history }) => {
 
     const renderInfo = () => (
         <>
-            {" "}
             <div className="text-center">
                 <img
                     className="profile-user-img img-fluid img-circle"

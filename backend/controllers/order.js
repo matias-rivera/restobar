@@ -98,11 +98,11 @@ exports.getAllInPlaceOrders = asyncHandler(async (req, res) => {
 });
 
 //@desc     Get all sales
-//@route    GET /api/orders/sales
+//@route    GET /api/orders/all/sales
 //@access   Private/user
 exports.getAllSales = asyncHandler(async (req, res) => {
     orders = await Order.findAll({
-        group: ["order.id"],
+        group: ["Order.id"],
         includeIgnoreAttributes: false,
         attributes: [
             "id",

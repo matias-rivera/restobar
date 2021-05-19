@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import LoaderHandler from "../loader/LoaderHandler";
 import Pagination from "../Pagination";
 import Search from "../Search";
+import { BigSpin } from "../loader/SvgLoaders";
 
 /* actions */
 import { listProducts } from "../../actions/productActions";
@@ -167,6 +168,7 @@ const ProductsTable = ({
                 loading={loadingProductList}
                 error={errorProductList}
                 render={renderProducts}
+                loader={<BigSpin />}
             />
 
             <Pagination pages={pages} page={page} setPage={setPageNumber} />

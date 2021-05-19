@@ -122,13 +122,13 @@ const CategoryEditScreen = ({ history, match }) => {
                                     <h3 className="card-title">
                                         Edit Category
                                     </h3>
+                                </div>
+                                {/* /.card-header */}
+                                <div className="card-body">
                                     <LoaderHandler
                                         loading={loadingUpdate}
                                         error={errorUpdate}
                                     />
-                                </div>
-                                {/* /.card-header */}
-                                <div className="card-body">
                                     <LoaderHandler
                                         loading={loading}
                                         error={error}

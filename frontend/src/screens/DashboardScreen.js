@@ -1,15 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+
+/* Components */
 import HeaderContent from "./../components/HeaderContent";
 import SmallBox from "./../components/SmallBox";
-import { Link } from "react-router-dom";
-import { allTables } from "../actions/tableActions";
 import Loader from "../components/Loader";
 import Message from "./../components/Message";
-import { allActiveOrders, allSales } from "./../actions/orderActions";
 import DeliveryListItem from "../components/DeliveryListItem";
-import { OccupiedTableLoader } from "../components/loader/TableLoader";
 import DataTableLoader from "../components/loader/DataTableLoader";
+import LoaderHandler from "../components/loader/LoaderHandler";
+
+/* Actions */
+import { allTables } from "../actions/tableActions";
+import { allActiveOrders, allSales } from "./../actions/orderActions";
+import {
+    OccupiedTableLoader,
+    SkeletonBoxes,
+    SkeletonSales,
+} from "../components/loader/SkeletonLoaders";
 
 const DashboardScreen = ({ history }) => {
     const dispatch = useDispatch();
@@ -111,32 +120,22 @@ const DashboardScreen = ({ history }) => {
             indents.push(
                 <tr key={sales[i].id}>
                     <td className="font-weight-bold">{sales[i].id}</td>
-                    <td>
-                        <h4>
-                            {sales[i].delivery ? (
-                                <span className={"badge bg-primary"}>
-                                    IN PLACE
-                                </span>
-                            ) : (
-                                <span className={"badge bg-info"}>
-                                    DELIVERY
-                                </span>
-                            )}
-                        </h4>
+                    <td className="h4">
+                        {sales[i].delivery ? (
+                            <span className={"badge bg-primary"}>IN PLACE</span>
+                        ) : (
+                            <span className={"badge bg-info"}>DELIVERY</span>
+                        )}
                     </td>
-                    <td>
-                        <h4>
-                            <span className={"badge bg-success"}>
-                                ${sales[i].total}
-                            </span>
-                        </h4>
+                    <td className="h4">
+                        <span className={"badge bg-success"}>
+                            ${sales[i].total}
+                        </span>
                     </td>
-                    <td>
-                        <h4>
-                            <span className={"badge bg-warning"}>
-                                {sales[i].total_products}
-                            </span>
-                        </h4>
+                    <td className="h4">
+                        <span className={"badge bg-warning"}>
+                            {sales[i].total_products}
+                        </span>
                     </td>
                     <td>
                         <Link
@@ -152,40 +151,201 @@ const DashboardScreen = ({ history }) => {
         return indents;
     };
 
-    const skeletonBoxes = () => {
-        let tableSkeleton = [];
-        for (let i = 0; i < 4; i++) {
-            tableSkeleton.push(
-                <div className="col-lg-3 col-6" key={i}>
-                    <OccupiedTableLoader />{" "}
-                </div>
-            );
-        }
-        return tableSkeleton;
-    };
+    const renderTablesBox = () => (
+        <SmallBox
+            number={tables.length}
+            paragraph={"Free tables"}
+            link={"active"}
+            color={"success"}
+            icon={"fas fa-utensils"}
+        />
+    );
 
-    const skeletonSales = () => {
-        return (
-            <div className="row">
-                <div className="col-12 col-lg-6">
-                    {" "}
-                    <div className="card">
-                        <div className="card-body">
-                            <DataTableLoader />
+    const renderSmallBoxes = () => (
+        <>
+            <LoaderHandler
+                loading={loadingTables}
+                error={errorTables}
+                render={renderTablesBox}
+            />
+            <SmallBox
+                number={ordersInPlace(allOrders).length}
+                paragraph={"In Place Orders"}
+                link={"active"}
+                color={"info"}
+                icon={"fas fa-users"}
+            />
+            <SmallBox
+                number={ordersForDelivery(allOrders).length}
+                paragraph={"Orders for delivery"}
+                link={"delivery"}
+                color={"danger"}
+                icon={"fas fa-truck"}
+            />
+            <SmallBox
+                number={allOrders.length}
+                paragraph={"Active orders"}
+                link={"order"}
+                color={"warning"}
+                icon={"ion ion-bag"}
+            />
+        </>
+    );
+
+    const renderSales = () => (
+        <div className="row">
+            <div className="col-12 col-lg-6">
+                <div className="card">
+                    <div className="card-header border-0">
+                        <h3 className="card-title">Last Sales</h3>
+                        <div className="card-tools">
+                            <Link to="/order" className="btn btn-tool btn-sm">
+                                <i className="nav-icon far fa-clipboard" />
+                            </Link>
                         </div>
-                    </div>{" "}
-                </div>
-                <div className="col-12 col-lg-6">
-                    {" "}
-                    <div className="card">
-                        <div className="card-body">
-                            <DataTableLoader />
-                        </div>
-                    </div>{" "}
+                    </div>
+                    <div className="card-body table-responsive p-0">
+                        <table className="table table-striped table-valign-middle text-center">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Type</th>
+                                    <th>Total</th>
+                                    <th>Products</th>
+                                    <th>More</th>
+                                </tr>
+                            </thead>
+                            <tbody>{returnSales(sales)}</tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        );
-    };
+            <div className="col-12 col-lg-6">
+                <div className="card">
+                    <div className="card-header border-0">
+                        <h3 className="card-title">Restobar Overview</h3>
+                    </div>
+                    <div className="card-body">
+                        <div className="d-flex justify-content-between align-items-center border-bottom mb-3">
+                            <p className="text-warning text-xl">
+                                <i className="fas fa-shopping-cart"></i>
+                            </p>
+                            <p className="d-flex flex-column text-right">
+                                <span className="font-weight-bold">
+                                    <i className="ion ion-android-arrow-up text-warning" />{" "}
+                                    {sales ? getTodayProducts(sales) : 0}
+                                </span>
+                                <span className="text-muted">
+                                    TODAY PRODUCTS SOLD
+                                </span>
+                            </p>
+                        </div>
+                        {/* /.d-flex */}
+                        <div className="d-flex justify-content-between align-items-center border-bottom mb-3">
+                            <p className="text-info text-xl">
+                                <i className="fas fa-truck"></i>
+                            </p>
+                            <p className="d-flex flex-column text-right">
+                                <span className="font-weight-bold">
+                                    <i className="ion ion-android-arrow-up text-info" />{" "}
+                                    {sales ? getTodayDelivery(sales) : 0}
+                                </span>
+                                <span className="text-muted">
+                                    TODAY DELIVERIES MADE{" "}
+                                </span>
+                            </p>
+                        </div>
+                        <div className="d-flex justify-content-between align-items-center border-bottom mb-3">
+                            <p className="text-success text-xl">
+                                <i className="fas fa-money-bill-wave"></i>
+                            </p>
+                            <p className="d-flex flex-column text-right">
+                                <span className="font-weight-bold">
+                                    <span className="text-success">
+                                        <i className="fas fa-dollar-sign text-success"></i>{" "}
+                                        {sales ? `${getTodayTotal(sales)}` : 0}
+                                    </span>{" "}
+                                    ({getTodaySales(sales).length})
+                                </span>
+                                <span className="text-muted">TODAY SALES</span>
+                            </p>
+                        </div>
+                        {/* /.d-flex */}
+                        <div className="d-flex justify-content-between align-items-center mb-0">
+                            <p className="text-danger text-xl">
+                                <i className="fas fa-piggy-bank"></i>
+                            </p>
+                            <p className="d-flex flex-column text-right">
+                                <span className="font-weight-bold">
+                                    <span className="text-success">
+                                        <i className="fas fa-dollar-sign"></i>{" "}
+                                        {sales ? `${getTotalSales(sales)}` : 0}
+                                    </span>
+                                </span>
+                                <span className="text-muted">TOTAL SALES</span>
+                            </p>
+                        </div>
+                        {/* /.d-flex */}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderOrders = () => (
+        <table className="table m-0 table-hover">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Client</th>
+                    <th>Table</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {ordersInPlace(allOrders)
+                    .splice(0, 5)
+                    .map((order) => (
+                        <tr
+                            key={order.id}
+                            onClick={(e) => handleRowClick(e, order.id)}
+                            style={{
+                                cursor: "pointer",
+                            }}
+                        >
+                            <td>
+                                <h4>
+                                    <span className={"badge bg-primary"}>
+                                        {order.id}
+                                    </span>
+                                </h4>
+                            </td>
+                            <td>{order.client ? order.client.name : ""}</td>
+                            <td>{order.table ? order.table.name : ""}</td>
+                            <td>
+                                <h4>
+                                    <span className={"badge bg-success"}>
+                                        ${order.total}
+                                    </span>
+                                </h4>
+                            </td>
+                        </tr>
+                    ))}
+            </tbody>
+        </table>
+    );
+
+    const renderDeliveries = () =>
+        ordersForDelivery(allOrders)
+            .splice(0, 5)
+            .map((order) => (
+                <DeliveryListItem
+                    id={order.id}
+                    name={order.client ? order.client.name : ""}
+                    address={order.client ? order.client.address : ""}
+                    key={order.id}
+                />
+            ));
 
     return (
         <>
@@ -194,193 +354,23 @@ const DashboardScreen = ({ history }) => {
             <section className="content">
                 <div className="container-fluid">
                     <div className="row">
-                        {loadingAllOrders ? (
-                            skeletonBoxes()
-                        ) : errorAllOrders ? (
-                            <Message
-                                message={errorAllOrders}
-                                color={"danger"}
-                            />
-                        ) : (
-                            <>
-                                {loadingTables ? (
-                                    <Loader variable={loadingTables} />
-                                ) : errorTables ? (
-                                    <Message
-                                        message={errorTables}
-                                        color={"danger"}
-                                    />
-                                ) : (
-                                    <SmallBox
-                                        number={tables.length}
-                                        paragraph={"Free tables"}
-                                        link={"active"}
-                                        color={"success"}
-                                        icon={"fas fa-utensils"}
-                                    />
-                                )}
-                                <SmallBox
-                                    number={ordersInPlace(allOrders).length}
-                                    paragraph={"In Place Orders"}
-                                    link={"active"}
-                                    color={"info"}
-                                    icon={"fas fa-users"}
-                                />
-                                <SmallBox
-                                    number={ordersForDelivery(allOrders).length}
-                                    paragraph={"Orders for delivery"}
-                                    link={"delivery"}
-                                    color={"danger"}
-                                    icon={"fas fa-truck"}
-                                />
-                                <SmallBox
-                                    number={allOrders.length}
-                                    paragraph={"Active orders"}
-                                    link={"order"}
-                                    color={"warning"}
-                                    icon={"ion ion-bag"}
-                                />
-                            </>
-                        )}
+                        <LoaderHandler
+                            loading={loadingAllOrders}
+                            error={errorAllOrders}
+                            loader={<SkeletonBoxes />}
+                            render={renderSmallBoxes}
+                        />
                     </div>
 
-                    {!userInfo.isAdmin ? (
-                        ""
-                    ) : loadingSales ? (
-                        skeletonSales()
-                    ) : errorSales ? (
-                        <Message message={errorSales} color={"danger"} />
-                    ) : (
-                        <div className="row">
-                            <div className="col-12 col-lg-6">
-                                <div className="card">
-                                    <div className="card-header border-0">
-                                        <h3 className="card-title">
-                                            Last Sales
-                                        </h3>
-                                        <div className="card-tools">
-                                            <Link
-                                                to="/order"
-                                                className="btn btn-tool btn-sm"
-                                            >
-                                                <i className="nav-icon far fa-clipboard" />
-                                            </Link>
-                                        </div>
-                                    </div>
-                                    <div className="card-body table-responsive p-0">
-                                        <table className="table table-striped table-valign-middle text-center">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Type</th>
-                                                    <th>Total</th>
-                                                    <th>Products</th>
-                                                    <th>More</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>{returnSales(sales)}</tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-12 col-lg-6">
-                                <div className="card">
-                                    <div className="card-header border-0">
-                                        <h3 className="card-title">
-                                            Restobar Overview
-                                        </h3>
-                                    </div>
-                                    <div className="card-body">
-                                        <div className="d-flex justify-content-between align-items-center border-bottom mb-3">
-                                            <p className="text-warning text-xl">
-                                                <i className="fas fa-shopping-cart"></i>
-                                            </p>
-                                            <p className="d-flex flex-column text-right">
-                                                <span className="font-weight-bold">
-                                                    <i className="ion ion-android-arrow-up text-warning" />{" "}
-                                                    {sales
-                                                        ? getTodayProducts(
-                                                              sales
-                                                          )
-                                                        : 0}
-                                                </span>
-                                                <span className="text-muted">
-                                                    TODAY PRODUCTS SOLD
-                                                </span>
-                                            </p>
-                                        </div>
-                                        {/* /.d-flex */}
-                                        <div className="d-flex justify-content-between align-items-center border-bottom mb-3">
-                                            <p className="text-info text-xl">
-                                                <i className="fas fa-truck"></i>
-                                            </p>
-                                            <p className="d-flex flex-column text-right">
-                                                <span className="font-weight-bold">
-                                                    <i className="ion ion-android-arrow-up text-info" />{" "}
-                                                    {sales
-                                                        ? getTodayDelivery(
-                                                              sales
-                                                          )
-                                                        : 0}
-                                                </span>
-                                                <span className="text-muted">
-                                                    TODAY DELIVERIES MADE{" "}
-                                                </span>
-                                            </p>
-                                        </div>
-                                        <div className="d-flex justify-content-between align-items-center border-bottom mb-3">
-                                            <p className="text-success text-xl">
-                                                <i className="fas fa-money-bill-wave"></i>
-                                            </p>
-                                            <p className="d-flex flex-column text-right">
-                                                <span className="font-weight-bold">
-                                                    <span className="text-success">
-                                                        <i className="fas fa-dollar-sign text-success"></i>{" "}
-                                                        {sales
-                                                            ? `${getTodayTotal(
-                                                                  sales
-                                                              )}`
-                                                            : 0}
-                                                    </span>{" "}
-                                                    (
-                                                    {
-                                                        getTodaySales(sales)
-                                                            .length
-                                                    }
-                                                    )
-                                                </span>
-                                                <span className="text-muted">
-                                                    TODAY SALES
-                                                </span>
-                                            </p>
-                                        </div>
-                                        {/* /.d-flex */}
-                                        <div className="d-flex justify-content-between align-items-center mb-0">
-                                            <p className="text-danger text-xl">
-                                                <i className="fas fa-piggy-bank"></i>
-                                            </p>
-                                            <p className="d-flex flex-column text-right">
-                                                <span className="font-weight-bold">
-                                                    <span className="text-success">
-                                                        <i className="fas fa-dollar-sign"></i>{" "}
-                                                        {sales
-                                                            ? `${getTotalSales(
-                                                                  sales
-                                                              )}`
-                                                            : 0}
-                                                    </span>
-                                                </span>
-                                                <span className="text-muted">
-                                                    TOTAL SALES
-                                                </span>
-                                            </p>
-                                        </div>
-                                        {/* /.d-flex */}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    {userInfo.isAdmin && (
+                        <LoaderHandler
+                            loading={loadingSales}
+                            error={errorSales}
+                            loader={<SkeletonSales />}
+                            render={renderSales}
+                        />
                     )}
+
                     <div className="row">
                         <div className="col-12 col-md-9">
                             <div className="card">
@@ -400,86 +390,12 @@ const DashboardScreen = ({ history }) => {
                                 </div>
                                 <div className="card-body p-0">
                                     <div className="table-responsive">
-                                        {loadingAllOrders ? (
-                                            <DataTableLoader />
-                                        ) : errorAllOrders ? (
-                                            <Message
-                                                message={errorAllOrders}
-                                                color={"danger"}
-                                            />
-                                        ) : (
-                                            <table className="table m-0 table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Order ID</th>
-                                                        <th>Client</th>
-                                                        <th>Table</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {ordersInPlace(allOrders)
-                                                        .splice(0, 5)
-                                                        .map((order) => (
-                                                            <tr
-                                                                key={order.id}
-                                                                onClick={(e) =>
-                                                                    handleRowClick(
-                                                                        e,
-                                                                        order.id
-                                                                    )
-                                                                }
-                                                                style={{
-                                                                    cursor:
-                                                                        "pointer",
-                                                                }}
-                                                            >
-                                                                <td>
-                                                                    <h4>
-                                                                        <span
-                                                                            className={
-                                                                                "badge bg-primary"
-                                                                            }
-                                                                        >
-                                                                            {
-                                                                                order.id
-                                                                            }{" "}
-                                                                        </span>
-                                                                    </h4>
-                                                                </td>
-                                                                <td>
-                                                                    {order.client
-                                                                        ? order
-                                                                              .client
-                                                                              .name
-                                                                        : ""}
-                                                                </td>
-                                                                <td>
-                                                                    {order.table
-                                                                        ? order
-                                                                              .table
-                                                                              .name
-                                                                        : ""}
-                                                                </td>
-                                                                <td>
-                                                                    <h4>
-                                                                        <span
-                                                                            className={
-                                                                                "badge bg-success"
-                                                                            }
-                                                                        >
-                                                                            $
-                                                                            {
-                                                                                order.total
-                                                                            }{" "}
-                                                                        </span>
-                                                                    </h4>
-                                                                </td>
-                                                            </tr>
-                                                        ))}
-                                                </tbody>
-                                            </table>
-                                        )}
+                                        <LoaderHandler
+                                            loading={loadingAllOrders}
+                                            error={errorAllOrders}
+                                            loader={<DataTableLoader />}
+                                            render={renderOrders}
+                                        />
                                     </div>
                                 </div>
                                 <div className="card-footer clearfix">
@@ -516,35 +432,12 @@ const DashboardScreen = ({ history }) => {
                                 </div>
                                 <div className="card-body p-0">
                                     <ul className="products-list product-list-in-card pl-2 pr-2">
-                                        {loadingAllOrders ? (
-                                            <DataTableLoader />
-                                        ) : errorAllOrders ? (
-                                            <Message
-                                                message={errorAllOrders}
-                                                color={"danger"}
-                                            />
-                                        ) : (
-                                            ordersForDelivery(allOrders)
-                                                .splice(0, 5)
-                                                .map((order) => (
-                                                    <DeliveryListItem
-                                                        id={order.id}
-                                                        name={
-                                                            order.client
-                                                                ? order.client
-                                                                      .name
-                                                                : ""
-                                                        }
-                                                        address={
-                                                            order.client
-                                                                ? order.client
-                                                                      .address
-                                                                : ""
-                                                        }
-                                                        key={order.id}
-                                                    />
-                                                ))
-                                        )}
+                                        <LoaderHandler
+                                            loading={loadingAllOrders}
+                                            loader={<DataTableLoader />}
+                                            error={errorAllOrders}
+                                            render={renderDeliveries}
+                                        />
                                     </ul>
                                 </div>
                                 <div className="card-footer text-center">
