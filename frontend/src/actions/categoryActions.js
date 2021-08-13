@@ -58,47 +58,46 @@ export const allCategories = () => async (dispatch, getState) => {
 };
 
 //get all categories with pagination
-export const listCategories = (keyword = "", pageNumber = "") => async (
-    dispatch,
-    getState
-) => {
-    try {
-        dispatch({
-            type: CATEGORY_LIST_REQUEST,
-        });
+export const listCategories =
+    (keyword = "", pageNumber = "") =>
+    async (dispatch, getState) => {
+        try {
+            dispatch({
+                type: CATEGORY_LIST_REQUEST,
+            });
 
-        //get user from state
-        const {
-            userLogin: { userInfo },
-        } = getState();
+            //get user from state
+            const {
+                userLogin: { userInfo },
+            } = getState();
 
-        //headers
-        const config = {
-            headers: {
-                Authorization: `Bearer ${userInfo.token}`,
-            },
-        };
+            //headers
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${userInfo.token}`,
+                },
+            };
 
-        //get all categories
-        const { data } = await axios.get(
-            `/api/categories?keyword=${keyword}&pageNumber=${pageNumber}`,
-            config
-        );
+            //get all categories
+            const { data } = await axios.get(
+                `/api/categories?keyword=${keyword}&pageNumber=${pageNumber}`,
+                config
+            );
 
-        dispatch({
-            type: CATEGORY_LIST_SUCCESS,
-            payload: data,
-        });
-    } catch (error) {
-        dispatch({
-            type: CATEGORY_LIST_FAIL,
-            payload:
-                error.response && error.response.data.message
-                    ? error.response.data.message
-                    : error.message,
-        });
-    }
-};
+            dispatch({
+                type: CATEGORY_LIST_SUCCESS,
+                payload: data,
+            });
+        } catch (error) {
+            dispatch({
+                type: CATEGORY_LIST_FAIL,
+                payload:
+                    error.response && error.response.data.message
+                        ? error.response.data.message
+                        : error.message,
+            });
+        }
+    };
 
 //create a category
 export const createCategory = (category) => async (dispatch, getState) => {

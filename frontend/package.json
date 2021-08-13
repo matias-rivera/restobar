@@ -8,6 +8,8 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.21.0",
+    "enzyme": "^3.11.0",
+    "moxios": "^0.4.0",
     "react": "^16.13.1",
     "react-content-loader": "^5.1.4",
     "react-dom": "^16.14.0",
@@ -17,6 +19,7 @@
     "react-select": "^3.1.0",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
+    "redux-mock-store": "^1.5.4",
     "redux-thunk": "^2.3.0"
   },
   "scripts": {
