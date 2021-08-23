@@ -4,8 +4,8 @@ const morgan = require("morgan");
 const path = require("path");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
-const app = express();
 dotenv.config();
+const app = express();
 
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));

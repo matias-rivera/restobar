@@ -1,0 +1,58 @@
+version: "3"
+services:
+    postgres:
+        image: postgres:latest
+        healthcheck:
+            test: ["CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root"]
+            timeout: 45s
+            interval: 10s
+            retries: 10
+        restart: always
+        environment:
+            - POSTGRES_USER=root
+            - POSTGRES_PASSWORD=password
+            - APP_DB_USER=docker
+            - APP_DB_PASS=docker
+            - APP_DB_NAME=restobar
+            - APP_USER_PASS=$$2b$$10$$Ob28q7LgYBCadB0mgVnPD.u8WtBVVoWs28iZTrxFF8LWuwG7xWiuO
+        volumes:
+            - ./database:/docker-entrypoint-initdb.d/
+    nginx:
+        restart: always
+        depends_on:
+            - backend
+            - frontend
+        build:
+            dockerfile: Dockerfile.dev
+            context: ./nginx
+        ports:
+            - "3000:80"
+    backend:
+        depends_on:
+            - postgres
+        build:
+            dockerfile: Dockerfile.dev
+            context: backend
+        volumes:
+            - /app/node_modules
+            - ./backend:/app
+        ports:
+            - "5000:5000"
+        environment:
+            - DB_USER=docker
+            - DB_HOST=postgres
+            - DB_NAME=restobar
+            - DB_PASSWORD=docker
+            - DB_DIALECT=postgres
+            - DB_PORT=5432
+            - NODE_ENV=development
+            - PORT=5000
+            - JWT_SECRET=abc123
+    frontend:
+        stdin_open: true
+        build:
+            dockerfile: Dockerfile.dev
+            context: ./frontend
+        volumes:
+            - /app/node_modules
+            - ./frontend:/app

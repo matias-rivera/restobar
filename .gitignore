@@ -18,7 +18,9 @@ frontend/public/pages
 # production
 /frontend/build
 /frontend/node_modules
-uploads/*
+/backend/node_modules
+/backend/.env
+/backend/uploads/*
 
 
 # misc
