@@ -1,22 +1,18 @@
 version: "3"
 services:
-    postgres:
-        image: postgres:latest
-        healthcheck:
-            test: ["CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root"]
-            timeout: 45s
-            interval: 10s
-            retries: 10
-        restart: always
-        environment:
-            - POSTGRES_USER=root
-            - POSTGRES_PASSWORD=password
-            - APP_DB_USER=docker
-            - APP_DB_PASS=docker
-            - APP_DB_NAME=restobar
-            - APP_USER_PASS=$$2b$$10$$Ob28q7LgYBCadB0mgVnPD.u8WtBVVoWs28iZTrxFF8LWuwG7xWiuO
+    mysql:
+        image: mysql:5.7
+        ports:
+            - "33061:3306"
+        command: --init-file /data/application/init.sql
         volumes:
-            - ./database:/docker-entrypoint-initdb.d/
+            - ./database/init.sql:/data/application/init.sql
+        environment:
+            MYSQL_ROOT_USER: root
+            MYSQL_ROOT_PASSWORD: secret
+            MYSQL_DATABASE: restobar
+            MYSQL_USER: mysql
+            MYSQL_PASSWORD: secret
     nginx:
         restart: always
         depends_on:
@@ -29,7 +25,7 @@ services:
             - "3000:80"
     backend:
         depends_on:
-            - postgres
+            - mysql
         build:
             dockerfile: Dockerfile.dev
             context: backend
@@ -39,12 +35,12 @@ services:
         ports:
             - "5000:5000"
         environment:
-            - DB_USER=docker
-            - DB_HOST=postgres
+            - DB_USER=mysql
+            - DB_HOST=mysql
             - DB_NAME=restobar
-            - DB_PASSWORD=docker
-            - DB_DIALECT=postgres
-            - DB_PORT=5432
+            - DB_PASSWORD=secret
+            - DB_DIALECT=mysql
+            - DB_PORT=3306
             - NODE_ENV=development
             - PORT=5000
             - JWT_SECRET=abc123

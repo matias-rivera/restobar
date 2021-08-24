@@ -17,41 +17,37 @@ exports.createCategory = asyncHandler(async (req, res) => {
 exports.getCategories = asyncHandler(async (req, res) => {
     const pageSize = 5;
     const page = Number(req.query.pageNumber) || 1;
-    let categories;
-    let count;
     const keyword = req.query.keyword ? req.query.keyword : null;
+
+    /* SEARCH OPTIONS */
+    let options = {
+        attributes: {
+            exclude: ["updatedAt"],
+        },
+        offset: pageSize * (page - 1),
+        limit: pageSize,
+    };
+
+    /* CHECK IF THERE IS A KEYWORD */
     if (keyword) {
-        count = await Category.count({
+        options = {
+            ...options,
             where: {
                 [Op.or]: [
                     { id: { [Op.like]: `%${keyword}%` } },
                     { name: { [Op.like]: `%${keyword}%` } },
                 ],
             },
-        });
-        categories = await Category.findAll({
-            attributes: {
-                exclude: ["updatedAt"],
-            },
-            where: {
-                [Op.or]: [
-                    { id: { [Op.like]: `%${keyword}%` } },
-                    { name: { [Op.like]: `%${keyword}%` } },
-                ],
-            },
-            offset: pageSize * (page - 1),
-            limit: pageSize,
-        });
-    } else {
-        count = await Category.count({});
-        categories = await Category.findAll({
-            attributes: {
-                exclude: ["updatedAt"],
-            },
-            offset: pageSize * (page - 1),
-            limit: pageSize,
-        });
+        };
     }
+
+    /* QUERY */
+    const count = await Category.count({ ...options });
+    const categories = await Category.findAll({
+        ...options,
+    });
+
+    /* RESPONSE */
     res.json({ categories, page, pages: Math.ceil(count / pageSize) });
 });
 

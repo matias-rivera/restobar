@@ -19,42 +19,30 @@ exports.createTable = asyncHandler(async (req, res) => {
 exports.getTables = asyncHandler(async (req, res) => {
     const pageSize = 5;
     const page = Number(req.query.pageNumber) || 1;
-    let count;
-
     const keyword = req.query.keyword ? req.query.keyword : null;
 
+    let options = {
+        attributes: {
+            exclude: ["updatedAt"],
+        },
+        offset: pageSize * (page - 1),
+        limit: pageSize,
+    };
+
     if (keyword) {
-        count = await Table.count({
+        options = {
+            ...options,
             where: {
                 [Op.or]: [
                     { id: { [Op.like]: `%${keyword}%` } },
                     { name: { [Op.like]: `%${keyword}%` } },
                 ],
             },
-        });
-        tables = await Table.findAll({
-            attributes: {
-                exclude: ["updatedAt"],
-            },
-            where: {
-                [Op.or]: [
-                    { id: { [Op.like]: `%${keyword}%` } },
-                    { name: { [Op.like]: `%${keyword}%` } },
-                ],
-            },
-            offset: pageSize * (page - 1),
-            limit: pageSize,
-        });
-    } else {
-        count = await Table.count({});
-        tables = await Table.findAll({
-            attributes: {
-                exclude: ["updatedAt"],
-            },
-            offset: pageSize * (page - 1),
-            limit: pageSize,
-        });
+        };
     }
+
+    const count = await Table.count({ ...options });
+    const tables = await Table.findAll({ ...options });
 
     res.json({ tables, page, pages: Math.ceil(count / pageSize) });
 });

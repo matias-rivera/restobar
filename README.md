@@ -57,7 +57,7 @@ App para la Administración de Restaurante desarrollada con NodeJS, Express, MyS
 -   [NodeJS](https://nodejs.org/es/)
 -   [Redux](https://redux.js.org/)
 -   [Sequelize](https://sequelize.org/)
--   [PostgreSQL](https://www.postgresql.org/)
+-   [MySQL](https://www.mysql.com/)
 -   [AdminLTE](https://adminlte.io/)
 
 <!-- GETTING STARTED -->
@@ -74,7 +74,7 @@ There are two ways to start this project. The first one which needs some configu
     git clone https://github.com/matias-rivera/restobar.git
     ```
 
-2. You will need to install [Postgres](https://www.postgresql.org/), here is a [tutorial](https://www.youtube.com/watch?v=RAFZleZYxsc). After that, create a database and write down his name, user and password.
+2. You will need to install a [Mysql Server](https://www.mysql.com/), i think that [WAMP](https://www.wampserver.com/en/) is an easy tool to get started. Then create a database.
 
 3. Go to "backend", install the dependencies.
 
@@ -82,17 +82,17 @@ There are two ways to start this project. The first one which needs some configu
     npm install
     ```
 
-    Open ".env.example", set the database variables that you wrote down, then change the file name to ".env"
+    Open ".env.example", set the database variables, then change the file name to ".env"
 
     ```
      NODE_ENV=development
      PORT=5000
-     JWT_SECRET=abc123
+     JWT_SECRET=[YOUR SECRET]
      DB_USER=[DATABASE USER]
      DB_NAME=[DATABASE NAME]
      DB_PASSWORD=[DATABASE PASSWORD]
-     DB_HOST=localhost
-     DB_DIALECT=postgres
+     DB_HOST=[DATABASE HOST]
+     DB_DIALECT=mysql
     ```
 
     Fill the database. These commands will make the work. The first one creates the structure, the second fills the database with some initial data.
@@ -133,7 +133,7 @@ There are two ways to start this project. The first one which needs some configu
     ```sh
     docker-compose up --build
     ```
-4. It will run in "localhost:3000".
+4. It should start at "localhost:3000".
 
 <!-- LICENSE -->
 
@@ -156,7 +156,6 @@ Project Link: [https://github.com/matias-rivera/restobar/](https://github.com/ma
 -   [express-async-handler](https://github.com/Abazhenov/express-async-handler)
 -   [express-validator](https://express-validator.github.io/docs/)
 -   [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken)
--   [pg](https://github.com/brianc/node-postgres)
 -   [multer](https://github.com/expressjs/multer)
 -   [nodemon](https://github.com/remy/nodemon)
 -   [bcrypt](https://github.com/kelektiv/node.bcrypt.js)

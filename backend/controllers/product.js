@@ -25,51 +25,34 @@ exports.createProduct = asyncHandler(async (req, res) => {
 exports.getProducts = asyncHandler(async (req, res) => {
     const pageSize = 5;
     const page = Number(req.query.pageNumber) || 1;
-    let products;
-    let count;
 
     const keyword = req.query.keyword ? req.query.keyword : null;
 
-    if (keyword) {
-        count = await Product.count({
-            include: [{ model: Category, as: "category" }],
-            where: {
-                [Op.or]: [
-                    { id: { [Op.like]: `%${keyword}%` } },
-                    { name: { [Op.like]: `%${keyword}%` } },
-                    { price: keyword },
-                    { "$category.name$": { [Op.like]: `%${keyword}%` } },
-                ],
-            },
-        });
-        products = await Product.findAll({
-            include: [{ model: Category, as: "category" }],
-            attributes: {
-                exclude: ["categoryId", "updatedAt"],
-            },
-            where: {
-                [Op.or]: [
-                    { id: { [Op.like]: `%${keyword}%` } },
-                    { name: { [Op.like]: `%${keyword}%` } },
-                    { price: keyword },
-                    { "$category.name$": { [Op.like]: `%${keyword}%` } },
-                ],
-            },
-            offset: pageSize * (page - 1),
-            limit: pageSize,
-        });
-    } else {
-        count = await Product.count({});
-        products = await Product.findAll({
-            include: [{ model: Category, as: "category" }],
-            attributes: {
-                exclude: ["categoryId", "updatedAt"],
-            },
+    let options = {
+        include: [{ model: Category, as: "category" }],
+        attributes: {
+            exclude: ["categoryId", "updatedAt"],
+        },
 
-            offset: pageSize * (page - 1),
-            limit: pageSize,
-        });
+        offset: pageSize * (page - 1),
+        limit: pageSize,
+    };
+
+    if (keyword) {
+        options = {
+            ...options,
+            where: {
+                [Op.or]: [
+                    { id: { [Op.like]: `%${keyword}%` } },
+                    { name: { [Op.like]: `%${keyword}%` } },
+                    { price: keyword },
+                    { "$category.name$": { [Op.like]: `%${keyword}%` } },
+                ],
+            },
+        };
     }
+    const count = await Product.count({ ...options });
+    const products = await Product.findAll({ ...options });
 
     res.json({ products, page, pages: Math.ceil(count / pageSize) });
 });

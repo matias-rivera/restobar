@@ -21,35 +21,37 @@ exports.createOrder = asyncHandler(async (req, res) => {
     //get data from request
     const { total, tableId, clientId, products, delivery, note } = req.body;
 
-    stock(products).then(async (stock) => {
-        if (stock) {
-            //create order
-            const createdOrder = await Order.create({
-                total,
-                tableId: !delivery ? tableId : null,
-                userId: req.user.id,
-                clientId: clientId,
-                delivery: delivery,
-                note: note,
-            });
+    await stock(products);
 
-            //create order products
-            addProductsInOrder(createdOrder, products);
+    if (stock) {
+        //create order
 
-            //update table to occupied
-            if (!delivery) {
-                updateTable(createdOrder.tableId, true);
-            }
+        const createdOrder = await Order.create({
+            total,
+            tableId: !delivery ? tableId : null,
+            userId: req.user.id,
+            clientId: clientId,
+            delivery: delivery,
+            note: note,
+        });
 
-            //update stock
-            updateProductsStock(products, -1);
+        //create order products
+        await addProductsInOrder(createdOrder, products);
 
-            //response OK
-            res.status(201).json(createdOrder);
-        } else {
-            res.status(400).json({ message: "There is no stock available" });
+        //update table to occupied
+        if (!delivery) {
+            await updateTable(createdOrder.tableId, true);
         }
-    });
+
+        //update stock
+        await updateProductsStock(products, -1);
+
+        res.status(201).json(createdOrder);
+
+        //response OK
+    } else {
+        res.status(400).json({ message: "There is no stock available" });
+    }
 });
 
 //@desc     Get all orders
@@ -131,17 +133,23 @@ exports.getAllSales = asyncHandler(async (req, res) => {
 exports.getOrders = asyncHandler(async (req, res) => {
     const pageSize = 5;
     const page = Number(req.query.pageNumber) || 1;
-    let orders;
-    let count;
-
     const keyword = req.query.keyword ? req.query.keyword : null;
+    let options = {
+        include: [
+            { model: Client, as: "client" },
+            { model: Table, as: "table" },
+        ],
+        attributes: {
+            exclude: ["userId", "clientId", "tableId", "updatedAt"],
+        },
+        order: [["id", "DESC"]],
+        offset: pageSize * (page - 1),
+        limit: pageSize,
+    };
 
     if (keyword) {
-        count = await Order.count({
-            include: [
-                { model: Client, as: "client" },
-                { model: Table, as: "table" },
-            ],
+        options = {
+            ...options,
             where: {
                 [Op.or]: [
                     { id: { [Op.like]: `%${keyword}%` } },
@@ -150,43 +158,10 @@ exports.getOrders = asyncHandler(async (req, res) => {
                     { "$table.name$": { [Op.like]: `%${keyword}%` } },
                 ],
             },
-        });
-        orders = await Order.findAll({
-            include: [
-                { model: Client, as: "client" },
-                { model: Table, as: "table" },
-            ],
-            attributes: {
-                exclude: ["userId", "clientId", "tableId", "updatedAt"],
-            },
-            where: {
-                [Op.or]: [
-                    { id: { [Op.like]: `%${keyword}%` } },
-                    { total: keyword },
-                    { "$client.name$": { [Op.like]: `%${keyword}%` } },
-                    { "$table.name$": { [Op.like]: `%${keyword}%` } },
-                ],
-            },
-            order: [["id", "DESC"]],
-
-            offset: pageSize * (page - 1),
-            limit: pageSize,
-        });
-    } else {
-        count = await Order.count({});
-        orders = await Order.findAll({
-            include: [
-                { model: Client, as: "client" },
-                { model: Table, as: "table" },
-            ],
-            attributes: {
-                exclude: ["userId", "clientId", "tableId", "updatedAt"],
-            },
-            order: [["id", "DESC"]],
-            offset: pageSize * (page - 1),
-            limit: pageSize,
-        });
+        };
     }
+    const count = await Order.count({ ...options });
+    const orders = await Order.findAll({ ...options });
 
     res.json({ orders, page, pages: Math.ceil(count / pageSize) });
 });
@@ -198,17 +173,29 @@ exports.getActiveOrders = asyncHandler(async (req, res) => {
     const pageSize = 5;
     const page = Number(req.query.pageNumber) || 1;
     const delivery = req.query.delivery ? true : false;
-    let orders;
-    let count;
 
     const keyword = req.query.keyword ? req.query.keyword : null;
 
+    let options = {
+        include: [
+            { model: Client, as: "client" },
+            { model: Table, as: "table" },
+        ],
+        attributes: {
+            exclude: ["userId", "clientId", "tableId", "updatedAt"],
+        },
+        where: {
+            [Op.or]: [{ isPaid: false }],
+            [Op.and]: { delivery: delivery },
+        },
+        order: [["id", "DESC"]],
+        offset: pageSize * (page - 1),
+        limit: pageSize,
+    };
+
     if (keyword) {
-        count = await Order.count({
-            include: [
-                { model: Client, as: "client" },
-                { model: Table, as: "table" },
-            ],
+        options = {
+            ...options,
             where: {
                 [Op.or]: [
                     { id: { [Op.like]: `%${keyword}%` } },
@@ -221,56 +208,10 @@ exports.getActiveOrders = asyncHandler(async (req, res) => {
                 },
                 [Op.and]: { delivery: delivery },
             },
-        });
-        orders = await Order.findAll({
-            include: [
-                { model: Client, as: "client" },
-                { model: Table, as: "table" },
-            ],
-            attributes: {
-                exclude: ["userId", "clientId", "tableId", "updatedAt"],
-            },
-            where: {
-                [Op.or]: [
-                    { id: { [Op.like]: `%${keyword}%` } },
-                    { total: keyword },
-                    { "$client.name$": { [Op.like]: `%${keyword}%` } },
-                    { "$table.name$": { [Op.like]: `%${keyword}%` } },
-                ],
-                [Op.and]: {
-                    [Op.or]: [{ isPaid: false }],
-                },
-                [Op.and]: { delivery: delivery },
-            },
-            order: [["id", "DESC"]],
-
-            offset: pageSize * (page - 1),
-            limit: pageSize,
-        });
-    } else {
-        count = await Order.count({
-            where: {
-                [Op.or]: [{ isPaid: false }],
-                [Op.and]: { delivery: delivery },
-            },
-        });
-        orders = await Order.findAll({
-            include: [
-                { model: Client, as: "client" },
-                { model: Table, as: "table" },
-            ],
-            attributes: {
-                exclude: ["userId", "clientId", "tableId", "updatedAt"],
-            },
-            where: {
-                [Op.or]: [{ isPaid: false }],
-                [Op.and]: { delivery: delivery },
-            },
-            order: [["id", "DESC"]],
-            offset: pageSize * (page - 1),
-            limit: pageSize,
-        });
+        };
     }
+    const count = await Order.count({ ...options });
+    const orders = await Order.findAll({ ...options });
 
     res.json({ orders, page, pages: Math.ceil(count / pageSize) });
 });
@@ -345,16 +286,16 @@ exports.updateOrder = asyncHandler(async (req, res) => {
         if (order.tableId !== tableId) {
             if (!order.tableId && !delivery) {
                 /* DELIVERY -> TABLE */
-                updateTable(tableId, true);
+                await updateTable(tableId, true);
                 order.tableId = tableId;
             } else if (order.tableId && delivery) {
                 /* TABLE -> DELIVERY */
-                updateTable(order.tableId, false);
+                await updateTable(order.tableId, false);
                 order.tableId = null;
             } else {
                 /* TABLE -> TABLE */
-                updateTable(order.tableId, false);
-                updateTable(tableId, true);
+                await updateTable(order.tableId, false);
+                await updateTable(tableId, true);
                 order.tableId = tableId;
             }
         }
@@ -370,16 +311,16 @@ exports.updateOrder = asyncHandler(async (req, res) => {
                 });
 
                 /* RESTOCK OLD PRODUCTS */
-                updateProductsStock(formattedOldProducts, 1);
+                await updateProductsStock(formattedOldProducts, 1);
 
                 /* DELETE ALL PRODUCTS FROM ORDER */
                 await order.setProducts(null);
 
                 /* CREATE NEW PRODUCTS */
-                addProductsInOrder(order, products);
+                await addProductsInOrder(order, products);
 
                 /* UPDATE STOCK */
-                updateProductsStock(products, -1);
+                await updateProductsStock(products, -1);
             }
         }
         order.total = total;

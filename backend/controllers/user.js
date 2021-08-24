@@ -85,13 +85,20 @@ exports.getUsers = asyncHandler(async (req, res) => {
     //pages constants
     const pageSize = 5;
     const page = Number(req.query.pageNumber) || 1;
-    let users;
-    let count;
     //check for keywords
     const keyword = req.query.keyword ? req.query.keyword : null;
 
+    let options = {
+        attributes: {
+            exclude: ["updatedAt"],
+        },
+        offset: pageSize * (page - 1),
+        limit: pageSize,
+    };
+
     if (keyword) {
-        count = await User.count({
+        options = {
+            ...options,
             where: {
                 [Op.or]: [
                     { id: { [Op.like]: `%${keyword}%` } },
@@ -99,31 +106,11 @@ exports.getUsers = asyncHandler(async (req, res) => {
                     { email: { [Op.like]: `%${keyword}%` } },
                 ],
             },
-        });
-        users = await User.findAll({
-            attributes: {
-                exclude: ["updatedAt"],
-            },
-            where: {
-                [Op.or]: [
-                    { id: { [Op.like]: `%${keyword}%` } },
-                    { name: { [Op.like]: `%${keyword}%` } },
-                    { email: { [Op.like]: `%${keyword}%` } },
-                ],
-            },
-            offset: pageSize * (page - 1),
-            limit: pageSize,
-        });
-    } else {
-        count = await User.count({});
-        users = await User.findAll({
-            attributes: {
-                exclude: ["updatedAt"],
-            },
-            offset: pageSize * (page - 1),
-            limit: pageSize,
-        });
+        };
     }
+
+    const count = await User.count({});
+    const users = await User.findAll({});
 
     res.json({ users, page, pages: Math.ceil(count / pageSize) });
 });
