@@ -51,14 +51,6 @@ exports.getCategories = asyncHandler(async (req, res) => {
     res.json({ categories, page, pages: Math.ceil(count / pageSize) });
 });
 
-//@desc     Get all categories
-//@route    GET /api/categories/all
-//@access   Private/user
-exports.getAllCategories = asyncHandler(async (req, res) => {
-    const categories = await Category.findAll({});
-    res.json(categories);
-});
-
 //@desc     Get category by ID
 //@route    GET /api/categories/:id
 //@access   Private/user

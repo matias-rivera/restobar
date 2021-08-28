@@ -16,7 +16,7 @@ import {
 } from "../../constants/productConstants";
 
 /* Actions */
-import { allCategories } from "../../actions/categoryActions";
+import { listCategories } from "../../actions/categoryActions";
 import { CATEGORY_ALL_RESET } from "../../constants/categoryConstants";
 import {
     updateProduct,
@@ -38,13 +38,8 @@ const ProductEditScreen = ({ history, match }) => {
     const userLogin = useSelector((state) => state.userLogin);
     const { userInfo } = userLogin;
 
-    //categories state
-    const categoryAll = useSelector((state) => state.categoryAll);
-    const {
-        loading: loadingCategories,
-        error: errorCategories,
-        categories,
-    } = categoryAll;
+    const categoryList = useSelector((state) => state.categoryList);
+    const { categories } = categoryList;
 
     //product details state
     const productDetails = useSelector((state) => state.productDetails);
@@ -70,7 +65,6 @@ const ProductEditScreen = ({ history, match }) => {
         if (product) {
             //load product data
             if (!product.name || product.id !== productId) {
-                dispatch(allCategories());
                 dispatch(listProductDetails(productId));
             } else {
                 //set states
@@ -120,8 +114,17 @@ const ProductEditScreen = ({ history, match }) => {
         }
     };
 
+    const searchCategories = (e) => {
+        dispatch(listCategories(e.target.value));
+    };
+
     const renderCategoriesSelect = () => (
-        <Select data={category} setData={setCategory} items={categories} />
+        <Select
+            data={category}
+            setData={setCategory}
+            items={categories}
+            search={searchCategories}
+        />
     );
 
     const renderForm = () => (
@@ -150,11 +153,7 @@ const ProductEditScreen = ({ history, match }) => {
                 errors={errors}
             />
 
-            <LoaderHandler
-                loading={loadingCategories}
-                error={errorCategories}
-                render={renderCategoriesSelect}
-            />
+            {renderCategoriesSelect()}
             {errors.category && (
                 <Message message={errors.category} color={"warning"} />
             )}

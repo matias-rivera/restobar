@@ -20,8 +20,6 @@ router
     .get(protect, getCategories)
     .post(protect, categoryCreateValidator, runValidation, createCategory);
 
-router.route("/all").get(protect, getAllCategories);
-
 router
     .route("/:id")
     .get(protect, getCategory)

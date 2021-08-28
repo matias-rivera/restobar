@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReactSelect from "react-select";
 
-const Select = ({ items, data, setData, disabled }) => {
+const Select = ({ items, data, setData, disabled, search = () => {} }) => {
     const [current, setCurrent] = useState(null);
 
     useEffect(() => {
@@ -30,6 +30,8 @@ const Select = ({ items, data, setData, disabled }) => {
             options={mapSelect()}
             onChange={handleChange}
             value={current}
+            onKeyDown={search}
+            onFocus={search}
             placeholder="Select value"
             isDisabled={disabled}
             isSearchable

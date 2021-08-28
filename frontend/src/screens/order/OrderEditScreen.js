@@ -26,8 +26,8 @@ import {
 
 /* Actions */
 import { listOrderDetails, updateOrder } from "../../actions/orderActions";
-import { allClients } from "../../actions/clientActions";
-import { allTables } from "../../actions/tableActions";
+import { listClients } from "../../actions/clientActions";
+import { listTables } from "../../actions/tableActions";
 
 const OrderEditScreen = ({ history, match }) => {
     const orderId = parseInt(match.params.id);
@@ -50,6 +50,12 @@ const OrderEditScreen = ({ history, match }) => {
     const orderDetails = useSelector((state) => state.orderDetails);
     const { loading, error, order } = orderDetails;
 
+    const clientList = useSelector((state) => state.clientList);
+    const { clients } = clientList;
+
+    const tableList = useSelector((state) => state.tableList);
+    const { tables } = tableList;
+
     //order edit state
     const orderUpdate = useSelector((state) => state.orderUpdate);
     const {
@@ -57,22 +63,6 @@ const OrderEditScreen = ({ history, match }) => {
         success: successUpdate,
         errorUpdate,
     } = orderUpdate;
-
-    //tables list state
-    const tableAll = useSelector((state) => state.tableAll);
-    const {
-        loading: loadingAllTables,
-        error: errorAllTables,
-        tables,
-    } = tableAll;
-
-    //client list state
-    const clientAll = useSelector((state) => state.clientAll);
-    const {
-        loading: loadingAllClients,
-        error: errorAllClients,
-        clients,
-    } = clientAll;
 
     useEffect(() => {
         if (successUpdate) {
@@ -85,12 +75,6 @@ const OrderEditScreen = ({ history, match }) => {
             }
         }
     }, [successUpdate]);
-
-    /* Load Tables and Clients */
-    useEffect(() => {
-        dispatch(allTables());
-        dispatch(allClients());
-    }, [dispatch, history]);
 
     useEffect(() => {
         //load order
@@ -190,6 +174,10 @@ const OrderEditScreen = ({ history, match }) => {
         </>
     );
 
+    const searchTables = (e) => {
+        dispatch(listTables(e.target.value));
+    };
+
     const renderTablesSelect = () => (
         <>
             <Select
@@ -197,6 +185,7 @@ const OrderEditScreen = ({ history, match }) => {
                 setData={setTable}
                 items={filterFreeTables(tables)}
                 disabled={delivery}
+                search={searchTables}
             />
             {errors.table && (
                 <Message message={errors.table} color={"warning"} />
@@ -204,9 +193,18 @@ const OrderEditScreen = ({ history, match }) => {
         </>
     );
 
+    const searchClients = (e) => {
+        dispatch(listClients(e.target.value));
+    };
+
     const renderClientsSelect = () => (
         <>
-            <Select data={client} setData={setClient} items={clients} />
+            <Select
+                data={client}
+                setData={setClient}
+                items={clients}
+                search={searchClients}
+            />
             {errors.client && (
                 <Message message={errors.client} color={"warning"} />
             )}
@@ -267,26 +265,10 @@ const OrderEditScreen = ({ history, match }) => {
                                             {renderCart()}
                                             <div className="row">
                                                 <div className="col-12 col-md-6">
-                                                    <LoaderHandler
-                                                        loading={
-                                                            loadingAllTables
-                                                        }
-                                                        error={errorAllTables}
-                                                        render={
-                                                            renderTablesSelect
-                                                        }
-                                                    />
+                                                    {renderTablesSelect()}
                                                 </div>
                                                 <div className="col-12 col-md-6">
-                                                    <LoaderHandler
-                                                        loading={
-                                                            loadingAllClients
-                                                        }
-                                                        error={errorAllClients}
-                                                        render={
-                                                            renderClientsSelect
-                                                        }
-                                                    />
+                                                    {renderClientsSelect()}
                                                 </div>
                                             </div>
                                             <div className="mt-4">

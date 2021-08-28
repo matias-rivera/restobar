@@ -5,8 +5,6 @@ import { Link } from "react-router-dom";
 /* Components */
 import HeaderContent from "./../components/HeaderContent";
 import SmallBox from "./../components/SmallBox";
-import Loader from "../components/Loader";
-import Message from "./../components/Message";
 import DeliveryListItem from "../components/DeliveryListItem";
 import DataTableLoader from "../components/loader/DataTableLoader";
 import LoaderHandler from "../components/loader/LoaderHandler";

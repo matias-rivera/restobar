@@ -9,7 +9,6 @@ import {
     userUpdateReducer,
 } from "./reducers/userReducers";
 import {
-    categoryAllReducer,
     categoryListReducer,
     categoryCreateReducer,
     categoryDetailsReducer,
@@ -25,7 +24,6 @@ import {
 } from "./reducers/tableReducers";
 
 import {
-    clientAllReducer,
     clientListReducer,
     clientCreateReducer,
     clientDetailsReducer,
@@ -57,7 +55,6 @@ const reducer = combineReducers({
     userDetails: userDetailsReducer,
     userUpdate: userUpdateReducer,
 
-    categoryAll: categoryAllReducer,
     categoryList: categoryListReducer,
     categoryCreate: categoryCreateReducer,
     categoryDetails: categoryDetailsReducer,
@@ -74,7 +71,6 @@ const reducer = combineReducers({
     tableDetails: tableDetailsReducer,
     tableUpdate: tableUpdateReducer,
 
-    clientAll: clientAllReducer,
     clientList: clientListReducer,
     clientCreate: clientCreateReducer,
     clientDetails: clientDetailsReducer,

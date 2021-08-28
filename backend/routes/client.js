@@ -7,7 +7,6 @@ const {
     getClient,
     updateClient,
     deleteClient,
-    getAllClients,
 } = require("../controllers/client");
 
 // VALIDATORS
@@ -19,8 +18,6 @@ router
     .route("/")
     .post(protect, clientCreateValidator, runValidation, createClient)
     .get(protect, getClients);
-
-router.route("/all").get(protect, getAllClients);
 
 router
     .route("/:id")

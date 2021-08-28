@@ -54,14 +54,6 @@ exports.getClients = asyncHandler(async (req, res) => {
     res.json({ clients, page, pages: Math.ceil(count / pageSize) });
 });
 
-//@desc     Get all clients
-//@route    GET /api/clients/all
-//@access   Private/user
-exports.getAllClients = asyncHandler(async (req, res) => {
-    const clients = await Client.findAll({});
-    res.json(clients);
-});
-
 //@desc     Get client by ID
 //@route    GET /api/clients/:id
 //@access   Private/user

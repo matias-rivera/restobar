@@ -47,27 +47,6 @@ export const clientListReducer = (
     }
 };
 
-export const clientAllReducer = (
-    state = { loading: true, clients: [] },
-    action
-) => {
-    switch (action.type) {
-        case CLIENT_ALL_REQUEST:
-            return { loading: true, clients: [] };
-        case CLIENT_ALL_SUCCESS:
-            return {
-                loading: false,
-                clients: action.payload,
-            };
-        case CLIENT_ALL_FAIL:
-            return { loading: false, error: action.payload };
-        case CLIENT_ALL_RESET:
-            return { clients: [] };
-        default:
-            return state;
-    }
-};
-
 export const clientCreateReducer = (state = {}, action) => {
     switch (action.type) {
         case CLIENT_CREATE_REQUEST:
