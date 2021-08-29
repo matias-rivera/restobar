@@ -1,11 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const Order = require("../models").Order;
-const Product = require("../models").Product;
 const { Op } = require("sequelize");
 const Client = require("../models").Client;
 const Table = require("../models").Table;
-const { sequelize } = require("../models");
-
 //utils
 const {
     stock,
@@ -55,84 +52,12 @@ exports.createOrder = asyncHandler(async (req, res) => {
 });
 
 //@desc     Get all orders
-//@route    GET /api/orders/all
-//@access   Private/user
-exports.getAllOrders = asyncHandler(async (req, res) => {
-    orders = await Order.findAll({ order: [["id", "DESC"]] });
-    res.json(orders);
-});
-
-//@desc     Get all active orders
-//@route    GET /api/orders/active/all
-//@access   Private/user
-exports.getAllActiveOrders = asyncHandler(async (req, res) => {
-    orders = await Order.findAll({
-        include: [
-            { model: Client, as: "client" },
-            { model: Table, as: "table" },
-        ],
-        order: [["id", "DESC"]],
-        where: { isPaid: false },
-    });
-    res.json(orders);
-});
-
-//@desc     Get all delivery orders
-//@route    GET /api/orders/all/delivery
-//@access   Private/user
-exports.getAllDeliveryOrders = asyncHandler(async (req, res) => {
-    orders = await Order.findAll({
-        order: [["id", "DESC"]],
-        where: { delivery: true },
-    });
-    res.json(orders);
-});
-
-//@desc     Get all in place orders
-//@route    GET /api/orders/all/in-place
-//@access   Private/user
-exports.getAllInPlaceOrders = asyncHandler(async (req, res) => {
-    orders = await Order.findAll({
-        order: [["id", "DESC"]],
-        where: { delivery: false },
-    });
-    res.json(orders);
-});
-
-//@desc     Get all sales
-//@route    GET /api/orders/all/sales
-//@access   Private/user
-exports.getAllSales = asyncHandler(async (req, res) => {
-    orders = await Order.findAll({
-        group: ["Order.id"],
-        includeIgnoreAttributes: false,
-        attributes: [
-            "id",
-            "delivery",
-            "total",
-            "updatedAt",
-            [sequelize.fn("COUNT", "products.id"), "total_products"],
-        ],
-        include: [
-            {
-                model: Product,
-                as: "products",
-                attributes: [],
-                duplicating: false,
-            },
-        ],
-        order: [["updatedAt", "DESC"]],
-        where: { isPaid: true },
-    });
-    res.json(orders);
-});
-
-//@desc     Get all orders
 //@route    GET /api/orders
 //@access   Private/user
 exports.getOrders = asyncHandler(async (req, res) => {
     const pageSize = 5;
     const page = Number(req.query.pageNumber) || 1;
+    const delivery = Boolean(req.query.delivery) || false;
     const keyword = req.query.keyword ? req.query.keyword : null;
     let options = {
         include: [
@@ -160,56 +85,19 @@ exports.getOrders = asyncHandler(async (req, res) => {
             },
         };
     }
-    const count = await Order.count({ ...options });
-    const orders = await Order.findAll({ ...options });
 
-    res.json({ orders, page, pages: Math.ceil(count / pageSize) });
-});
-
-//@desc     Get all active orders
-//@route    GET /api/orders/active
-//@access   Private/user
-exports.getActiveOrders = asyncHandler(async (req, res) => {
-    const pageSize = 5;
-    const page = Number(req.query.pageNumber) || 1;
-    const delivery = req.query.delivery ? true : false;
-
-    const keyword = req.query.keyword ? req.query.keyword : null;
-
-    let options = {
-        include: [
-            { model: Client, as: "client" },
-            { model: Table, as: "table" },
-        ],
-        attributes: {
-            exclude: ["userId", "clientId", "tableId", "updatedAt"],
-        },
-        where: {
-            [Op.or]: [{ isPaid: false }],
-            [Op.and]: { delivery: delivery },
-        },
-        order: [["id", "DESC"]],
-        offset: pageSize * (page - 1),
-        limit: pageSize,
-    };
-
-    if (keyword) {
+    if (delivery) {
         options = {
             ...options,
             where: {
-                [Op.or]: [
-                    { id: { [Op.like]: `%${keyword}%` } },
-                    { total: keyword },
-                    { "$client.name$": { [Op.like]: `%${keyword}%` } },
-                    { "$table.name$": { [Op.like]: `%${keyword}%` } },
-                ],
-                [Op.and]: {
-                    [Op.or]: [false ? { isPaid: false } : ""],
+                ...options.where,
+                delivery: {
+                    [Op.eq]: true,
                 },
-                [Op.and]: { delivery: delivery },
             },
         };
     }
+
     const count = await Order.count({ ...options });
     const orders = await Order.findAll({ ...options });
 
@@ -225,21 +113,6 @@ exports.getOrder = asyncHandler(async (req, res) => {
     });
     if (order) {
         res.json(order);
-    } else {
-        res.status(404);
-        throw new Error("Order not found");
-    }
-});
-
-//@desc     Get order items by ID
-//@route    GET /api/order/:id/items
-//@access   Private/user
-exports.getOrderItems = asyncHandler(async (req, res) => {
-    const order = await Order.findByPk(req.params.id);
-
-    if (order) {
-        const orderItems = await order.getProducts();
-        res.json(orderItems);
     } else {
         res.status(404);
         throw new Error("Order not found");
@@ -348,35 +221,6 @@ exports.updateOrderDelivery = asyncHandler(async (req, res) => {
     }
 });
 
-//@desc     Update order items
-//@route    PUT /api/orders/:id/items
-//@access   Private/user
-exports.updateOrderItems = asyncHandler(async (req, res) => {
-    const order = await Order.findByPk(req.params.id);
-
-    const { products } = req.body;
-
-    if (order) {
-        //delete order items
-        order.setProducts(null).then((item) => {
-            // create order items
-            products.map((product) => {
-                order.addProduct(product.id, {
-                    through: { quantity: product.quantity },
-                });
-            });
-        });
-
-        //save
-        //const updatedOrder =  await order.save()
-        const orders = await order.getProducts();
-        res.json(orders);
-    } else {
-        res.status(404);
-        throw new Error("Order not found");
-    }
-});
-
 //@desc     Delete a order
 //@route    DELETE /api/orders/:id
 //@access   Private/user
@@ -390,4 +234,70 @@ exports.deleteOrder = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error("Order not found");
     }
+});
+
+//@desc     Get statistics
+//@route    POST /api/orders/statistics
+//@access   Private/user
+exports.getStatistics = asyncHandler(async (req, res) => {
+    const TODAY_START = new Date().setHours(0, 0, 0, 0);
+    const NOW = new Date();
+
+    const sales = await Order.findAll({
+        where: {
+            isPaid: true,
+        },
+        limit: 5,
+        include: { all: true, nested: true },
+    });
+
+    const totalSales = await Order.sum("total", {
+        where: {
+            isPaid: true,
+        },
+    });
+
+    const deliveriesMade = await Order.count({
+        where: {
+            delivery: true,
+            isPaid: true,
+        },
+    });
+
+    const totalOrdersPaid = await Order.count({
+        where: {
+            isPaid: true,
+        },
+    });
+
+    const todaySales = await Order.sum("total", {
+        where: {
+            updatedAt: {
+                [Op.gt]: TODAY_START,
+                [Op.lt]: NOW,
+            },
+            isPaid: true,
+        },
+    });
+
+    const orders = await Order.findAll({
+        where: {
+            [Op.or]: [{ isPaid: false }],
+        },
+        include: { all: true, nested: true },
+        attributes: {
+            exclude: ["userId", "clientId", "tableId"],
+        },
+    });
+
+    res.json({
+        statistics: {
+            total: totalSales,
+            today: todaySales,
+            orders: totalOrdersPaid,
+            deliveries: deliveriesMade,
+        },
+        sales,
+        orders,
+    });
 });

@@ -18,23 +18,11 @@ import {
     ORDER_DELETE_SUCCESS,
     ORDER_DELETE_FAIL,
     ORDER_DELETE_RESET,
-    ORDER_ALL_REQUEST,
-    ORDER_ALL_SUCCESS,
-    ORDER_ALL_FAIL,
-    ORDER_ALL_RESET,
+    ORDER_STATISTICS_REQUEST,
+    ORDER_STATISTICS_SUCCESS,
+    ORDER_STATISTICS_FAIL,
+    ORDER_STATISTICS_RESET,
     ORDER_CREATE_RESET,
-    ORDER_DELIVERY_REQUEST,
-    ORDER_DELIVERY_SUCCESS,
-    ORDER_DELIVERY_FAIL,
-    ORDER_DELIVERY_RESET,
-    ORDER_ALL_ACTIVE_REQUEST,
-    ORDER_ALL_ACTIVE_SUCCESS,
-    ORDER_ALL_ACTIVE_FAIL,
-    ORDER_ALL_ACTIVE_RESET,
-    ORDER_SALES_REQUEST,
-    ORDER_SALES_SUCCESS,
-    ORDER_SALES_FAIL,
-    ORDER_SALES_RESET,
 } from "../constants/orderConstants";
 
 export const orderListReducer = (
@@ -60,87 +48,46 @@ export const orderListReducer = (
     }
 };
 
-export const orderDeliveryListReducer = (
-    state = { loading: true, orders: [] },
+export const statisticsReducer = (
+    state = {
+        loading: true,
+        data: {
+            orders: [],
+            sales: [],
+            statistics: {
+                total: 0,
+                today: 0,
+                orders: 0,
+                deliveries: 0,
+            },
+        },
+    },
     action
 ) => {
     switch (action.type) {
-        case ORDER_DELIVERY_REQUEST:
-            return { loading: true, orders: [] };
-        case ORDER_DELIVERY_SUCCESS:
+        case ORDER_STATISTICS_REQUEST:
+            return { loading: true, ...state };
+        case ORDER_STATISTICS_SUCCESS:
             return {
                 loading: false,
-                orders: action.payload.orders,
-                pages: action.payload.pages,
-                page: action.payload.page,
+                data: action.payload,
             };
-        case ORDER_DELIVERY_FAIL:
-            return { loading: false, error: action.payload, orders: [] };
-        case ORDER_DELIVERY_RESET:
-            return { orders: [] };
-        default:
-            return state;
-    }
-};
-
-export const orderAllReducer = (
-    state = { loading: true, orders: [] },
-    action
-) => {
-    switch (action.type) {
-        case ORDER_ALL_REQUEST:
-            return { loading: true, orders: [] };
-        case ORDER_ALL_SUCCESS:
+        case ORDER_STATISTICS_FAIL:
+            return { loading: false, error: action.payload, ...state };
+        case ORDER_STATISTICS_RESET:
             return {
-                loading: false,
-                orders: action.payload,
+                ...state,
+                data: {
+                    orders: [],
+                    sales: [],
+                    statistics: {
+                        total: 0,
+                        today: 0,
+                        orders: 0,
+                        deliveries: 0,
+                    },
+                },
             };
-        case ORDER_ALL_FAIL:
-            return { loading: false, error: action.payload };
-        case ORDER_ALL_RESET:
-            return { orders: [] };
-        default:
-            return state;
-    }
-};
-
-export const orderAllSalesReducer = (
-    state = { loading: true, orders: [] },
-    action
-) => {
-    switch (action.type) {
-        case ORDER_SALES_REQUEST:
-            return { loading: true, orders: [] };
-        case ORDER_SALES_SUCCESS:
-            return {
-                loading: false,
-                orders: action.payload,
-            };
-        case ORDER_SALES_FAIL:
-            return { loading: false, error: action.payload };
-        case ORDER_SALES_RESET:
-            return { orders: [] };
-        default:
-            return state;
-    }
-};
-
-export const orderAllActiveReducer = (
-    state = { loading: true, orders: [] },
-    action
-) => {
-    switch (action.type) {
-        case ORDER_ALL_ACTIVE_REQUEST:
-            return { loading: true, orders: [] };
-        case ORDER_ALL_ACTIVE_SUCCESS:
-            return {
-                loading: false,
-                orders: action.payload,
-            };
-        case ORDER_ALL_ACTIVE_FAIL:
-            return { loading: false, error: action.payload };
-        case ORDER_ALL_ACTIVE_RESET:
-            return { orders: [] };
         default:
             return state;
     }

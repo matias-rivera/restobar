@@ -10,9 +10,9 @@ import Pagination from "../../components/Pagination";
 import Search from "../../components/Search";
 
 /* actions */
-import { listDeliveryOrders } from "../../actions/orderActions";
+import { listOrders } from "../../actions/orderActions";
 
-const DeliveryScreen = ({ history, match }) => {
+const DeliveryScreen = ({ history }) => {
     const dispatch = useDispatch();
 
     const [pageNumber, setPageNumber] = useState(1);
@@ -20,11 +20,11 @@ const DeliveryScreen = ({ history, match }) => {
     const userLogin = useSelector((state) => state.userLogin);
     const { userInfo } = userLogin;
 
-    const orderDeliveryList = useSelector((state) => state.orderDeliveryList);
-    const { loading, error, orders, page, pages } = orderDeliveryList;
+    const orderList = useSelector((state) => state.orderList);
+    const { loading, error, orders, page, pages } = orderList;
 
     useEffect(() => {
-        dispatch(listDeliveryOrders(keyword, pageNumber));
+        dispatch(listOrders({ keyword, pageNumber, delivery: true }));
     }, [dispatch, history, userInfo, pageNumber, keyword]);
 
     const renderCreateButton = () => (

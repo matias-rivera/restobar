@@ -19,9 +19,8 @@ import OrderCart from "../../components/order/OrderCart";
 import LoaderHandler from "../../components/loader/LoaderHandler";
 
 /* Constants */
-import { TABLE_ALL_RESET } from "../../constants/tableConstants";
+
 import { PRODUCT_LIST_RESET } from "../../constants/productConstants";
-import { CLIENT_ALL_RESET } from "../../constants/clientConstants";
 import { ORDER_CREATE_RESET } from "../../constants/orderConstants";
 
 /* Actions */
@@ -63,8 +62,6 @@ const OrderCreateScreen = ({ history, match }) => {
     useEffect(() => {
         if (success) {
             dispatch({ type: PRODUCT_LIST_RESET });
-            dispatch({ type: TABLE_ALL_RESET });
-            dispatch({ type: CLIENT_ALL_RESET });
             dispatch({ type: ORDER_CREATE_RESET });
             if (delivery) {
                 history.push("/delivery");

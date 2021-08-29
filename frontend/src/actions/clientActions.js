@@ -15,90 +15,49 @@ import {
     CLIENT_DELETE_REQUEST,
     CLIENT_DELETE_SUCCESS,
     CLIENT_DELETE_FAIL,
-    CLIENT_ALL_REQUEST,
-    CLIENT_ALL_SUCCESS,
-    CLIENT_ALL_FAIL,
 } from "../constants/clientConstants";
 
-//get all clients
-export const allClients = () => async (dispatch, getState) => {
-    try {
-        dispatch({
-            type: CLIENT_ALL_REQUEST,
-        });
-
-        //get user from state
-        const {
-            userLogin: { userInfo },
-        } = getState();
-
-        //headers
-        const config = {
-            headers: {
-                Authorization: `Bearer ${userInfo.token}`,
-            },
-        };
-
-        //get all clients
-        const { data } = await axios.get(`/api/clients/all`, config);
-
-        dispatch({
-            type: CLIENT_ALL_SUCCESS,
-            payload: data,
-        });
-    } catch (error) {
-        dispatch({
-            type: CLIENT_ALL_FAIL,
-            payload:
-                error.response && error.response.data.message
-                    ? error.response.data.message
-                    : error.message,
-        });
-    }
-};
-
 //get all clients with pagination
-export const listClients = (keyword = "", pageNumber = "") => async (
-    dispatch,
-    getState
-) => {
-    try {
-        dispatch({
-            type: CLIENT_LIST_REQUEST,
-        });
+export const listClients =
+    (keyword = "", pageNumber = "") =>
+    async (dispatch, getState) => {
+        try {
+            dispatch({
+                type: CLIENT_LIST_REQUEST,
+            });
 
-        //get user from state
-        const {
-            userLogin: { userInfo },
-        } = getState();
+            //get user from state
+            const {
+                userLogin: { userInfo },
+            } = getState();
 
-        //headers
-        const config = {
-            headers: {
-                Authorization: `Bearer ${userInfo.token}`,
-            },
-        };
+            //headers
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${userInfo.token}`,
+                },
+            };
 
-        //get all clients
-        const { data } = await axios.get(
-            `/api/clients?keyword=${keyword}&pageNumber=${pageNumber}`,
-            config
-        );
+            //get all clients
+            const { data } = await axios.get(
+                `/api/clients?keyword=${keyword}&pageNumber=${pageNumber}`,
+                config
+            );
 
-        dispatch({
-            type: CLIENT_LIST_SUCCESS,
-            payload: data,
-        });
-    } catch (error) {
-        dispatch({
-            type: CLIENT_LIST_FAIL,
-            payload:
-                error.response && error.response.data.message
-                    ? error.response.data.message
-                    : error.message,
-        });
-    }
-};
+            dispatch({
+                type: CLIENT_LIST_SUCCESS,
+                payload: data,
+            });
+        } catch (error) {
+            dispatch({
+                type: CLIENT_LIST_FAIL,
+                payload:
+                    error.response && error.response.data.message
+                        ? error.response.data.message
+                        : error.message,
+            });
+        }
+    };
 
 //create a client
 export const createClient = (client) => async (dispatch, getState) => {

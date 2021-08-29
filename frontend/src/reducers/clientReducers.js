@@ -18,10 +18,6 @@ import {
     CLIENT_DELETE_SUCCESS,
     CLIENT_DELETE_FAIL,
     CLIENT_DELETE_RESET,
-    CLIENT_ALL_REQUEST,
-    CLIENT_ALL_SUCCESS,
-    CLIENT_ALL_FAIL,
-    CLIENT_ALL_RESET,
 } from "../constants/clientConstants";
 
 export const clientListReducer = (

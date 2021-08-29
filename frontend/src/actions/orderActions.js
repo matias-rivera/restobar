@@ -15,22 +15,16 @@ import {
     ORDER_DELETE_REQUEST,
     ORDER_DELETE_SUCCESS,
     ORDER_DELETE_FAIL,
-    ORDER_DELIVERY_REQUEST,
-    ORDER_DELIVERY_SUCCESS,
-    ORDER_DELIVERY_FAIL,
-    ORDER_ALL_ACTIVE_REQUEST,
-    ORDER_ALL_ACTIVE_SUCCESS,
-    ORDER_ALL_ACTIVE_FAIL,
-    ORDER_SALES_REQUEST,
-    ORDER_SALES_SUCCESS,
-    ORDER_SALES_FAIL,
+    ORDER_STATISTICS_REQUEST,
+    ORDER_STATISTICS_SUCCESS,
+    ORDER_STATISTICS_FAIL,
 } from "../constants/orderConstants";
 
 //get all sales
-export const allSales = () => async (dispatch, getState) => {
+export const getStatistics = () => async (dispatch, getState) => {
     try {
         dispatch({
-            type: ORDER_SALES_REQUEST,
+            type: ORDER_STATISTICS_REQUEST,
         });
 
         //get user from state
@@ -46,52 +40,15 @@ export const allSales = () => async (dispatch, getState) => {
         };
 
         //get all sales
-        const { data } = await axios.get(`/api/orders/all/sales`, config);
+        const { data } = await axios.get(`/api/orders/statistics`, config);
 
         dispatch({
-            type: ORDER_SALES_SUCCESS,
+            type: ORDER_STATISTICS_SUCCESS,
             payload: data,
         });
     } catch (error) {
         dispatch({
-            type: ORDER_SALES_FAIL,
-            payload:
-                error.response && error.response.data.message
-                    ? error.response.data.message
-                    : error.message,
-        });
-    }
-};
-
-//get all active orders
-export const allActiveOrders = () => async (dispatch, getState) => {
-    try {
-        dispatch({
-            type: ORDER_ALL_ACTIVE_REQUEST,
-        });
-
-        //get user from state
-        const {
-            userLogin: { userInfo },
-        } = getState();
-
-        //headers
-        const config = {
-            headers: {
-                Authorization: `Bearer ${userInfo.token}`,
-            },
-        };
-
-        //get all orders
-        const { data } = await axios.get(`/api/orders/active/all`, config);
-
-        dispatch({
-            type: ORDER_ALL_ACTIVE_SUCCESS,
-            payload: data,
-        });
-    } catch (error) {
-        dispatch({
-            type: ORDER_ALL_ACTIVE_FAIL,
+            type: ORDER_STATISTICS_FAIL,
             payload:
                 error.response && error.response.data.message
                     ? error.response.data.message
@@ -101,10 +58,8 @@ export const allActiveOrders = () => async (dispatch, getState) => {
 };
 
 //get all orders with pagination
-export const listOrders = (keyword = "", pageNumber = "") => async (
-    dispatch,
-    getState
-) => {
+export const listOrders = (options) => async (dispatch, getState) => {
+    const { keyword, pageNumber, delivery } = options;
     try {
         dispatch({
             type: ORDER_LIST_REQUEST,
@@ -124,7 +79,9 @@ export const listOrders = (keyword = "", pageNumber = "") => async (
 
         //get all orders
         const { data } = await axios.get(
-            `/api/orders/?keyword=${keyword}&pageNumber=${pageNumber}`,
+            `/api/orders/?keyword=${keyword}&pageNumber=${pageNumber}${
+                delivery ? "&delivery=true" : ""
+            }`,
             config
         );
 
@@ -135,49 +92,6 @@ export const listOrders = (keyword = "", pageNumber = "") => async (
     } catch (error) {
         dispatch({
             type: ORDER_LIST_FAIL,
-            payload:
-                error.response && error.response.data.message
-                    ? error.response.data.message
-                    : error.message,
-        });
-    }
-};
-
-//get all orders with pagination
-export const listDeliveryOrders = (keyword = "", pageNumber = "") => async (
-    dispatch,
-    getState
-) => {
-    try {
-        dispatch({
-            type: ORDER_DELIVERY_REQUEST,
-        });
-
-        //get user from state
-        const {
-            userLogin: { userInfo },
-        } = getState();
-
-        //headers
-        const config = {
-            headers: {
-                Authorization: `Bearer ${userInfo.token}`,
-            },
-        };
-
-        //get all orders
-        const { data } = await axios.get(
-            `/api/orders/active?keyword=${keyword}&pageNumber=${pageNumber}&delivery=true`,
-            config
-        );
-
-        dispatch({
-            type: ORDER_DELIVERY_SUCCESS,
-            payload: data,
-        });
-    } catch (error) {
-        dispatch({
-            type: ORDER_DELIVERY_FAIL,
             payload:
                 error.response && error.response.data.message
                     ? error.response.data.message

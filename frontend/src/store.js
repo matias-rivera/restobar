@@ -38,14 +38,11 @@ import {
 } from "./reducers/productReducers";
 
 import {
-    orderAllReducer,
-    orderAllSalesReducer,
-    orderAllActiveReducer,
     orderListReducer,
     orderCreateReducer,
     orderDetailsReducer,
     orderUpdateReducer,
-    orderDeliveryListReducer,
+    statisticsReducer,
 } from "./reducers/orderReducers";
 
 const reducer = combineReducers({
@@ -76,14 +73,11 @@ const reducer = combineReducers({
     clientDetails: clientDetailsReducer,
     clientUpdate: clientUpdateReducer,
 
-    orderAll: orderAllReducer,
-    orderAllActive: orderAllActiveReducer,
-    orderAllSales: orderAllSalesReducer,
+    orderStatistics: statisticsReducer,
     orderList: orderListReducer,
     orderCreate: orderCreateReducer,
     orderDetails: orderDetailsReducer,
     orderUpdate: orderUpdateReducer,
-    orderDeliveryList: orderDeliveryListReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

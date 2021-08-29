@@ -8,8 +8,6 @@ const {
     getTable,
     updateTable,
     deleteTable,
-    getAllAvailableTables,
-    getAllTablesWithOrders,
 } = require("../controllers/table");
 
 // VALIDATORS
@@ -23,10 +21,6 @@ router
     .post(protect, tableCreateValidator, runValidation, createTable);
 
 router.route("/all").get(protect, getAllTables);
-
-router.route("/all/available").get(protect, getAllAvailableTables);
-
-router.route("/with-orders").get(protect, getAllTablesWithOrders);
 
 router
     .route("/:id")

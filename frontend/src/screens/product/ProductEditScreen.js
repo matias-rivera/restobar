@@ -17,7 +17,6 @@ import {
 
 /* Actions */
 import { listCategories } from "../../actions/categoryActions";
-import { CATEGORY_ALL_RESET } from "../../constants/categoryConstants";
 import {
     updateProduct,
     listProductDetails,
@@ -58,7 +57,6 @@ const ProductEditScreen = ({ history, match }) => {
         if (successUpdate) {
             dispatch({ type: PRODUCT_UPDATE_RESET });
             dispatch({ type: PRODUCT_DETAILS_RESET });
-            dispatch({ type: CATEGORY_ALL_RESET });
             history.push("/product");
         }
 

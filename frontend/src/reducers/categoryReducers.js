@@ -18,10 +18,6 @@ import {
     CATEGORY_DELETE_SUCCESS,
     CATEGORY_DELETE_FAIL,
     CATEGORY_DELETE_RESET,
-    CATEGORY_ALL_REQUEST,
-    CATEGORY_ALL_SUCCESS,
-    CATEGORY_ALL_FAIL,
-    CATEGORY_ALL_RESET,
 } from "../constants/categoryConstants";
 
 export const categoryListReducer = (

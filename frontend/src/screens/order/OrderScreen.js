@@ -25,7 +25,7 @@ const OrderScreen = ({ history }) => {
     const { loading, error, orders, page, pages } = orderList;
 
     useEffect(() => {
-        dispatch(listOrders(keyword, pageNumber));
+        dispatch(listOrders({ keyword, pageNumber, delivery: false }));
     }, [dispatch, history, userInfo, pageNumber, keyword]);
 
     const renderCreateButton = () => (

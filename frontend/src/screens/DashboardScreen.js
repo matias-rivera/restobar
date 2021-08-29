@@ -10,13 +10,13 @@ import DataTableLoader from "../components/loader/DataTableLoader";
 import LoaderHandler from "../components/loader/LoaderHandler";
 
 /* Actions */
-import { allTables } from "../actions/tableActions";
-import { allActiveOrders, allSales } from "./../actions/orderActions";
+
 import {
     OccupiedTableLoader,
     SkeletonBoxes,
     SkeletonSales,
 } from "../components/loader/SkeletonLoaders";
+import { getStatistics } from "../actions/orderActions";
 
 const DashboardScreen = ({ history }) => {
     const dispatch = useDispatch();
@@ -25,35 +25,16 @@ const DashboardScreen = ({ history }) => {
     const userLogin = useSelector((state) => state.userLogin);
     const { userInfo } = userLogin;
 
-    //tables list state
-    const tableAll = useSelector((state) => state.tableAll);
-    const { loading: loadingTables, error: errorTables, tables } = tableAll;
+    const orderStatistics = useSelector((state) => state.orderStatistics);
+    const { loading, error, data } = orderStatistics;
 
-    //all orders
-    const orderAllActive = useSelector((state) => state.orderAllActive);
-    const {
-        loading: loadingAllOrders,
-        error: errorAllOrders,
-        orders: allOrders,
-    } = orderAllActive;
-
-    //all orders
-    const orderAllSales = useSelector((state) => state.orderAllSales);
-    const {
-        loading: loadingSales,
-        error: errorSales,
-        orders: sales,
-    } = orderAllSales;
+    const { orders, sales, statistics } = data;
 
     useEffect(() => {
-        dispatch(allTables());
-        dispatch(allActiveOrders());
         if (!userInfo) {
             history.push("/login");
         }
-        if (userInfo.isAdmin) {
-            dispatch(allSales());
-        }
+        dispatch(getStatistics());
     }, [dispatch, history, userInfo]);
 
     //get all in place orders
@@ -63,6 +44,16 @@ const DashboardScreen = ({ history }) => {
         });
 
         return ordersInPlace;
+    };
+
+    const getTodaySales = (items) => {
+        let day = new Date();
+        day = day.toISOString().slice(8, 10);
+        const newSales = items.filter(function (item) {
+            const saleDay = item.updatedAt.slice(8, 10);
+            return day === saleDay;
+        });
+        return newSales;
     };
 
     //get all delivery orders
@@ -80,39 +71,7 @@ const DashboardScreen = ({ history }) => {
         history.push(`/order/${id}/view`);
     };
 
-    const getTodaySales = (sales) => {
-        let day = new Date();
-        day = day.toISOString().slice(8, 10);
-        const newSales = sales.filter(function (item) {
-            const saleDay = item.updatedAt.slice(8, 10);
-            return day === saleDay;
-        });
-        return newSales;
-    };
-
-    const getTodayTotal = (sales) => {
-        const salesToday = getTodaySales(sales);
-        return salesToday.reduce((acc, item) => acc + item.total, 0).toFixed(2);
-    };
-
-    const getTodayDelivery = (sales) => {
-        const salesToday = getTodaySales(sales);
-        return salesToday.reduce(
-            (acc, item) => acc + (item.delivery ? 1 : 0),
-            0
-        );
-    };
-
-    const getTodayProducts = (sales) => {
-        const salesToday = getTodaySales(sales);
-        return salesToday.reduce((acc, item) => acc + item.total_products, 0);
-    };
-
-    const getTotalSales = (sales) => {
-        return sales.reduce((acc, item) => acc + item.total, 0).toFixed(2);
-    };
-
-    const returnSales = (sales) => {
+    const returnSales = () => {
         var indents = [];
         for (var i = 0; i < (sales.length > 3 ? 4 : sales.length); i++) {
             indents.push(
@@ -132,7 +91,7 @@ const DashboardScreen = ({ history }) => {
                     </td>
                     <td className="h4">
                         <span className={"badge bg-warning"}>
-                            {sales[i].total_products}
+                            {sales[i].products.length}
                         </span>
                     </td>
                     <td>
@@ -149,40 +108,34 @@ const DashboardScreen = ({ history }) => {
         return indents;
     };
 
-    const renderTablesBox = () => (
-        <SmallBox
-            number={tables.length}
-            paragraph={"Free tables"}
-            link={"active"}
-            color={"success"}
-            icon={"fas fa-utensils"}
-        />
-    );
-
     const renderSmallBoxes = () => (
         <>
-            <LoaderHandler
-                loading={loadingTables}
-                error={errorTables}
-                render={renderTablesBox}
-            />
             <SmallBox
-                number={ordersInPlace(allOrders).length}
+                number={orders.length}
+                paragraph={"Active orders"}
+                link={"order"}
+                color={"success"}
+                icon={"fas fa-utensils"}
+            />
+
+            <SmallBox
+                number={ordersInPlace(orders).length}
                 paragraph={"In Place Orders"}
                 link={"active"}
                 color={"info"}
                 icon={"fas fa-users"}
             />
             <SmallBox
-                number={ordersForDelivery(allOrders).length}
+                number={ordersForDelivery(orders).length}
                 paragraph={"Orders for delivery"}
                 link={"delivery"}
                 color={"danger"}
                 icon={"fas fa-truck"}
             />
+
             <SmallBox
-                number={allOrders.length}
-                paragraph={"Active orders"}
+                number={orders.length}
+                paragraph={"Total orders"}
                 link={"order"}
                 color={"warning"}
                 icon={"ion ion-bag"}
@@ -231,10 +184,10 @@ const DashboardScreen = ({ history }) => {
                             <p className="d-flex flex-column text-right">
                                 <span className="font-weight-bold">
                                     <i className="ion ion-android-arrow-up text-warning" />{" "}
-                                    {sales ? getTodayProducts(sales) : 0}
+                                    {statistics && statistics.orders}
                                 </span>
                                 <span className="text-muted">
-                                    TODAY PRODUCTS SOLD
+                                    TOTAL ORDERS COMPLETED
                                 </span>
                             </p>
                         </div>
@@ -246,10 +199,10 @@ const DashboardScreen = ({ history }) => {
                             <p className="d-flex flex-column text-right">
                                 <span className="font-weight-bold">
                                     <i className="ion ion-android-arrow-up text-info" />{" "}
-                                    {sales ? getTodayDelivery(sales) : 0}
+                                    {statistics && statistics.deliveries}
                                 </span>
                                 <span className="text-muted">
-                                    TODAY DELIVERIES MADE{" "}
+                                    TOTAL DELIVERIES COMPLETED
                                 </span>
                             </p>
                         </div>
@@ -261,9 +214,8 @@ const DashboardScreen = ({ history }) => {
                                 <span className="font-weight-bold">
                                     <span className="text-success">
                                         <i className="fas fa-dollar-sign text-success"></i>{" "}
-                                        {sales ? `${getTodayTotal(sales)}` : 0}
-                                    </span>{" "}
-                                    ({getTodaySales(sales).length})
+                                        {statistics && statistics.today}
+                                    </span>
                                 </span>
                                 <span className="text-muted">TODAY SALES</span>
                             </p>
@@ -277,7 +229,7 @@ const DashboardScreen = ({ history }) => {
                                 <span className="font-weight-bold">
                                     <span className="text-success">
                                         <i className="fas fa-dollar-sign"></i>{" "}
-                                        {sales ? `${getTotalSales(sales)}` : 0}
+                                        {statistics && statistics.total}
                                     </span>
                                 </span>
                                 <span className="text-muted">TOTAL SALES</span>
@@ -301,7 +253,7 @@ const DashboardScreen = ({ history }) => {
                 </tr>
             </thead>
             <tbody>
-                {ordersInPlace(allOrders)
+                {ordersInPlace(orders)
                     .splice(0, 5)
                     .map((order) => (
                         <tr
@@ -334,7 +286,7 @@ const DashboardScreen = ({ history }) => {
     );
 
     const renderDeliveries = () =>
-        ordersForDelivery(allOrders)
+        ordersForDelivery(orders)
             .splice(0, 5)
             .map((order) => (
                 <DeliveryListItem
@@ -353,8 +305,8 @@ const DashboardScreen = ({ history }) => {
                 <div className="container-fluid">
                     <div className="row">
                         <LoaderHandler
-                            loading={loadingAllOrders}
-                            error={errorAllOrders}
+                            loading={loading}
+                            error={error}
                             loader={<SkeletonBoxes />}
                             render={renderSmallBoxes}
                         />
@@ -362,8 +314,8 @@ const DashboardScreen = ({ history }) => {
 
                     {userInfo.isAdmin && (
                         <LoaderHandler
-                            loading={loadingSales}
-                            error={errorSales}
+                            loading={loading}
+                            error={error}
                             loader={<SkeletonSales />}
                             render={renderSales}
                         />
@@ -389,8 +341,8 @@ const DashboardScreen = ({ history }) => {
                                 <div className="card-body p-0">
                                     <div className="table-responsive">
                                         <LoaderHandler
-                                            loading={loadingAllOrders}
-                                            error={errorAllOrders}
+                                            loading={loading}
+                                            error={error}
                                             loader={<DataTableLoader />}
                                             render={renderOrders}
                                         />
@@ -431,9 +383,9 @@ const DashboardScreen = ({ history }) => {
                                 <div className="card-body p-0">
                                     <ul className="products-list product-list-in-card pl-2 pr-2">
                                         <LoaderHandler
-                                            loading={loadingAllOrders}
+                                            loading={loading}
                                             loader={<DataTableLoader />}
-                                            error={errorAllOrders}
+                                            error={error}
                                             render={renderDeliveries}
                                         />
                                     </ul>
