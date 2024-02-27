@@ -1,0 +1,20 @@
+version: "3"
+services:
+    backend:
+        build:
+            dockerfile: Dockerfile.dev
+        volumes:
+            - /app/node_modules
+            - .:/app
+        ports:
+            - "5000:5000"
+        environment:
+            - DB_USER=${DB_USER}
+            - DB_HOST=${DB_HOST}
+            - DB_NAME=${DB_NAME}
+            - DB_PASSWORD=${DB_PASSWORD}
+            - DB_DIALECT=${DB_DIALECT}
+            - DB_PORT=${DB_PORT}
+            - NODE_ENV=${NODE_ENV}
+            - PORT=${PORT}
+            - JWT_SECRET=${JWT_SECRET}
