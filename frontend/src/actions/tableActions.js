@@ -19,6 +19,8 @@ import {
     TABLE_ALL_SUCCESS,
     TABLE_ALL_FAIL,
 } from "../constants/tableConstants";
+import config from '../config';
+const API_URL = config.API_URL;
 
 //get all tables
 export const allTables = () => async (dispatch, getState) => {
@@ -40,7 +42,7 @@ export const allTables = () => async (dispatch, getState) => {
         };
 
         //if tables available is needed
-        const { data } = await axios.get(`/api/tables/all`, config);
+        const { data } = await axios.get(`${API_URL}/tables/all`, config);
 
         dispatch({
             type: TABLE_ALL_SUCCESS,
@@ -81,7 +83,7 @@ export const listTables = (keyword = "", pageNumber = "") => async (
 
         //get all tables
         const { data } = await axios.get(
-            `/api/tables?keyword=${keyword}&pageNumber=${pageNumber}`,
+            `${API_URL}/tables?keyword=${keyword}&pageNumber=${pageNumber}`,
             config
         );
 
@@ -123,7 +125,7 @@ export const createTable = (table) => async (dispatch, getState) => {
         };
 
         //create table
-        const { data } = await axios.post("/api/tables", { name }, config);
+        const { data } = await axios.post(`${API_URL}/tables`, { name }, config);
         dispatch({
             type: TABLE_CREATE_SUCCESS,
             payload: data,
@@ -157,7 +159,7 @@ export const listTableDetails = (id) => async (dispatch, getState) => {
         };
 
         //api call to get table
-        const { data } = await axios.get(`/api/tables/${id}`, config);
+        const { data } = await axios.get(`${API_URL}/tables/${id}`, config);
         dispatch({
             type: TABLE_DETAILS_SUCCESS,
             payload: data,
@@ -194,7 +196,7 @@ export const updateTable = (table) => async (dispatch, getState) => {
 
         //update table
         const { data } = await axios.put(
-            `/api/tables/${table.id}`,
+            `${API_URL}/tables/${table.id}`,
             table,
             config
         );
@@ -232,7 +234,7 @@ export const deleteTable = (id) => async (dispatch, getState) => {
         };
 
         //api call to delete table
-        await axios.delete(`/api/tables/${id}`, config);
+        await axios.delete(`${API_URL}/tables/${id}`, config);
         dispatch({
             type: TABLE_DELETE_SUCCESS,
         });

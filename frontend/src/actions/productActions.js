@@ -16,6 +16,8 @@ import {
     PRODUCT_DELETE_SUCCESS,
     PRODUCT_DELETE_FAIL,
 } from "../constants/productConstants";
+import config from '../config';
+const API_URL = config.API_URL;
 
 //get all products
 export const listProducts = (keyword = "", pageNumber = "") => async (
@@ -41,7 +43,7 @@ export const listProducts = (keyword = "", pageNumber = "") => async (
 
         //get all products
         const { data } = await axios.get(
-            `/api/products?keyword=${keyword}&pageNumber=${pageNumber}`,
+            `${API_URL}/products?keyword=${keyword}&pageNumber=${pageNumber}`,
             config
         );
 
@@ -81,7 +83,7 @@ export const createProduct = (product) => async (dispatch, getState) => {
         };
 
         //create product
-        const { data } = await axios.post("/api/products", product, config);
+        const { data } = await axios.post(`${API_URL}/products`, product, config);
         dispatch({
             type: PRODUCT_CREATE_SUCCESS,
             payload: data,
@@ -115,7 +117,7 @@ export const listProductDetails = (id) => async (dispatch, getState) => {
         };
 
         //api call to get product
-        const { data } = await axios.get(`/api/products/${id}`, config);
+        const { data } = await axios.get(`${API_URL}/products/${id}`, config);
         dispatch({
             type: PRODUCT_DETAILS_SUCCESS,
             payload: data,
@@ -152,7 +154,7 @@ export const updateProduct = (product) => async (dispatch, getState) => {
 
         //update product
         const { data } = await axios.put(
-            `/api/products/${product.id}`,
+            `${API_URL}/products/${product.id}`,
             product,
             config
         );
@@ -190,7 +192,7 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
         };
 
         //api call to delete product
-        await axios.delete(`/api/products/${id}`, config);
+        await axios.delete(`${API_URL}/products/${id}`, config);
         dispatch({
             type: PRODUCT_DELETE_SUCCESS,
         });

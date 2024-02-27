@@ -16,6 +16,8 @@ import {
     CLIENT_DELETE_SUCCESS,
     CLIENT_DELETE_FAIL,
 } from "../constants/clientConstants";
+import config from '../config';
+const API_URL = config.API_URL;
 
 //get all clients with pagination
 export const listClients =
@@ -40,7 +42,7 @@ export const listClients =
 
             //get all clients
             const { data } = await axios.get(
-                `/api/clients?keyword=${keyword}&pageNumber=${pageNumber}`,
+                `${API_URL}/clients?keyword=${keyword}&pageNumber=${pageNumber}`,
                 config
             );
 
@@ -80,7 +82,7 @@ export const createClient = (client) => async (dispatch, getState) => {
         };
 
         //create client
-        const { data } = await axios.post("/api/clients", client, config);
+        const { data } = await axios.post(`${API_URL}/clients`, client, config);
         dispatch({
             type: CLIENT_CREATE_SUCCESS,
             payload: data,
@@ -114,7 +116,7 @@ export const listClientDetails = (id) => async (dispatch, getState) => {
         };
 
         //api call to get CLIENT
-        const { data } = await axios.get(`/api/clients/${id}`, config);
+        const { data } = await axios.get(`${API_URL}/clients/${id}`, config);
         dispatch({
             type: CLIENT_DETAILS_SUCCESS,
             payload: data,
@@ -151,7 +153,7 @@ export const updateClient = (client) => async (dispatch, getState) => {
 
         //update client
         const { data } = await axios.put(
-            `/api/clients/${client.id}`,
+            `${API_URL}/clients/${client.id}`,
             client,
             config
         );
@@ -189,7 +191,7 @@ export const deleteClient = (id) => async (dispatch, getState) => {
         };
 
         //api call to delete client
-        await axios.delete(`/api/clients/${id}`, config);
+        await axios.delete(`${API_URL}/clients/${id}`, config);
         dispatch({
             type: CLIENT_DELETE_SUCCESS,
         });

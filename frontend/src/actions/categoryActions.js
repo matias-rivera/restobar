@@ -16,6 +16,8 @@ import {
     CATEGORY_DELETE_SUCCESS,
     CATEGORY_DELETE_FAIL,
 } from "../constants/categoryConstants";
+import config from '../config';
+const API_URL = config.API_URL;
 
 //get all categories with pagination
 export const listCategories =
@@ -40,7 +42,7 @@ export const listCategories =
 
             //get all categories
             const { data } = await axios.get(
-                `/api/categories?keyword=${keyword}&pageNumber=${pageNumber}`,
+                `${API_URL}/categories?keyword=${keyword}&pageNumber=${pageNumber}`,
                 config
             );
 
@@ -82,7 +84,7 @@ export const createCategory = (category) => async (dispatch, getState) => {
         };
 
         //create category
-        const { data } = await axios.post("/api/categories", { name }, config);
+        const { data } = await axios.post(`${API_URL}/categories`, { name }, config);
         dispatch({
             type: CATEGORY_CREATE_SUCCESS,
             payload: data,
@@ -116,7 +118,7 @@ export const listCategoryDetails = (id) => async (dispatch, getState) => {
         };
 
         //api call to get category
-        const { data } = await axios.get(`/api/categories/${id}`, config);
+        const { data } = await axios.get(`${API_URL}/categories/${id}`, config);
         dispatch({
             type: CATEGORY_DETAILS_SUCCESS,
             payload: data,
@@ -153,7 +155,7 @@ export const updateCategory = (category) => async (dispatch, getState) => {
 
         //update category
         const { data } = await axios.put(
-            `/api/categories/${category.id}`,
+            `${API_URL}/categories/${category.id}`,
             category,
             config
         );
@@ -191,7 +193,7 @@ export const deleteCategory = (id) => async (dispatch, getState) => {
         };
 
         //api call to delete category
-        await axios.delete(`/api/categories/${id}`, config);
+        await axios.delete(`${API_URL}/categories/${id}`, config);
         dispatch({
             type: CATEGORY_DELETE_SUCCESS,
         });

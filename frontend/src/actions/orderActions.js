@@ -19,6 +19,8 @@ import {
     ORDER_STATISTICS_SUCCESS,
     ORDER_STATISTICS_FAIL,
 } from "../constants/orderConstants";
+import config from '../config';
+const API_URL = config.API_URL;
 
 //get all sales
 export const getStatistics = () => async (dispatch, getState) => {
@@ -40,7 +42,7 @@ export const getStatistics = () => async (dispatch, getState) => {
         };
 
         //get all sales
-        const { data } = await axios.get(`/api/orders/statistics`, config);
+        const { data } = await axios.get(`${API_URL}/orders/statistics`, config);
 
         dispatch({
             type: ORDER_STATISTICS_SUCCESS,
@@ -79,7 +81,7 @@ export const listOrders = (options) => async (dispatch, getState) => {
 
         //get all orders
         const { data } = await axios.get(
-            `/api/orders/?keyword=${keyword}&pageNumber=${pageNumber}${
+            `${API_URL}/orders/?keyword=${keyword}&pageNumber=${pageNumber}${
                 delivery ? "&delivery=true" : ""
             }`,
             config
@@ -121,7 +123,7 @@ export const createOrder = (order) => async (dispatch, getState) => {
         };
 
         //create order
-        const { data } = await axios.post("/api/orders", order, config);
+        const { data } = await axios.post(`${API_URL}/orders`, order, config);
         dispatch({
             type: ORDER_CREATE_SUCCESS,
             payload: data,
@@ -155,7 +157,7 @@ export const listOrderDetails = (id) => async (dispatch, getState) => {
         };
 
         //api call to get ORDER
-        const { data } = await axios.get(`/api/orders/${id}`, config);
+        const { data } = await axios.get(`${API_URL}/orders/${id}`, config);
         dispatch({
             type: ORDER_DETAILS_SUCCESS,
             payload: data,
@@ -192,7 +194,7 @@ export const updateOrder = (order) => async (dispatch, getState) => {
 
         //update order
         const { data } = await axios.put(
-            `/api/orders/${order.id}`,
+            `${API_URL}/orders/${order.id}`,
             order,
             config
         );
@@ -231,7 +233,7 @@ export const updateOrderToPaid = (order) => async (dispatch, getState) => {
         };
         //update order
         const { data } = await axios.post(
-            `/api/orders/${order.id}/pay`,
+            `${API_URL}/orders/${order.id}/pay`,
             order,
             config
         );
@@ -269,7 +271,7 @@ export const deleteOrder = (id) => async (dispatch, getState) => {
         };
 
         //api call to delete order
-        await axios.delete(`/api/orders/${id}`, config);
+        await axios.delete(`${API_URL}/orders/${id}`, config);
         dispatch({
             type: ORDER_DELETE_SUCCESS,
         });
