@@ -27,18 +27,18 @@ const orderRoutes = require("./routes/order");
 const uploadRoutes = require("./routes/upload");
 
 /* Routes */
-app.use("/api/users", userRoutes);
-app.use("/api/categories", categoryRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/clients", clientRoutes);
-app.use("/api/tables", tableRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/upload", uploadRoutes);
+app.use("/restobar/api/users", userRoutes);
+app.use("/restobar/api/categories", categoryRoutes);
+app.use("/restobar/api/products", productRoutes);
+app.use("/restobar/api/clients", clientRoutes);
+app.use("/restobar/api/tables", tableRoutes);
+app.use("/restobar/api/orders", orderRoutes);
+app.use("/restobar/api/upload", uploadRoutes);
 
 const rootPath = path.resolve();
 
 /* File folder */
-app.use("/uploads", express.static(path.join(rootPath, "/uploads")));
+app.use("/restobar/uploads", express.static(path.join(rootPath, "/uploads")));
 
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(rootPath, "/frontend/build")));
