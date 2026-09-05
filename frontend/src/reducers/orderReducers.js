@@ -54,6 +54,7 @@ export const statisticsReducer = (
         data: {
             orders: [],
             sales: [],
+            topSelling: [],
             statistics: {
                 total: 0,
                 today: 0,
@@ -80,6 +81,7 @@ export const statisticsReducer = (
                 data: {
                     orders: [],
                     sales: [],
+                    topSelling: [],
                     statistics: {
                         total: 0,
                         today: 0,

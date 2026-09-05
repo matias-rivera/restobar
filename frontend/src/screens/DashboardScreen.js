@@ -8,6 +8,7 @@ import SmallBox from "./../components/SmallBox";
 import DeliveryListItem from "../components/DeliveryListItem";
 import DataTableLoader from "../components/loader/DataTableLoader";
 import LoaderHandler from "../components/loader/LoaderHandler";
+import { listLowStockProducts } from "../actions/productActions";
 
 /* Actions */
 
@@ -28,13 +29,25 @@ const DashboardScreen = ({ history }) => {
     const orderStatistics = useSelector((state) => state.orderStatistics);
     const { loading, error, data } = orderStatistics;
 
-    const { orders, sales, statistics } = data;
+    const productLowStock = useSelector((state) => state.productLowStock);
+    const { products: lowStockProducts = [] } = productLowStock;
+
+    const {
+    orders,
+    sales,
+    statistics,
+    topSelling,
+    peakHours = [],
+    peakHourSummary,
+} = data;
 
     useEffect(() => {
         if (!userInfo) {
             history.push("/login");
         }
         dispatch(getStatistics());
+        dispatch(listLowStockProducts());
+
     }, [dispatch, history, userInfo]);
 
     //get all in place orders
@@ -142,6 +155,172 @@ const DashboardScreen = ({ history }) => {
             />
         </>
     );
+    const renderLowStock = () => (
+        <div className="card">
+            <div className="card-header">
+                <h3 className="card-title">
+                    <i className="fas fa-exclamation-triangle text-warning mr-2"></i>
+                    Low Stock Products
+                </h3>
+            </div>
+
+            <div className="card-body p-0">
+                {lowStockProducts.length === 0 ? (
+                    <p className="p-3 mb-0">
+                        All products have sufficient stock.
+                    </p>
+                ) : (
+                    <ul className="list-group list-group-flush">
+                        {lowStockProducts.map((product) => (
+                            <li
+                                key={product.id}
+                                className="list-group-item d-flex justify-content-between align-items-center"
+                            >
+                                <span>{product.name}</span>
+
+                                <span className="badge bg-danger">
+                                    Stock: {product.stock}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+        </div>
+    );
+    const renderTopSelling = () => (
+        <div className="card">
+            <div className="card-header">
+                <h3 className="card-title">
+                    <i className="fas fa-chart-line mr-2"></i>
+                    Top Selling Products
+                </h3>
+            </div>
+
+            <div className="card-body p-0">
+                {topSelling.length === 0 ? (
+                    <p className="p-3 mb-0">
+                        No sales yet.
+                    </p>
+                ) : (
+                    <ul className="list-group list-group-flush">
+                        {topSelling.map((product, index) => (
+                            <li
+                                key={product.id}
+                                className="list-group-item d-flex justify-content-between align-items-center"
+                            >
+                                <span>
+                                    <strong>{index + 1}.</strong>{" "}
+                                    {product.name}
+                                </span>
+
+                                <span className="badge bg-success">
+                                    {product.quantitySold} sold
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+        </div>
+    );
+    const renderPeakHours = () => {
+    if (!peakHours.length) {
+        return (
+            <div className="card">
+                <div className="card-header">
+                    <h3 className="card-title">
+                        <i className="fas fa-clock mr-2"></i>
+                        Peak Hours
+                    </h3>
+                </div>
+
+                <div className="card-body">
+                   
+                    {peakHourSummary && peakHourSummary.totalSales > 0 ? (
+    <div className="p-3">
+        <h4>
+            Peak Hour: {peakHourSummary.hour}
+        </h4>
+
+        <p className="mb-1">
+            Total Sales: ${peakHourSummary.totalSales}
+        </p>
+
+        <p className="mb-0">
+            Orders: {peakHourSummary.ordersCount}
+        </p>
+    </div>
+) : (
+    <p className="p-3 mb-0">
+        No sales data yet.
+    </p>
+)}
+                </div>
+            </div>
+        );
+    }
+
+    const maxSales = Math.max(
+        ...peakHours.map((item) => item.totalSales)
+    );
+
+    return (
+        <div className="card">
+            <div className="card-header">
+                <h3 className="card-title">
+                    <i className="fas fa-clock mr-2"></i>
+                    Peak Hours
+                </h3>
+            </div>
+
+            <div className="card-body">
+                {peakHourSummary && (
+                    <div className="alert alert-warning">
+                        <strong>Peak Hour:</strong>{" "}
+                        {peakHourSummary.hour}
+                        <br />
+                        Revenue: ₪
+                        {Number(peakHourSummary.totalSales).toFixed(2)}
+                        <br />
+                        Orders: {peakHourSummary.ordersCount}
+                    </div>
+                )}
+
+                {peakHours
+                    .filter((item) => item.ordersCount > 0)
+                    .map((item) => {
+                        const percentage =
+                            maxSales > 0
+                                ? (item.totalSales / maxSales) * 100
+                                : 0;
+
+                        return (
+                            <div key={item.hour} className="mb-3">
+                                <div className="d-flex justify-content-between">
+                                    <span>{item.hour}</span>
+                                    <span>
+                                        ₪{Number(item.totalSales).toFixed(2)}
+                                        {" "}
+                                        ({item.ordersCount} orders)
+                                    </span>
+                                </div>
+
+                                <div className="progress">
+                                    <div
+                                        className="progress-bar bg-info"
+                                        style={{
+                                            width: `${percentage}%`,
+                                        }}
+                                    ></div>
+                                </div>
+                            </div>
+                        );
+                    })}
+            </div>
+        </div>
+    );
+};
 
     const renderSales = () => (
         <div className="row">
@@ -241,6 +420,7 @@ const DashboardScreen = ({ history }) => {
             </div>
         </div>
     );
+    
 
     const renderOrders = () => (
         <table className="table m-0 table-hover">
@@ -311,6 +491,21 @@ const DashboardScreen = ({ history }) => {
                             render={renderSmallBoxes}
                         />
                     </div>
+                    <div className="row">
+                        <div className="col-12 col-lg-6">
+                            {renderLowStock()}
+                        </div>
+
+                        <div className="col-12 col-lg-6">
+                            {renderTopSelling()}
+                        </div>
+                    </div>
+
+                    <div className="row">
+    <div className="col-12">
+        {renderPeakHours()}
+    </div>
+</div>
 
                     {userInfo.isAdmin && (
                         <LoaderHandler

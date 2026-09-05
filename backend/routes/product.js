@@ -7,6 +7,8 @@ const {
     getProduct,
     updateProduct,
     deleteProduct,
+    getLowStockProducts,
+
 } = require("../controllers/product");
 
 // VALIDATORS
@@ -18,11 +20,15 @@ router
     .route("/")
     .post(protect, productCreateValidator, runValidation, createProduct)
     .get(protect, getProducts);
+    
+router
+    .route("/low-stock")
+    .get(protect, getLowStockProducts);
 
 router
     .route("/:id")
     .get(protect, getProduct)
     .put(protect, updateProduct)
     .delete(protect, deleteProduct);
-
+  
 module.exports = router;
