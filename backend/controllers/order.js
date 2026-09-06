@@ -1,9 +1,10 @@
 const asyncHandler = require("express-async-handler");
 const Order = require("../models").Order;
-const { Op } = require("sequelize");
+const { Op, fn, col } = require("sequelize");
 const Client = require("../models").Client;
 const Table = require("../models").Table;
 const Product = require("../models").Product;
+const OrderProduct = require("../models").OrderProduct;
 //utils
 const {
     stock,
@@ -251,39 +252,40 @@ exports.getStatistics = asyncHandler(async (req, res) => {
         limit: 5,
         include: { all: true, nested: true },
     });
-
-    const topSellingProducts = await Product.findAll({
-        include: {
+const topSelling = await OrderProduct.findAll({
+    attributes: [
+        [col("Product.id"), "id"],
+        [col("Product.name"), "name"],
+        [col("Product.price"), "price"],
+        [
+            fn("SUM", col("quantity")),
+            "quantitySold",
+        ],
+    ],
+    include: [
+        {
             model: Order,
-            as: "order",
             where: {
                 isPaid: true,
             },
-            through: {
-                attributes: ["quantity"],
-            },
+            attributes: [],
         },
-    });
-
-    const topSelling = topSellingProducts
-        .map((product) => {
-            const quantitySold = product.order.reduce(
-                (sum, order) => sum + order.OrderProduct.quantity,
-                0
-            );
-
-            return {
-                id: product.id,
-                name: product.name,
-                price: product.price,
-                quantitySold,
-            };
-        })
-        .sort((a, b) => b.quantitySold - a.quantitySold)
-        .slice(0, 5);
-
-
-
+        {
+            model: Product,
+            attributes: [],
+        },
+    ],
+    group: [
+        "Product.id",
+        "Product.name",
+        "Product.price",
+    ],
+    order: [
+        [fn("SUM", col("quantity")), "DESC"],
+    ],
+    limit: 5,
+    raw: true,
+});
 
     const totalSales = await Order.sum("total", {
         where: {
