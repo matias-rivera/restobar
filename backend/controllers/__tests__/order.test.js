@@ -18,6 +18,7 @@ jest.mock("../../models", () => ({
     Client: {},
     Table: {},
 }));
+
 describe("getStatistics", () => {
     let req;
     let res;
@@ -34,6 +35,7 @@ describe("getStatistics", () => {
         Order.sum.mockResolvedValue(0);
         Order.count.mockResolvedValue(0);
     });
+
     test("should return top selling products aggregated by quantity sold", async () => {
         Order.findAll.mockResolvedValue([]);
 
@@ -83,6 +85,7 @@ describe("getStatistics", () => {
             },
         ]);
     });
+
     test("should include only paid orders in the aggregation", async () => {
         Order.findAll.mockResolvedValue([]);
 
@@ -140,12 +143,9 @@ describe("getStatistics", () => {
             .mockResolvedValueOnce([])
             .mockResolvedValueOnce([
                 {
-                    total: 50,
-                    createdAt: new Date("2026-09-05T14:15:00"),
-                },
-                {
-                    total: 30,
-                    createdAt: new Date("2026-09-05T14:45:00"),
+                    hour: 14,
+                    totalSales: 80,
+                    ordersCount: 2,
                 },
             ]);
 
@@ -165,12 +165,14 @@ describe("getStatistics", () => {
             .mockResolvedValueOnce([])
             .mockResolvedValueOnce([
                 {
-                    total: 50,
-                    createdAt: new Date("2026-09-05T10:00:00"),
+                    hour: 10,
+                    totalSales: 50,
+                    ordersCount: 1,
                 },
                 {
-                    total: 200,
-                    createdAt: new Date("2026-09-05T15:00:00"),
+                    hour: 15,
+                    totalSales: 200,
+                    ordersCount: 1,
                 },
             ]);
 
