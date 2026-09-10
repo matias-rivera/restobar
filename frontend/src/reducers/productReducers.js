@@ -1,5 +1,8 @@
 import {
     PRODUCT_LIST_REQUEST,
+    PRODUCT_LOW_STOCK_REQUEST,
+PRODUCT_LOW_STOCK_SUCCESS,
+PRODUCT_LOW_STOCK_FAIL,
     PRODUCT_LIST_SUCCESS,
     PRODUCT_LIST_FAIL,
     PRODUCT_LIST_RESET,
@@ -96,6 +99,32 @@ export const productDeleteReducer = (state = {}, action) => {
             return { loading: false, error: action.payload };
         case PRODUCT_DELETE_RESET:
             return {};
+        default:
+            return state;
+    }
+};
+
+
+export const productLowStockReducer = (
+    state = { loading: false, products: [] },
+    action
+) => {
+    switch (action.type) {
+        case PRODUCT_LOW_STOCK_REQUEST:
+            return { loading: true, products: [] };
+
+        case PRODUCT_LOW_STOCK_SUCCESS:
+            return {
+                loading: false,
+                products: action.payload,
+            };
+
+        case PRODUCT_LOW_STOCK_FAIL:
+            return {
+                loading: false,
+                error: action.payload,
+            };
+
         default:
             return state;
     }

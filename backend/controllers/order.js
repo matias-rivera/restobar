@@ -1,8 +1,10 @@
 const asyncHandler = require("express-async-handler");
 const Order = require("../models").Order;
-const { Op } = require("sequelize");
+const { Op, fn, col } = require("sequelize");
 const Client = require("../models").Client;
 const Table = require("../models").Table;
+const Product = require("../models").Product;
+const OrderProduct = require("../models").OrderProduct;
 //utils
 const {
     stock,
@@ -250,6 +252,40 @@ exports.getStatistics = asyncHandler(async (req, res) => {
         limit: 5,
         include: { all: true, nested: true },
     });
+    const topSelling = await OrderProduct.findAll({
+        attributes: [
+            [col("Product.id"), "id"],
+            [col("Product.name"), "name"],
+            [col("Product.price"), "price"],
+            [
+                fn("SUM", col("quantity")),
+                "quantitySold",
+            ],
+        ],
+        include: [
+            {
+                model: Order,
+                where: {
+                    isPaid: true,
+                },
+                attributes: [],
+            },
+            {
+                model: Product,
+                attributes: [],
+            },
+        ],
+        group: [
+            "Product.id",
+            "Product.name",
+            "Product.price",
+        ],
+        order: [
+            [fn("SUM", col("quantity")), "DESC"],
+        ],
+        limit: 5,
+        raw: true,
+    });
 
     const totalSales = await Order.sum("total", {
         where: {
@@ -280,6 +316,40 @@ exports.getStatistics = asyncHandler(async (req, res) => {
         },
     });
 
+  // Peak Hours - sales and orders by hour
+const hourlySales = await Order.findAll({
+    where: {
+        isPaid: true,
+    },
+    attributes: [
+        [fn("HOUR", col("createdAt")), "hour"],
+        [fn("SUM", col("total")), "totalSales"],
+        [fn("COUNT", col("id")), "ordersCount"],
+    ],
+    group: [fn("HOUR", col("createdAt"))],
+    order: [[fn("HOUR", col("createdAt")), "ASC"]],
+    raw: true,
+});
+
+const peakHours = Array.from({ length: 24 }, (_, hour) => ({
+    hour: `${hour.toString().padStart(2, "0")}:00`,
+    totalSales: 0,
+    ordersCount: 0,
+}));
+
+hourlySales.forEach((item) => {
+    const hour = Number(item.hour);
+
+    peakHours[hour].totalSales = Number(item.totalSales) || 0;
+    peakHours[hour].ordersCount = Number(item.ordersCount) || 0;
+});
+
+    const peakHourSummary = peakHours.reduce(
+        (max, hour) =>
+            hour.totalSales > max.totalSales ? hour : max,
+        peakHours[0]
+    );
+
     const orders = await Order.findAll({
         where: {
             [Op.or]: [{ isPaid: false }],
@@ -299,5 +369,9 @@ exports.getStatistics = asyncHandler(async (req, res) => {
         },
         sales,
         orders,
+        topSelling,
+        peakHours,
+        peakHourSummary,
     });
+
 });

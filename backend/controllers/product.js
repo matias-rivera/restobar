@@ -57,6 +57,22 @@ exports.getProducts = asyncHandler(async (req, res) => {
     res.json({ products, page, pages: Math.ceil(count / pageSize) });
 });
 
+//@desc     Get low stock products
+//@route    GET /api/products/low-stock
+//@access   Private/user
+
+exports.getLowStockProducts = asyncHandler(async (req, res) => {
+    const products = await Product.findAll({
+        where: {
+            stock: {
+                [Op.gt]: 0,
+                [Op.lte]: 5,
+            },
+        },
+    });
+
+    res.json(products);
+});
 //@desc     Get product by ID
 //@route    GET /api/products/:id
 //@access   Private/user

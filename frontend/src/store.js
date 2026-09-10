@@ -7,12 +7,14 @@ import {
     userRegisterReducer,
     userDetailsReducer,
     userUpdateReducer,
+    
 } from "./reducers/userReducers";
 import {
     categoryListReducer,
     categoryCreateReducer,
     categoryDetailsReducer,
     categoryUpdateReducer,
+    
 } from "./reducers/categoryReducers";
 
 import {
@@ -35,6 +37,7 @@ import {
     productCreateReducer,
     productDetailsReducer,
     productUpdateReducer,
+     productLowStockReducer,
 } from "./reducers/productReducers";
 
 import {
@@ -61,6 +64,7 @@ const reducer = combineReducers({
     productCreate: productCreateReducer,
     productDetails: productDetailsReducer,
     productUpdate: productUpdateReducer,
+    productLowStock: productLowStockReducer,
 
     tableAll: tableAllReducer,
     tableList: tableListReducer,
